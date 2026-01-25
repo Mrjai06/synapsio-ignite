@@ -80,10 +80,24 @@ const FeaturesSection = () => {
   const [activeFeature, setActiveFeature] = useState<string | null>(null);
   const [hoveredFeature, setHoveredFeature] = useState<string | null>(null);
   const [panelVisible, setPanelVisible] = useState(false);
+  const [headerVisible, setHeaderVisible] = useState(false);
+  const headerRef = useRef<HTMLDivElement>(null);
   const [visibleCards, setVisibleCards] = useState<boolean[]>(Array(features.length).fill(false));
   const cardsRef = useRef<(HTMLButtonElement | null)[]>([]);
   
   const selectedFeature = features.find(f => f.id === activeFeature);
+
+  // Header observer
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) setHeaderVisible(true);
+      },
+      { threshold: 0.3 }
+    );
+    if (headerRef.current) observer.observe(headerRef.current);
+    return () => observer.disconnect();
+  }, []);
 
   // Staggered reveal on scroll
   useEffect(() => {
@@ -99,7 +113,7 @@ const FeaturesSection = () => {
                 next[index] = true;
                 return next;
               });
-            }, index * 100);
+            }, index * 120);
           }
         },
         { threshold: 0.2 }
@@ -127,25 +141,27 @@ const FeaturesSection = () => {
   };
 
   return (
-    <section className="relative py-40">
+    <section className="relative py-32 md:py-48">
       {/* Subtle ambient glow */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <div className="w-[500px] h-[500px] bg-secondary/20 rounded-full blur-[180px]" />
+        <div className="w-[600px] h-[600px] bg-secondary/15 rounded-full blur-[220px]" />
       </div>
       
-      {/* Top transition */}
-      <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-background to-transparent pointer-events-none" />
-      
-      <div className="relative z-10 container mx-auto px-8 lg:px-16">
+      <div className="relative z-10 container mx-auto px-8 lg:px-20 xl:px-28">
         {/* Section header */}
-        <div className="max-w-2xl mb-24">
-          <p className="text-xs tracking-[0.3em] uppercase text-primary/60 mb-8">
+        <div ref={headerRef} className="max-w-2xl mb-28 md:mb-36">
+          <p 
+            className={`text-[10px] tracking-[0.4em] uppercase text-primary/50 mb-10 transition-all duration-1000 ${headerVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}
+          >
             Capabilities
           </p>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-light tracking-[-0.02em] mb-10 leading-[1.05]">
+          <h2 
+            className={`text-4xl md:text-5xl lg:text-[3.5rem] font-light tracking-[-0.02em] mb-12 leading-[1.08] transition-all duration-1000 ${headerVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
+            style={{ transitionDelay: "100ms" }}
+          >
             <span className="text-foreground">A living system</span>
             <br />
-            <span className="text-muted-foreground/35">that grows with you</span>
+            <span className="text-muted-foreground/30">that grows with you</span>
           </h2>
         </div>
         

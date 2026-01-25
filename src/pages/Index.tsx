@@ -5,32 +5,107 @@ import FeaturesSection from "@/components/premium/FeaturesSection";
 import MarketSection from "@/components/premium/MarketSection";
 import TeamSection from "@/components/premium/TeamSection";
 import Footer from "@/components/premium/Footer";
+import ScrollProgress from "@/components/premium/ScrollProgress";
 
 const Index = () => {
   return (
     <div className="min-h-screen bg-background text-foreground overflow-x-hidden">
-      {/* Continuous narrative flow - no navigation, no hard breaks */}
+      {/* Scroll progress indicator */}
+      <ScrollProgress />
+      
+      {/* Continuous narrative flow */}
       <main className="relative">
-        {/* 1. Hero - System Awakening */}
-        <HeroSection />
+        {/* Act 1: Introduction - System Awakening */}
+        <section id="hero">
+          <HeroSection />
+        </section>
         
-        {/* 2. Problem - Friction Emerges (chaos increases) */}
-        <ProblemSection />
+        {/* Narrative bridge: From order to chaos */}
+        <div className="relative h-32 -mt-16">
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/50 to-background" />
+        </div>
         
-        {/* 3. Solution - System Reorganizes (order returns) */}
-        <SolutionSection />
+        {/* Act 2: The Challenge - Friction Emerges */}
+        <section id="problem">
+          <ProblemSection />
+        </section>
         
-        {/* 4. Features - Living System */}
-        <FeaturesSection />
+        {/* Narrative bridge: From chaos to resolution */}
+        <div className="relative py-20 md:py-28">
+          <div className="container mx-auto px-8 lg:px-16">
+            <div className="max-w-lg">
+              <p className="text-sm text-muted-foreground/40 font-light leading-relaxed italic">
+                "There has to be a better way..."
+              </p>
+            </div>
+          </div>
+        </div>
         
-        {/* 5. Market & Competition - Scale */}
-        <MarketSection />
+        {/* Act 3: The Solution - Order Restored */}
+        <section id="solution">
+          <SolutionSection />
+        </section>
         
-        {/* 6. Team - Human Trust */}
-        <TeamSection />
+        {/* Narrative bridge: From solution to capabilities */}
+        <div className="relative py-20 md:py-28">
+          <div className="container mx-auto px-8 lg:px-16">
+            <div className="max-w-lg ml-auto text-right">
+              <p className="text-sm text-muted-foreground/40 font-light leading-relaxed">
+                Powered by six core capabilities
+              </p>
+              <div className="mt-4 flex justify-end">
+                <svg width="40" height="20" viewBox="0 0 40 20" className="text-border/40">
+                  <path 
+                    d="M0 10 L30 10 M25 5 L30 10 L25 15" 
+                    stroke="currentColor" 
+                    strokeWidth="1" 
+                    fill="none"
+                  />
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        {/* Act 4: Capabilities - Living System */}
+        <section id="features">
+          <FeaturesSection />
+        </section>
+        
+        {/* Narrative bridge: From product to market */}
+        <div className="relative py-20 md:py-28">
+          <div className="container mx-auto px-8 lg:px-16">
+            <div className="max-w-lg">
+              <p className="text-sm text-muted-foreground/40 font-light leading-relaxed">
+                Addressing a massive, underserved market
+              </p>
+            </div>
+          </div>
+        </div>
+        
+        {/* Act 5: The Opportunity - Scale */}
+        <section id="market">
+          <MarketSection />
+        </section>
+        
+        {/* Narrative bridge: From market to people */}
+        <div className="relative py-20 md:py-28">
+          <div className="container mx-auto px-8 lg:px-16">
+            <div className="max-w-lg mx-auto text-center">
+              <p className="text-sm text-muted-foreground/40 font-light leading-relaxed">
+                Built by people who've lived this problem
+              </p>
+            </div>
+          </div>
+        </div>
+        
+        {/* Act 6: The Team - Human Trust */}
+        <section id="team">
+          <TeamSection />
+        </section>
       </main>
       
-      {/* 7. Footer - Minimal, unobtrusive */}
+      {/* Footer */}
       <Footer />
     </div>
   );

@@ -33,8 +33,22 @@ const TeamSection = () => {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [visibleCards, setVisibleCards] = useState<boolean[]>(Array(team.length).fill(false));
   const [ctaVisible, setCtaVisible] = useState(false);
+  const [headerVisible, setHeaderVisible] = useState(false);
+  const headerRef = useRef<HTMLDivElement>(null);
   const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
   const ctaRef = useRef<HTMLDivElement>(null);
+
+  // Header observer
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) setHeaderVisible(true);
+      },
+      { threshold: 0.3 }
+    );
+    if (headerRef.current) observer.observe(headerRef.current);
+    return () => observer.disconnect();
+  }, []);
 
   // Staggered reveal on scroll
   useEffect(() => {
@@ -50,7 +64,7 @@ const TeamSection = () => {
                 next[index] = true;
                 return next;
               });
-            }, index * 120);
+            }, index * 150);
           }
         },
         { threshold: 0.2 }
@@ -81,30 +95,32 @@ const TeamSection = () => {
   }, []);
 
   return (
-    <section className="relative py-40">
-      {/* Warm, human ambient light */}
+    <section className="relative py-32 md:py-48">
+      {/* Warm ambient light */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <div className="w-[800px] h-[400px] bg-primary/4 rounded-full blur-[200px]" />
+        <div className="w-[900px] h-[500px] bg-primary/3 rounded-full blur-[250px]" />
       </div>
       
-      {/* Top transition */}
-      <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-background to-transparent pointer-events-none" />
-      
-      <div className="relative z-10 container mx-auto px-8 lg:px-16">
+      <div className="relative z-10 container mx-auto px-8 lg:px-20 xl:px-28">
         {/* Section header */}
-        <div className="max-w-2xl mb-24">
-          <p className="text-xs tracking-[0.3em] uppercase text-primary/60 mb-8">
+        <div ref={headerRef} className="max-w-2xl mb-28 md:mb-36">
+          <p 
+            className={`text-[10px] tracking-[0.4em] uppercase text-primary/50 mb-10 transition-all duration-1000 ${headerVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}
+          >
             Team
           </p>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-light tracking-[-0.02em] mb-10 leading-[1.05]">
+          <h2 
+            className={`text-4xl md:text-5xl lg:text-[3.5rem] font-light tracking-[-0.02em] mb-12 leading-[1.08] transition-all duration-1000 ${headerVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
+            style={{ transitionDelay: "100ms" }}
+          >
             <span className="text-foreground">Built by operators</span>
             <br />
-            <span className="text-muted-foreground/35">who understand the problem</span>
+            <span className="text-muted-foreground/30">who understand the problem</span>
           </h2>
         </div>
         
-        {/* Team grid - elegant cards with hover states */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-10 mb-32">
+        {/* Team grid */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-12 mb-40">
           {team.map((member, index) => {
             const isHovered = hoveredIndex === index;
             const isVisible = visibleCards[index];

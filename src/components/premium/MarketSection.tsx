@@ -28,8 +28,22 @@ const MarketSection = () => {
   const [dragStart, setDragStart] = useState(0);
   const [businessAnimated, setBusinessAnimated] = useState(false);
   const [marketHover, setMarketHover] = useState<"tam" | "sam" | "som" | null>(null);
+  const [headerVisible, setHeaderVisible] = useState(false);
+  const headerRef = useRef<HTMLDivElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
   const businessRef = useRef<HTMLDivElement>(null);
+
+  // Header observer
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) setHeaderVisible(true);
+      },
+      { threshold: 0.3 }
+    );
+    if (headerRef.current) observer.observe(headerRef.current);
+    return () => observer.disconnect();
+  }, []);
 
   // Trigger business model animation on scroll into view
   useEffect(() => {
@@ -97,29 +111,31 @@ const MarketSection = () => {
   };
 
   return (
-    <section className="relative py-40">
+    <section className="relative py-32 md:py-48">
       {/* Subtle ambient */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <div className="w-[700px] h-[400px] bg-secondary/15 rounded-full blur-[200px]" />
+        <div className="w-[800px] h-[500px] bg-secondary/12 rounded-full blur-[250px]" />
       </div>
       
-      {/* Top transition */}
-      <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-background to-transparent pointer-events-none" />
-      
-      <div className="relative z-10 container mx-auto px-8 lg:px-16">
+      <div className="relative z-10 container mx-auto px-8 lg:px-20 xl:px-28">
         {/* Section header */}
-        <div className="max-w-2xl mb-24">
-          <p className="text-xs tracking-[0.3em] uppercase text-primary/60 mb-8">
+        <div ref={headerRef} className="max-w-2xl mb-28 md:mb-36">
+          <p 
+            className={`text-[10px] tracking-[0.4em] uppercase text-primary/50 mb-10 transition-all duration-1000 ${headerVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}
+          >
             Opportunity
           </p>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-light tracking-[-0.02em] mb-10 leading-[1.05]">
+          <h2 
+            className={`text-4xl md:text-5xl lg:text-[3.5rem] font-light tracking-[-0.02em] mb-12 leading-[1.08] transition-all duration-1000 ${headerVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
+            style={{ transitionDelay: "100ms" }}
+          >
             <span className="text-foreground">A market ready</span>
             <br />
-            <span className="text-muted-foreground/35">for transformation</span>
+            <span className="text-muted-foreground/30">for transformation</span>
           </h2>
         </div>
         
-        <div className="grid lg:grid-cols-2 gap-20 lg:gap-32">
+        <div className="grid lg:grid-cols-2 gap-24 lg:gap-40">
           {/* TAM/SAM/SOM - interactive concentric circles */}
           <div>
             <div className="relative flex items-center justify-center py-16">

@@ -19,20 +19,19 @@ const HeroSection = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Content fades and rises slightly as user scrolls
   const contentOpacity = 1 - scrollProgress * 1.5;
-  const contentTranslate = scrollProgress * 30;
+  const contentTranslate = scrollProgress * 40;
 
   return (
     <section 
       ref={sectionRef}
-      className="relative min-h-[100vh] flex items-center justify-center overflow-hidden"
+      className="relative min-h-[110vh] flex items-center justify-center overflow-hidden"
     >
-      {/* Animated network - reacts to scroll and cursor */}
+      {/* Animated network */}
       <NetworkCanvas 
         nodeCount={50} 
         chaos={scrollProgress * 0.3}
-        className="absolute inset-0 opacity-50"
+        className="absolute inset-0 opacity-40"
         colorScheme="neutral"
         scrollReactive={true}
         parallaxFactor={0.15}
@@ -42,42 +41,42 @@ const HeroSection = () => {
       <div 
         className="absolute inset-0 pointer-events-none transition-opacity duration-1000"
         style={{ 
-          background: `radial-gradient(ellipse at 50% 40%, transparent 0%, hsl(var(--background) / ${0.3 + scrollProgress * 0.4}) 70%)` 
+          background: `radial-gradient(ellipse at 50% 40%, transparent 0%, hsl(var(--background) / ${0.2 + scrollProgress * 0.5}) 70%)` 
         }}
       />
       
       {/* Content */}
       <div 
-        className="relative z-10 container mx-auto px-8 lg:px-16 transition-all duration-700"
+        className="relative z-10 container mx-auto px-8 lg:px-20 xl:px-28 transition-all duration-700"
         style={{ 
           opacity: Math.max(0, contentOpacity),
           transform: `translateY(${contentTranslate}px)`
         }}
       >
-        <div className="max-w-4xl">
-          {/* Branding */}
-          <div className="mb-16 animate-fade-in" style={{ animationDelay: "0.1s", animationDuration: "1s" }}>
-            <span className="text-xs tracking-[0.4em] uppercase text-muted-foreground/50 font-light">
+        <div className="max-w-5xl">
+          {/* Branding - very subtle */}
+          <div className="mb-20 animate-fade-in" style={{ animationDelay: "0.2s", animationDuration: "1.2s" }}>
+            <span className="text-[10px] tracking-[0.5em] uppercase text-muted-foreground/40 font-light">
               Synapsio
             </span>
           </div>
           
-          {/* Headline */}
+          {/* Headline - larger, more breathing room */}
           <h1 
-            className="text-5xl md:text-7xl lg:text-8xl font-light tracking-[-0.02em] mb-10 animate-fade-in leading-[0.95]"
-            style={{ animationDelay: "0.3s", animationDuration: "1.2s" }}
+            className="text-5xl md:text-7xl lg:text-[5.5rem] xl:text-[6.5rem] font-light tracking-[-0.03em] mb-14 animate-fade-in leading-[0.92]"
+            style={{ animationDelay: "0.4s", animationDuration: "1.4s" }}
           >
             <span className="text-foreground">Intelligent</span>
             <br />
             <span className="text-foreground">orchestration</span>
             <br />
-            <span className="text-muted-foreground/40">for supply chains</span>
+            <span className="text-muted-foreground/35">for supply chains</span>
           </h1>
           
-          {/* Subheadline */}
+          {/* Subheadline - more space */}
           <p 
-            className="text-lg md:text-xl text-muted-foreground/50 max-w-xl mb-16 font-light leading-relaxed animate-fade-in"
-            style={{ animationDelay: "0.5s", animationDuration: "1.2s" }}
+            className="text-lg md:text-xl lg:text-[1.35rem] text-muted-foreground/45 max-w-xl mb-20 font-light leading-[1.7] animate-fade-in"
+            style={{ animationDelay: "0.6s", animationDuration: "1.4s" }}
           >
             Transform fragmented operations into adaptive, self-optimizing networks. 
             Real-time coordination. Predictive intelligence.
@@ -85,12 +84,12 @@ const HeroSection = () => {
           
           {/* CTAs */}
           <div 
-            className="flex flex-col sm:flex-row gap-5 animate-fade-in"
-            style={{ animationDelay: "0.7s", animationDuration: "1.2s" }}
+            className="flex flex-col sm:flex-row gap-6 animate-fade-in"
+            style={{ animationDelay: "0.8s", animationDuration: "1.4s" }}
           >
             <Button 
               size="lg" 
-              className="group bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-10 py-7 text-sm tracking-wide font-normal transition-all duration-1000 hover:scale-[1.02] hover:shadow-lg hover:shadow-primary/20"
+              className="group bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-12 py-8 text-sm tracking-wide font-normal transition-all duration-1000 hover:scale-[1.02] hover:shadow-xl hover:shadow-primary/15"
             >
               View Pitchdeck
               <ArrowRight className="ml-3 h-4 w-4 transition-transform duration-700 group-hover:translate-x-1" />
@@ -98,7 +97,7 @@ const HeroSection = () => {
             <Button 
               size="lg" 
               variant="ghost"
-              className="text-muted-foreground/60 hover:text-foreground hover:bg-transparent rounded-full px-10 py-7 text-sm tracking-wide font-normal border border-border/20 hover:border-border/40 transition-all duration-1000"
+              className="text-muted-foreground/50 hover:text-foreground hover:bg-transparent rounded-full px-12 py-8 text-sm tracking-wide font-normal border border-border/15 hover:border-border/35 transition-all duration-1000"
             >
               Explore Product
             </Button>
@@ -106,19 +105,22 @@ const HeroSection = () => {
         </div>
       </div>
       
-      {/* Scroll hint */}
+      {/* Scroll hint - more subtle */}
       <div 
-        className="absolute bottom-16 left-1/2 -translate-x-1/2 transition-opacity duration-1000"
-        style={{ opacity: 1 - scrollProgress * 3 }}
+        className="absolute bottom-20 left-1/2 -translate-x-1/2 transition-opacity duration-1000"
+        style={{ opacity: 1 - scrollProgress * 4 }}
       >
-        <div className="w-6 h-10 rounded-full border border-border/20 flex justify-center pt-2">
-          <div className="w-1 h-2 bg-muted-foreground/30 rounded-full animate-bounce" style={{ animationDuration: "2s" }} />
+        <div className="flex flex-col items-center gap-4">
+          <span className="text-[10px] tracking-[0.3em] uppercase text-muted-foreground/25">Scroll</span>
+          <div className="w-5 h-8 rounded-full border border-border/15 flex justify-center pt-1.5">
+            <div className="w-0.5 h-1.5 bg-muted-foreground/25 rounded-full animate-bounce" style={{ animationDuration: "2.5s" }} />
+          </div>
         </div>
       </div>
       
-      {/* Morphing transition */}
-      <div className="absolute bottom-0 left-0 right-0 h-[40vh] pointer-events-none">
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
+      {/* Bottom transition */}
+      <div className="absolute bottom-0 left-0 right-0 h-[50vh] pointer-events-none">
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/70 to-transparent" />
       </div>
     </section>
   );
