@@ -1,42 +1,46 @@
 import { useState, useRef, useEffect } from "react";
-import { Linkedin, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { FloatingSurface, GlassPanel, AmbientGlow } from "./DepthSystem";
+import { FloatingSurface, AmbientGlow } from "./DepthSystem";
+import { TestimonialCarousel } from "@/components/ui/profile-card-testimonial-carousel";
 
 const team = [
   {
     name: "Alex Chen",
-    role: "CEO & Co-founder",
-    bio: "Former VP of Operations at Scale AI. Stanford MBA. 15 years in supply chain optimization.",
-    linkedin: "#"
+    title: "CEO & Co-founder",
+    description: "Former VP of Operations at Scale AI. Stanford MBA. 15 years in supply chain optimization.",
+    imageUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=600&q=80",
+    linkedinUrl: "#"
   },
   {
     name: "Maria Santos",
-    role: "CTO & Co-founder",
-    bio: "Ex-Google AI researcher. PhD in distributed systems. Led ML infrastructure for Google Cloud.",
-    linkedin: "#"
+    title: "CTO & Co-founder",
+    description: "Ex-Google AI researcher. PhD in distributed systems. Led ML infrastructure for Google Cloud.",
+    imageUrl: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=600&q=80",
+    linkedinUrl: "#"
   },
   {
     name: "James Park",
-    role: "VP of Product",
-    bio: "Former Director at Flexport. Built products serving Fortune 500 logistics operations.",
-    linkedin: "#"
+    title: "VP of Product",
+    description: "Former Director at Flexport. Built products serving Fortune 500 logistics operations.",
+    imageUrl: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=600&q=80",
+    linkedinUrl: "#"
   },
   {
     name: "Sarah Mitchell",
-    role: "VP of Sales",
-    bio: "20 years enterprise SaaS. Former SVP at SAP. Deep relationships across manufacturing.",
-    linkedin: "#"
+    title: "VP of Sales",
+    description: "20 years enterprise SaaS. Former SVP at SAP. Deep relationships across manufacturing.",
+    imageUrl: "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=600&q=80",
+    linkedinUrl: "#"
   }
 ];
 
 const TeamSection = () => {
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-  const [visibleCards, setVisibleCards] = useState<boolean[]>(Array(team.length).fill(false));
   const [ctaVisible, setCtaVisible] = useState(false);
   const [headerVisible, setHeaderVisible] = useState(false);
+  const [carouselVisible, setCarouselVisible] = useState(false);
   const headerRef = useRef<HTMLDivElement>(null);
-  const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
+  const carouselRef = useRef<HTMLDivElement>(null);
   const ctaRef = useRef<HTMLDivElement>(null);
 
   // Header observer
@@ -51,31 +55,17 @@ const TeamSection = () => {
     return () => observer.disconnect();
   }, []);
 
-  // Staggered reveal on scroll
+  // Carousel and CTA observers
   useEffect(() => {
-    const observers = cardsRef.current.map((card, index) => {
-      if (!card) return null;
-      
-      const observer = new IntersectionObserver(
-        ([entry]) => {
-          if (entry.isIntersecting) {
-            setTimeout(() => {
-              setVisibleCards(prev => {
-                const next = [...prev];
-                next[index] = true;
-                return next;
-              });
-            }, index * 150);
-          }
-        },
-        { threshold: 0.2 }
-      );
-      
-      observer.observe(card);
-      return observer;
-    });
+    const carouselObserver = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setCarouselVisible(true);
+        }
+      },
+      { threshold: 0.2 }
+    );
 
-    // CTA observer
     const ctaObserver = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
@@ -85,12 +75,16 @@ const TeamSection = () => {
       { threshold: 0.3 }
     );
 
+    if (carouselRef.current) {
+      carouselObserver.observe(carouselRef.current);
+    }
+
     if (ctaRef.current) {
       ctaObserver.observe(ctaRef.current);
     }
 
     return () => {
-      observers.forEach(obs => obs?.disconnect());
+      carouselObserver.disconnect();
       ctaObserver.disconnect();
     };
   }, []);
@@ -103,7 +97,7 @@ const TeamSection = () => {
       
       <div className="relative z-10 container mx-auto px-8 lg:px-20 xl:px-28">
         {/* Section header */}
-        <div ref={headerRef} className="max-w-2xl mb-28 md:mb-36">
+        <div ref={headerRef} className="max-w-2xl mx-auto text-center mb-20 md:mb-28">
           <p 
             className={`text-[10px] tracking-[0.4em] uppercase text-primary/50 mb-10 transition-all duration-1000 ${headerVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}
           >
@@ -119,84 +113,12 @@ const TeamSection = () => {
           </h2>
         </div>
         
-        {/* Team grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-12 mb-40">
-          {team.map((member, index) => {
-            const isHovered = hoveredIndex === index;
-            const isVisible = visibleCards[index];
-            
-            return (
-              <FloatingSurface
-                key={index}
-                elevation={isHovered ? "high" : "low"}
-                glow={isHovered}
-                glowColor="primary"
-                className={`
-                  rounded-3xl
-                  transition-all ease-out
-                  ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}
-                  ${isHovered ? "scale-[1.03]" : ""}
-                `}
-                style={{ transitionDuration: "900ms" }}
-              >
-                <GlassPanel
-                  ref={el => cardsRef.current[index] = el}
-                  intensity={isHovered ? "medium" : "subtle"}
-                  bordered
-                  className={`
-                    p-10 rounded-3xl
-                    border-border/10
-                    transition-all duration-700
-                    ${isHovered ? "border-border/30 bg-card/30" : "hover:border-border/20"}
-                  `}
-                  onMouseEnter={() => setHoveredIndex(index)}
-                  onMouseLeave={() => setHoveredIndex(null)}
-                >
-                  {/* Avatar with hover animation */}
-                  <div className={`
-                    relative w-16 h-16 rounded-full mb-8 flex items-center justify-center
-                    bg-gradient-to-br from-card/60 to-card/20
-                    transition-all duration-700
-                    ${isHovered ? "scale-110 from-primary/10 to-card/30" : ""}
-                  `}>
-                    <span className={`
-                      text-xl font-light transition-colors duration-700
-                      ${isHovered ? "text-primary/70" : "text-muted-foreground/30"}
-                    `}>
-                      {member.name.split(" ").map(n => n[0]).join("")}
-                    </span>
-                  </div>
-                  
-                  <h3 className="relative text-lg font-normal text-foreground mb-2 tracking-tight">
-                    {member.name}
-                  </h3>
-                  <p className={`
-                    relative text-sm mb-5 transition-colors duration-700
-                    ${isHovered ? "text-primary" : "text-primary/60"}
-                  `}>
-                    {member.role}
-                  </p>
-                  <p className={`
-                    relative text-sm leading-relaxed mb-8 transition-colors duration-700
-                    ${isHovered ? "text-muted-foreground/60" : "text-muted-foreground/40"}
-                  `}>
-                    {member.bio}
-                  </p>
-                  
-                  <a
-                    href={member.linkedin}
-                    className={`
-                      relative inline-flex items-center gap-2 text-xs transition-all duration-700
-                      ${isHovered ? "text-foreground translate-x-1" : "text-muted-foreground/30"}
-                    `}
-                  >
-                    <Linkedin className="h-4 w-4" />
-                    <span>LinkedIn</span>
-                  </a>
-                </GlassPanel>
-              </FloatingSurface>
-            );
-          })}
+        {/* Team carousel */}
+        <div 
+          ref={carouselRef}
+          className={`mb-40 transition-all duration-1000 ${carouselVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
+        >
+          <TestimonialCarousel testimonials={team} />
         </div>
         
         {/* Final CTA - warm and inviting with staggered animation */}
