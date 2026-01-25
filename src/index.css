@@ -274,4 +274,14 @@
       linear-gradient(to bottom, hsl(var(--border) / 0.3) 1px, transparent 1px);
     background-size: 60px 60px;
   }
+
+  /* Animated line drawing for orbital connections */
+  @keyframes drawLine {
+    from {
+      stroke-dashoffset: var(--path-length, 300);
+    }
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
 }
