@@ -50,15 +50,15 @@ const HeroSection = () => {
           </div>
           
           {/* Headline - larger, more breathing room */}
-          <h1 className="text-5xl md:text-7xl lg:text-[5.5rem] xl:text-[6.5rem] font-light tracking-[-0.03em] mb-14 animate-fade-in leading-[0.92]" style={{
+          <h1 className="text-5xl md:text-7xl lg:text-[5.5rem] font-light tracking-[-0.03em] mb-14 animate-fade-in leading-[0.92] xl:text-7xl" style={{
           animationDelay: "0.4s",
           animationDuration: "1.4s"
         }}>
-            <span className="text-foreground">Intelligent</span>
+            <span className="text-foreground">Connections</span>
             <br />
-            <span className="text-foreground">orchestration</span>
+            <span className="text-primary">you can rely </span>
             <br />
-            <span className="text-muted-foreground/35">for supply chains</span>
+            <span className="text-primary">on</span>
           </h1>
           
           {/* Subheadline - more space */}
