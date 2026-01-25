@@ -155,15 +155,18 @@ export default function RadialOrbitalTimeline({
     }
   };
 
+  const activeItem = activeNodeId ? timelineData.find(item => item.id === activeNodeId) : null;
+
   return (
     <div
       ref={containerRef}
       onClick={handleContainerClick}
-      className="relative w-full h-[400px] flex items-center justify-center overflow-hidden"
+      className="relative w-full flex items-center justify-center gap-8"
     >
+      {/* Orbital visualization */}
       <div
         ref={orbitRef}
-        className="relative w-[320px] h-[320px] flex items-center justify-center"
+        className="relative w-[320px] h-[400px] flex items-center justify-center flex-shrink-0"
       >
         {/* Orbital rings */}
         <div className="absolute inset-0 flex items-center justify-center">
@@ -248,98 +251,100 @@ export default function RadialOrbitalTimeline({
               >
                 {item.title}
               </div>
-
-              {/* Expanded card */}
-              {isExpanded && (
-                <Card className="absolute left-12 top-0 w-64 bg-card/95 backdrop-blur-lg border-border shadow-xl z-[201]">
-                  <CardHeader className="pb-2">
-                    <div className="flex items-center justify-between">
-                      <Badge
-                        variant={
-                          item.status === "completed"
-                            ? "default"
-                            : item.status === "in-progress"
-                            ? "secondary"
-                            : "outline"
-                        }
-                        className="text-[10px]"
-                      >
-                        {item.status === "completed"
-                          ? "COMPLETE"
-                          : item.status === "in-progress"
-                          ? "IN PROGRESS"
-                          : "PENDING"}
-                      </Badge>
-                      <span className="text-[10px] text-muted-foreground">
-                        {item.date}
-                      </span>
-                    </div>
-                    <CardTitle className="text-sm mt-2">
-                      {item.title}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="pt-0">
-                    <p className="text-xs text-muted-foreground mb-3">
-                      {item.content}
-                    </p>
-
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="flex items-center gap-1">
-                        <Zap className="w-3 h-3 text-primary" />
-                        <span className="text-[10px] text-muted-foreground">
-                          Energy Level
-                        </span>
-                      </div>
-                      <span className="text-xs font-semibold text-foreground">
-                        {item.energy}%
-                      </span>
-                    </div>
-
-                    <div className="w-full h-1 bg-muted rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-primary rounded-full transition-all duration-500"
-                        style={{ width: `${item.energy}%` }}
-                      />
-                    </div>
-
-                    {item.relatedIds.length > 0 && (
-                      <div className="mt-3 pt-3 border-t border-border">
-                        <div className="flex items-center gap-1 mb-2">
-                          <Link className="w-3 h-3 text-muted-foreground" />
-                          <span className="text-[10px] text-muted-foreground">
-                            Connected Nodes
-                          </span>
-                        </div>
-                        <div className="flex flex-wrap gap-1">
-                          {item.relatedIds.map((relatedId) => {
-                            const relatedItem = timelineData.find(
-                              (i) => i.id === relatedId
-                            );
-                            return (
-                              <Button
-                                key={relatedId}
-                                variant="outline"
-                                size="sm"
-                                className="h-6 text-[10px] px-2"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  toggleItem(relatedId);
-                                }}
-                              >
-                                {relatedItem?.title}
-                                <ArrowRight className="w-2 h-2 ml-1" />
-                              </Button>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-              )}
             </div>
           );
         })}
+      </div>
+
+      {/* Side Panel for expanded content */}
+      <div className={`w-80 flex-shrink-0 transition-all duration-500 ${activeItem ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-4 pointer-events-none'}`}>
+        {activeItem && (
+          <Card className="bg-card/95 backdrop-blur-lg border-border shadow-xl">
+            <CardHeader className="pb-2">
+              <div className="flex items-center justify-between">
+                <Badge
+                  variant={
+                    activeItem.status === "completed"
+                      ? "default"
+                      : activeItem.status === "in-progress"
+                      ? "secondary"
+                      : "outline"
+                  }
+                  className="text-[10px]"
+                >
+                  {activeItem.status === "completed"
+                    ? "COMPLETE"
+                    : activeItem.status === "in-progress"
+                    ? "IN PROGRESS"
+                    : "PENDING"}
+                </Badge>
+                <span className="text-[10px] text-muted-foreground">
+                  {activeItem.date}
+                </span>
+              </div>
+              <CardTitle className="text-sm mt-2">
+                {activeItem.title}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="pt-0">
+              <p className="text-xs text-muted-foreground mb-3">
+                {activeItem.content}
+              </p>
+
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-1">
+                  <Zap className="w-3 h-3 text-primary" />
+                  <span className="text-[10px] text-muted-foreground">
+                    Energy Level
+                  </span>
+                </div>
+                <span className="text-xs font-semibold text-foreground">
+                  {activeItem.energy}%
+                </span>
+              </div>
+
+              <div className="w-full h-1 bg-muted rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-primary rounded-full transition-all duration-500"
+                  style={{ width: `${activeItem.energy}%` }}
+                />
+              </div>
+
+              {activeItem.relatedIds.length > 0 && (
+                <div className="mt-3 pt-3 border-t border-border">
+                  <div className="flex items-center gap-1 mb-2">
+                    <Link className="w-3 h-3 text-muted-foreground" />
+                    <span className="text-[10px] text-muted-foreground">
+                      Connected Nodes
+                    </span>
+                  </div>
+                  <div className="flex flex-wrap gap-1">
+                    {activeItem.relatedIds.map((relatedId) => {
+                      const relatedItem = timelineData.find(
+                        (i) => i.id === relatedId
+                      );
+                      return (
+                        <Button
+                          key={relatedId}
+                          variant="outline"
+                          size="sm"
+                          className="h-6 text-[10px] px-2"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            toggleItem(relatedId);
+                          }}
+                        >
+                          {relatedItem?.title}
+                          <ArrowRight className="w-2 h-2 ml-1" />
+                        </Button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        )}
       </div>
     </div>
   );
