@@ -6,15 +6,19 @@ import MarketSection from "@/components/premium/MarketSection";
 import TeamSection from "@/components/premium/TeamSection";
 import Footer from "@/components/premium/Footer";
 import ScrollProgress from "@/components/premium/ScrollProgress";
+import BackgroundSystem from "@/components/premium/BackgroundSystem";
 
 const Index = () => {
   return (
     <div className="min-h-screen bg-background text-foreground overflow-x-hidden">
+      {/* Persistent animated background system */}
+      <BackgroundSystem />
+      
       {/* Scroll progress indicator */}
       <ScrollProgress />
       
-      {/* Continuous narrative flow */}
-      <main className="relative">
+      {/* Continuous narrative flow - sits above background */}
+      <main className="relative" style={{ zIndex: 1 }}>
         {/* Act 1: Introduction - System Awakening */}
         <section id="hero">
           <HeroSection />
