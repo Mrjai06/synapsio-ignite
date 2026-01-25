@@ -81,68 +81,75 @@
   }
 
   .dark {
-    /* Synapsio Premium Dark Theme */
-    --background: 0 0% 0%;
-    --foreground: 0 0% 100%;
+    /* Synapsio Brand System - Premium, Calm, Minimal */
+    /* Background: #051824 → HSL 200 75% 8% */
+    --background: 200 75% 8%;
+    --foreground: 0 0% 98%;
     
-    --card: 203 76% 8%;
-    --card-foreground: 248 0.3% 98.4%;
+    /* Surface: #0E4B58 → HSL 189 72% 20% */
+    --card: 189 72% 20%;
+    --card-foreground: 0 0% 98%;
     
-    --popover: 191 73% 20%;
-    --popover-foreground: 248 0.3% 98.4%;
+    --popover: 189 72% 16%;
+    --popover-foreground: 0 0% 98%;
     
-    /* Primary: Refined warm amber - confident, premium */
-    --primary: 18 61% 63%;
-    --primary-foreground: 0 0% 100%;
+    /* Accent: #DA8A67 → HSL 19 62% 63% */
+    --primary: 19 62% 63%;
+    --primary-foreground: 200 75% 8%;
     
-    --secondary: 0 0% 100%;
-    --secondary-foreground: 0 0% 100%;
+    --secondary: 189 72% 25%;
+    --secondary-foreground: 0 0% 98%;
     
-    --muted: 191 73% 20%;
-    --muted-foreground: 0 0% 100%;
+    --muted: 200 50% 12%;
+    --muted-foreground: 200 20% 65%;
     
-    --accent: 191 73% 20%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 189 72% 20%;
+    --accent-foreground: 0 0% 98%;
     
-    --destructive: 0 0% 100%;
+    --destructive: 0 65% 55%;
     --destructive-foreground: 0 0% 100%;
     
-    --border: 191 73% 20%;
-    --input: 0 0% 58%;
-    --ring: 265 48% 27%;
+    --border: 189 50% 18%;
+    --input: 189 50% 22%;
+    --ring: 19 62% 63%;
     
-    /* Charts */
-    --chart-1: 0 0% 100%;
-    --chart-2: 162 17% 69.6%;
-    --chart-3: 70 18.8% 76.9%;
-    --chart-4: 304 26.5% 62.7%;
-    --chart-5: 16 24.6% 64.5%;
+    /* Charts - harmonized with brand */
+    --chart-1: 19 62% 63%;
+    --chart-2: 189 72% 40%;
+    --chart-3: 200 50% 50%;
+    --chart-4: 19 45% 75%;
+    --chart-5: 189 40% 60%;
     
     /* Sidebar */
-    --sidebar: 266 4% 20.8%;
-    --sidebar-foreground: 248 0.3% 98.4%;
-    --sidebar-primary: 264 24.3% 48.8%;
-    --sidebar-primary-foreground: 248 0.3% 98.4%;
-    --sidebar-accent: 260 4.1% 27.9%;
-    --sidebar-accent-foreground: 248 0.3% 98.4%;
-    --sidebar-border: 0 0% 100% / 10%;
-    --sidebar-ring: 264 2.7% 55.1%;
+    --sidebar: 200 75% 6%;
+    --sidebar-foreground: 0 0% 98%;
+    --sidebar-primary: 19 62% 63%;
+    --sidebar-primary-foreground: 200 75% 8%;
+    --sidebar-accent: 189 72% 18%;
+    --sidebar-accent-foreground: 0 0% 98%;
+    --sidebar-border: 189 50% 15%;
+    --sidebar-ring: 19 62% 63%;
     
-    /* Shadows - subtle for premium feel */
-    --shadow-2xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
-    --shadow-xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
-    --shadow-sm: 0px 0px 0px -10px hsl(0, 0%, 0%);
-    --shadow: 0px 0px 0px -10px hsl(0, 0%, 0%);
-    --shadow-md: 0px 0px 0px -10px hsl(0, 0%, 0%);
-    --shadow-lg: 0px 0px 0px -10px hsl(0, 0%, 0%);
-    --shadow-xl: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 8px 10px -1px hsl(0 0% 0% / 0.1);
-    --shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.25);
+    /* Shadows - subtle depth, no glow */
+    --shadow-2xs: 0 1px 2px 0 hsl(200 75% 4% / 0.3);
+    --shadow-xs: 0 1px 3px 0 hsl(200 75% 4% / 0.4);
+    --shadow-sm: 0 2px 4px -1px hsl(200 75% 4% / 0.5);
+    --shadow: 0 4px 8px -2px hsl(200 75% 4% / 0.5);
+    --shadow-md: 0 6px 16px -4px hsl(200 75% 4% / 0.5);
+    --shadow-lg: 0 12px 24px -8px hsl(200 75% 4% / 0.6);
+    --shadow-xl: 0 20px 40px -12px hsl(200 75% 4% / 0.7);
+    --shadow-2xl: 0 32px 64px -16px hsl(200 75% 4% / 0.8);
     
-    /* Custom Synapsio tokens */
-    --glow-primary: 35 85% 58%;
-    --glow-accent: 220 30% 50%;
-    --gradient-start: 35 85% 58%;
-    --gradient-end: 25 75% 45%;
+    /* Custom Synapsio tokens - subtle, no neon */
+    --glow-primary: 19 62% 63%;
+    --glow-accent: 189 72% 30%;
+    --gradient-start: 200 75% 10%;
+    --gradient-end: 189 72% 18%;
+    
+    /* Surface layers for depth */
+    --surface-1: 200 70% 10%;
+    --surface-2: 189 65% 16%;
+    --surface-3: 189 72% 20%;
   }
 }
 
