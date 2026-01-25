@@ -62,13 +62,10 @@ const HeroSection = () => {
           </h1>
           
           {/* Subheadline - more space */}
-          <p className="text-lg md:text-xl lg:text-[1.35rem] text-muted-foreground/45 max-w-xl mb-20 font-light leading-[1.7] animate-fade-in" style={{
+          <p className="text-lg md:text-xl max-w-xl mb-20 font-light leading-[1.7] animate-fade-in lg:text-2xl text-primary" style={{
           animationDelay: "0.6s",
           animationDuration: "1.4s"
-        }}>
-            Transform fragmented operations into adaptive, self-optimizing networks. 
-            Real-time coordination. Predictive intelligence.
-          </p>
+        }}>A fully automated AI-based SCM-solution used for the management and creation of supply-chains</p>
           
           {/* CTAs - floating surfaces */}
           <div className="flex flex-col sm:flex-row gap-6 animate-fade-in" style={{
