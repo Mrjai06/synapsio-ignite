@@ -170,59 +170,15 @@ export default function RadialOrbitalTimeline({
       >
         {/* Orbital rings */}
         <div className="absolute inset-0 flex items-center justify-center">
-          <div className="absolute w-[280px] h-[280px] rounded-full border border-border/30" />
+          <div className="absolute w-[280px] h-[280px] rounded-full border border-border/30 animate-[spin_30s_linear_infinite]" />
           <div className="absolute w-[200px] h-[200px] rounded-full border border-border/20" />
           <div className="absolute w-[120px] h-[120px] rounded-full border border-border/10" />
         </div>
 
-        {/* SVG connections between nodes */}
-        <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ overflow: 'visible' }}>
-          <defs>
-            <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity="0.6" />
-              <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity="0.2" />
-            </linearGradient>
-          </defs>
-          <g transform={`translate(160, 200)`}>
-            {timelineData.map((item, index) => {
-              const fromPos = calculateNodePosition(index, timelineData.length);
-              return item.relatedIds.map((relatedId) => {
-                const relatedIndex = timelineData.findIndex(t => t.id === relatedId);
-                if (relatedIndex === -1) return null;
-                const toPos = calculateNodePosition(relatedIndex, timelineData.length);
-                
-                // Calculate path length for animation
-                const pathLength = Math.sqrt(
-                  Math.pow(toPos.x - fromPos.x, 2) + Math.pow(toPos.y - fromPos.y, 2)
-                );
-                
-                return (
-                  <line
-                    key={`${item.id}-${relatedId}`}
-                    x1={fromPos.x}
-                    y1={fromPos.y}
-                    x2={toPos.x}
-                    y2={toPos.y}
-                    stroke="url(#lineGradient)"
-                    strokeWidth="1.5"
-                    strokeDasharray={pathLength}
-                    strokeDashoffset={pathLength}
-                    className="animate-[drawLine_2s_ease-out_forwards]"
-                    style={{
-                      animation: `drawLine 2s ease-out forwards`,
-                      animationDelay: `${index * 0.1}s`
-                    }}
-                  />
-                );
-              });
-            })}
-          </g>
-        </svg>
-
         {/* Center element - Brain AI Core */}
         <div className="absolute z-50 flex flex-col items-center justify-center">
           <div className="relative">
-            <div className="absolute inset-0 bg-primary/20 rounded-full blur-xl" />
+            <div className="absolute inset-0 bg-primary/20 rounded-full blur-xl animate-pulse" />
             <div className="relative w-16 h-16 rounded-full bg-card border border-border flex items-center justify-center shadow-lg">
               <CenterIcon className="w-8 h-8 text-primary" />
             </div>
@@ -276,7 +232,7 @@ export default function RadialOrbitalTimeline({
                     : isRelated
                     ? "scale-110 bg-secondary border-secondary"
                     : "bg-card border-border hover:border-primary/50"
-                }`}
+                } ${isPulsing ? "animate-pulse" : ""}`}
               >
                 <Icon
                   className={`w-4 h-4 ${
