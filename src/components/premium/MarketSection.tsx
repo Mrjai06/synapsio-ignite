@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const marketData = {
   tam: { value: "$847B", label: "Total Addressable Market", description: "Global supply chain management software and services" },
@@ -15,12 +15,86 @@ const competitors = [
   { name: "Coupa", position: "Procurement focus", differentiation: "Limited end-to-end visibility" }
 ];
 
+const businessSteps = [
+  { label: "Transaction", delay: 0 },
+  { label: "Platform Fee", delay: 400 },
+  { label: "Recurring Revenue", delay: 800, highlight: true }
+];
+
 const MarketSection = () => {
   const [activeMarket, setActiveMarket] = useState<"tam" | "sam" | "som">("sam");
   const [competitorIndex, setCompetitorIndex] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState(0);
+  const [businessAnimated, setBusinessAnimated] = useState(false);
+  const [marketHover, setMarketHover] = useState<"tam" | "sam" | "som" | null>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
+  const businessRef = useRef<HTMLDivElement>(null);
 
-  const nextCompetitor = () => setCompetitorIndex((i) => (i + 1) % competitors.length);
-  const prevCompetitor = () => setCompetitorIndex((i) => (i - 1 + competitors.length) % competitors.length);
+  // Trigger business model animation on scroll into view
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setBusinessAnimated(true);
+        }
+      },
+      { threshold: 0.5 }
+    );
+
+    if (businessRef.current) {
+      observer.observe(businessRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
+
+  const nextCompetitor = () => {
+    setCompetitorIndex((i) => (i + 1) % competitors.length);
+  };
+  
+  const prevCompetitor = () => {
+    setCompetitorIndex((i) => (i - 1 + competitors.length) % competitors.length);
+  };
+
+  // Touch/drag handlers for swipeable deck
+  const handleDragStart = (e: React.MouseEvent | React.TouchEvent) => {
+    setIsDragging(true);
+    const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
+    setDragStart(clientX);
+  };
+
+  const handleDragEnd = (e: React.MouseEvent | React.TouchEvent) => {
+    if (!isDragging) return;
+    setIsDragging(false);
+    
+    const clientX = 'changedTouches' in e ? e.changedTouches[0].clientX : e.clientX;
+    const diff = clientX - dragStart;
+    
+    if (Math.abs(diff) > 50) {
+      if (diff > 0) {
+        prevCompetitor();
+      } else {
+        nextCompetitor();
+      }
+    }
+  };
+
+  // Get ring sizes and styles based on active/hover state
+  const getRingStyle = (ring: "tam" | "sam" | "som") => {
+    const isActive = activeMarket === ring;
+    const isHovered = marketHover === ring;
+    
+    const baseScale = isActive ? 1.02 : isHovered ? 1.01 : 1;
+    const borderOpacity = isActive ? 0.4 : isHovered ? 0.3 : 0.15;
+    const bgOpacity = isActive ? 0.08 : isHovered ? 0.04 : 0;
+    
+    return {
+      transform: `scale(${baseScale})`,
+      borderColor: `hsl(var(--primary) / ${borderOpacity})`,
+      backgroundColor: `hsl(var(--primary) / ${bgOpacity})`,
+    };
+  };
 
   return (
     <section className="relative py-40">
@@ -46,98 +120,183 @@ const MarketSection = () => {
         </div>
         
         <div className="grid lg:grid-cols-2 gap-20 lg:gap-32">
-          {/* TAM/SAM/SOM - concentric circles */}
+          {/* TAM/SAM/SOM - interactive concentric circles */}
           <div>
             <div className="relative flex items-center justify-center py-16">
               <div className="relative">
-                {/* TAM */}
+                {/* TAM - outermost */}
                 <button
                   onClick={() => setActiveMarket("tam")}
-                  className={`
-                    w-80 h-80 rounded-full border transition-all duration-700 flex items-center justify-center
-                    ${activeMarket === "tam" 
-                      ? "border-primary/30 bg-primary/3" 
-                      : "border-border/15 hover:border-border/25"
-                    }
-                  `}
+                  onMouseEnter={() => setMarketHover("tam")}
+                  onMouseLeave={() => setMarketHover(null)}
+                  className="w-80 h-80 rounded-full border-2 flex items-center justify-center transition-all duration-1000 ease-out"
+                  style={getRingStyle("tam")}
                 >
-                  {/* SAM */}
+                  {/* SAM - middle */}
                   <button
                     onClick={(e) => { e.stopPropagation(); setActiveMarket("sam"); }}
-                    className={`
-                      w-56 h-56 rounded-full border transition-all duration-700 flex items-center justify-center
-                      ${activeMarket === "sam" 
-                        ? "border-primary/40 bg-primary/5" 
-                        : "border-border/20 hover:border-border/30"
-                      }
-                    `}
+                    onMouseEnter={(e) => { e.stopPropagation(); setMarketHover("sam"); }}
+                    onMouseLeave={() => setMarketHover(null)}
+                    className="w-56 h-56 rounded-full border-2 flex items-center justify-center transition-all duration-1000 ease-out"
+                    style={getRingStyle("sam")}
                   >
-                    {/* SOM */}
+                    {/* SOM - innermost */}
                     <button
                       onClick={(e) => { e.stopPropagation(); setActiveMarket("som"); }}
-                      className={`
-                        w-32 h-32 rounded-full border transition-all duration-700 flex items-center justify-center
-                        ${activeMarket === "som" 
-                          ? "border-primary/50 bg-primary/10" 
-                          : "border-border/25 hover:border-border/40"
-                        }
-                      `}
+                      onMouseEnter={(e) => { e.stopPropagation(); setMarketHover("som"); }}
+                      onMouseLeave={() => setMarketHover(null)}
+                      className="w-32 h-32 rounded-full border-2 flex items-center justify-center transition-all duration-1000 ease-out"
+                      style={getRingStyle("som")}
                     >
-                      <span className={`text-xs tracking-wider transition-colors duration-500 ${activeMarket === "som" ? "text-foreground" : "text-muted-foreground/40"}`}>
+                      <span className={`text-xs tracking-wider transition-all duration-700 ${activeMarket === "som" ? "text-foreground scale-110" : "text-muted-foreground/40"}`}>
                         SOM
                       </span>
                     </button>
                   </button>
                 </button>
                 
-                {/* Labels */}
-                <span className="absolute -top-4 left-1/2 -translate-x-1/2 text-xs text-muted-foreground/30 tracking-wider">TAM</span>
-                <span className="absolute top-10 left-1/2 -translate-x-1/2 text-xs text-muted-foreground/30 tracking-wider">SAM</span>
+                {/* Labels with fade based on selection */}
+                <span className={`absolute -top-6 left-1/2 -translate-x-1/2 text-xs tracking-wider transition-all duration-700 ${activeMarket === "tam" ? "text-primary/80" : "text-muted-foreground/25"}`}>
+                  TAM
+                </span>
+                <span className={`absolute top-8 left-1/2 -translate-x-1/2 text-xs tracking-wider transition-all duration-700 ${activeMarket === "sam" ? "text-primary/80" : "text-muted-foreground/25"}`}>
+                  SAM
+                </span>
+                
+                {/* Pulse ring on active */}
+                <div 
+                  className="absolute inset-0 rounded-full pointer-events-none transition-all duration-1000"
+                  style={{
+                    width: activeMarket === "tam" ? "320px" : activeMarket === "sam" ? "224px" : "128px",
+                    height: activeMarket === "tam" ? "320px" : activeMarket === "sam" ? "224px" : "128px",
+                    left: "50%",
+                    top: "50%",
+                    transform: "translate(-50%, -50%)",
+                    boxShadow: `0 0 60px -20px hsl(var(--primary) / 0.3)`,
+                  }}
+                />
               </div>
             </div>
             
-            {/* Active market info */}
+            {/* Active market info with smooth transitions */}
             <div className="text-center mt-8">
-              <p className="text-5xl font-light text-foreground mb-3">{marketData[activeMarket].value}</p>
-              <p className="text-sm text-muted-foreground/50 mb-4">{marketData[activeMarket].label}</p>
-              <p className="text-sm text-muted-foreground/35 max-w-sm mx-auto">{marketData[activeMarket].description}</p>
+              <p 
+                className="text-5xl font-light text-foreground mb-3 transition-all duration-700"
+                key={activeMarket}
+              >
+                {marketData[activeMarket].value}
+              </p>
+              <p className="text-sm text-muted-foreground/50 mb-4 transition-all duration-500">
+                {marketData[activeMarket].label}
+              </p>
+              <p className="text-sm text-muted-foreground/35 max-w-sm mx-auto transition-all duration-500">
+                {marketData[activeMarket].description}
+              </p>
             </div>
           </div>
           
           {/* Competitors and Business Model */}
           <div className="space-y-20">
-            {/* Competitor cards */}
+            {/* Swipeable competitor cards */}
             <div>
               <p className="text-xs tracking-[0.25em] uppercase text-muted-foreground/35 mb-8">
                 Competitive Landscape
               </p>
               
               <div className="relative">
-                <div className="p-10 rounded-3xl border border-border/10 bg-gradient-to-br from-card/20 to-transparent">
-                  <div className="flex items-center justify-between mb-8">
-                    <h4 className="text-2xl font-light text-foreground">
-                      {competitors[competitorIndex].name}
-                    </h4>
-                    <span className="text-xs text-muted-foreground/40 tracking-wide">
-                      {competitorIndex + 1} / {competitors.length}
-                    </span>
-                  </div>
-                  <p className="text-sm text-primary/70 mb-4">{competitors[competitorIndex].position}</p>
-                  <p className="text-base text-muted-foreground/45 leading-relaxed">
-                    {competitors[competitorIndex].differentiation}
-                  </p>
+                {/* Stacked card deck effect */}
+                <div className="relative h-[200px]">
+                  {competitors.map((competitor, i) => {
+                    const offset = i - competitorIndex;
+                    const isActive = i === competitorIndex;
+                    const isPrev = offset === -1 || (competitorIndex === 0 && i === competitors.length - 1);
+                    const isNext = offset === 1 || (competitorIndex === competitors.length - 1 && i === 0);
+                    
+                    // Calculate z-index and transforms for deck effect
+                    let zIndex = 10 - Math.abs(offset);
+                    let translateX = 0;
+                    let scale = 1;
+                    let opacity = 0;
+                    
+                    if (isActive) {
+                      zIndex = 20;
+                      opacity = 1;
+                    } else if (isPrev) {
+                      translateX = -20;
+                      scale = 0.95;
+                      opacity = 0.3;
+                      zIndex = 15;
+                    } else if (isNext) {
+                      translateX = 20;
+                      scale = 0.95;
+                      opacity = 0.3;
+                      zIndex = 15;
+                    }
+                    
+                    return (
+                      <div
+                        key={competitor.name}
+                        ref={isActive ? cardRef : undefined}
+                        className={`
+                          absolute inset-0 p-10 rounded-3xl border border-border/10 
+                          bg-gradient-to-br from-card/25 to-transparent
+                          transition-all duration-700 ease-out cursor-grab
+                          ${isDragging && isActive ? "cursor-grabbing" : ""}
+                        `}
+                        style={{
+                          zIndex,
+                          transform: `translateX(${translateX}px) scale(${scale})`,
+                          opacity,
+                          pointerEvents: isActive ? "auto" : "none",
+                        }}
+                        onMouseDown={handleDragStart}
+                        onMouseUp={handleDragEnd}
+                        onMouseLeave={() => isDragging && handleDragEnd}
+                        onTouchStart={handleDragStart}
+                        onTouchEnd={handleDragEnd}
+                      >
+                        <div className="flex items-center justify-between mb-8">
+                          <h4 className="text-2xl font-light text-foreground">
+                            {competitor.name}
+                          </h4>
+                          <span className="text-xs text-muted-foreground/40 tracking-wide">
+                            {i + 1} / {competitors.length}
+                          </span>
+                        </div>
+                        <p className="text-sm text-primary/70 mb-4">{competitor.position}</p>
+                        <p className="text-base text-muted-foreground/45 leading-relaxed">
+                          {competitor.differentiation}
+                        </p>
+                      </div>
+                    );
+                  })}
                 </div>
                 
-                <div className="flex justify-center gap-4 mt-8">
+                {/* Navigation dots and arrows */}
+                <div className="flex items-center justify-center gap-6 mt-8">
                   <button
                     onClick={prevCompetitor}
-                    className="p-3 rounded-full border border-border/15 hover:border-border/40 transition-colors duration-500"
+                    className="p-3 rounded-full border border-border/15 hover:border-border/40 transition-all duration-500 hover:scale-105"
                   >
                     <ChevronLeft className="h-4 w-4 text-muted-foreground/40" />
                   </button>
+                  
+                  <div className="flex gap-2">
+                    {competitors.map((_, i) => (
+                      <button
+                        key={i}
+                        onClick={() => setCompetitorIndex(i)}
+                        className={`
+                          w-2 h-2 rounded-full transition-all duration-500
+                          ${i === competitorIndex ? "bg-primary/60 w-6" : "bg-border/30 hover:bg-border/50"}
+                        `}
+                      />
+                    ))}
+                  </div>
+                  
                   <button
                     onClick={nextCompetitor}
-                    className="p-3 rounded-full border border-border/15 hover:border-border/40 transition-colors duration-500"
+                    className="p-3 rounded-full border border-border/15 hover:border-border/40 transition-all duration-500 hover:scale-105"
                   >
                     <ChevronRight className="h-4 w-4 text-muted-foreground/40" />
                   </button>
@@ -145,27 +304,60 @@ const MarketSection = () => {
               </div>
             </div>
             
-            {/* Business model */}
-            <div>
+            {/* Animated business model flow */}
+            <div ref={businessRef}>
               <p className="text-xs tracking-[0.25em] uppercase text-muted-foreground/35 mb-8">
                 Business Model
               </p>
               
-              <div className="flex items-center gap-5 text-sm flex-wrap">
-                <div className="px-5 py-3 rounded-2xl bg-card/20 border border-border/10">
-                  <span className="text-muted-foreground/50">Transaction</span>
-                </div>
-                <ArrowRight className="h-4 w-4 text-muted-foreground/20" />
-                <div className="px-5 py-3 rounded-2xl bg-card/20 border border-border/10">
-                  <span className="text-muted-foreground/50">Platform Fee</span>
-                </div>
-                <ArrowRight className="h-4 w-4 text-muted-foreground/20" />
-                <div className="px-5 py-3 rounded-2xl bg-primary/8 border border-primary/15">
-                  <span className="text-foreground">Recurring Revenue</span>
-                </div>
+              <div className="flex items-center gap-4 text-sm flex-wrap">
+                {businessSteps.map((step, i) => (
+                  <div key={step.label} className="flex items-center gap-4">
+                    <div 
+                      className={`
+                        px-6 py-4 rounded-2xl border transition-all duration-1000 ease-out
+                        ${step.highlight 
+                          ? "bg-primary/10 border-primary/20" 
+                          : "bg-card/20 border-border/10"
+                        }
+                        ${businessAnimated ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}
+                      `}
+                      style={{ transitionDelay: `${step.delay}ms` }}
+                    >
+                      <span className={step.highlight ? "text-foreground font-medium" : "text-muted-foreground/50"}>
+                        {step.label}
+                      </span>
+                    </div>
+                    
+                    {i < businessSteps.length - 1 && (
+                      <div 
+                        className={`transition-all duration-700 ${businessAnimated ? "opacity-100 scale-100" : "opacity-0 scale-50"}`}
+                        style={{ transitionDelay: `${step.delay + 200}ms` }}
+                      >
+                        <svg width="24" height="12" viewBox="0 0 24 12" className="text-muted-foreground/20">
+                          <path 
+                            d="M0 6 L18 6 M14 2 L18 6 L14 10" 
+                            stroke="currentColor" 
+                            strokeWidth="1.5" 
+                            fill="none"
+                            className={`transition-all duration-1000 ${businessAnimated ? "stroke-dashoffset-0" : ""}`}
+                            strokeDasharray="30"
+                            style={{ 
+                              strokeDashoffset: businessAnimated ? 0 : 30,
+                              transition: `stroke-dashoffset 800ms ease-out ${step.delay + 300}ms`
+                            }}
+                          />
+                        </svg>
+                      </div>
+                    )}
+                  </div>
+                ))}
               </div>
               
-              <p className="text-sm text-muted-foreground/35 mt-6 leading-relaxed">
+              <p 
+                className={`text-sm text-muted-foreground/35 mt-6 leading-relaxed transition-all duration-700 ${businessAnimated ? "opacity-100" : "opacity-0"}`}
+                style={{ transitionDelay: "1200ms" }}
+              >
                 SaaS subscription + transaction-based fees aligned with customer value.
               </p>
             </div>

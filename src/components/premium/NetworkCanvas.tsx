@@ -9,26 +9,32 @@ interface Node {
   opacity: number;
   baseX: number;
   baseY: number;
+  phase: number;
 }
 
 interface NetworkCanvasProps {
   nodeCount?: number;
-  chaos?: number; // 0 = calm/organized, 1 = chaotic/fragmented
+  chaos?: number;
   className?: string;
   colorScheme?: "primary" | "accent" | "neutral";
+  scrollReactive?: boolean;
+  parallaxFactor?: number;
 }
 
 const NetworkCanvas = ({ 
   nodeCount = 40, 
   chaos = 0, 
   className = "",
-  colorScheme = "neutral"
+  colorScheme = "neutral",
+  scrollReactive = false,
+  parallaxFactor = 0.3
 }: NetworkCanvasProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animationRef = useRef<number>();
   const nodesRef = useRef<Node[]>([]);
   const mouseRef = useRef({ x: 0, y: 0 });
   const scrollRef = useRef(0);
+  const targetScrollRef = useRef(0);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -44,13 +50,12 @@ const NetworkCanvas = ({
     resize();
     window.addEventListener("resize", resize);
 
-    // Initialize nodes in an organized pattern (will disperse based on chaos)
     const centerX = canvas.width / 2;
     const centerY = canvas.height / 2;
     
     nodesRef.current = Array.from({ length: nodeCount }, (_, i) => {
       const angle = (i / nodeCount) * Math.PI * 2;
-      const radius = 150 + Math.random() * 200;
+      const radius = 120 + Math.random() * 280;
       const baseX = centerX + Math.cos(angle) * radius;
       const baseY = centerY + Math.sin(angle) * radius;
       
@@ -61,8 +66,9 @@ const NetworkCanvas = ({
         baseY,
         vx: 0,
         vy: 0,
-        radius: Math.random() * 2 + 1.5,
-        opacity: Math.random() * 0.4 + 0.3,
+        radius: Math.random() * 2.5 + 1,
+        opacity: Math.random() * 0.5 + 0.2,
+        phase: Math.random() * Math.PI * 2,
       };
     });
 
@@ -72,17 +78,16 @@ const NetworkCanvas = ({
     window.addEventListener("mousemove", handleMouseMove);
 
     const handleScroll = () => {
-      scrollRef.current = window.scrollY;
+      targetScrollRef.current = window.scrollY;
     };
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
 
-    // Color based on scheme
     const getColor = (opacity: number) => {
       switch (colorScheme) {
         case "primary":
-          return `rgba(218, 138, 103, ${opacity})`; // #DA8A67
+          return `rgba(218, 138, 103, ${opacity})`;
         case "accent":
-          return `rgba(14, 75, 88, ${opacity})`; // #0E4B58
+          return `rgba(14, 75, 88, ${opacity})`;
         default:
           return `rgba(255, 255, 255, ${opacity})`;
       }
@@ -93,43 +98,46 @@ const NetworkCanvas = ({
       
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+      // Smooth scroll interpolation (very slow, 2% per frame)
+      scrollRef.current += (targetScrollRef.current - scrollRef.current) * 0.02;
+
       const nodes = nodesRef.current;
-      const time = Date.now() * 0.001;
+      const time = Date.now() * 0.0006; // Slower time progression
       
-      // Chaos affects behavior
-      const chaosMultiplier = chaos * 4;
-      const connectionDistance = 180 - chaos * 80;
-      const organizationStrength = 1 - chaos;
+      const chaosMultiplier = chaos * 3;
+      const connectionDistance = 200 - chaos * 90;
+      const organizationStrength = 1 - chaos * 0.7;
+
+      // Scroll-based parallax offset
+      const scrollOffset = scrollReactive ? scrollRef.current * parallaxFactor : 0;
 
       nodes.forEach((node, i) => {
-        // Calculate target position based on chaos level
-        const targetX = node.baseX + Math.sin(time + i * 0.5) * (20 + chaosMultiplier * 100);
-        const targetY = node.baseY + Math.cos(time + i * 0.3) * (20 + chaosMultiplier * 100);
+        // Very slow, organic movement
+        const waveX = Math.sin(time + node.phase) * (15 + chaosMultiplier * 60);
+        const waveY = Math.cos(time * 0.7 + node.phase * 1.3) * (15 + chaosMultiplier * 60);
         
-        // Add random jitter based on chaos
-        const jitterX = (Math.random() - 0.5) * chaosMultiplier * 2;
-        const jitterY = (Math.random() - 0.5) * chaosMultiplier * 2;
+        const targetX = node.baseX + waveX;
+        const targetY = node.baseY + waveY - scrollOffset;
         
-        // Smooth interpolation towards target
-        node.vx = (targetX - node.x) * 0.02 * organizationStrength + jitterX;
-        node.vy = (targetY - node.y) * 0.02 * organizationStrength + jitterY;
+        // Ultra-slow interpolation (1.5% per frame) for calm movement
+        node.vx = (targetX - node.x) * 0.015 * organizationStrength;
+        node.vy = (targetY - node.y) * 0.015 * organizationStrength;
         
-        // When chaotic, allow more free movement
-        if (chaos > 0.5) {
-          node.vx += (Math.random() - 0.5) * chaosMultiplier * 0.5;
-          node.vy += (Math.random() - 0.5) * chaosMultiplier * 0.5;
+        if (chaos > 0.4) {
+          node.vx += (Math.random() - 0.5) * chaosMultiplier * 0.3;
+          node.vy += (Math.random() - 0.5) * chaosMultiplier * 0.3;
         }
         
-        // Damping
-        node.vx *= 0.95;
-        node.vy *= 0.95;
+        // Heavy damping for smooth deceleration
+        node.vx *= 0.92;
+        node.vy *= 0.92;
 
-        // Subtle mouse interaction
+        // Very subtle mouse attraction
         const dx = mouseRef.current.x - node.x;
         const dy = mouseRef.current.y - node.y;
         const dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist < 250) {
-          const force = (250 - dist) / 250 * 0.008;
+        if (dist < 300 && dist > 0) {
+          const force = (300 - dist) / 300 * 0.004;
           node.vx += dx * force;
           node.vy += dy * force;
         }
@@ -137,25 +145,24 @@ const NetworkCanvas = ({
         node.x += node.vx;
         node.y += node.vy;
 
-        // Soft boundary bounce
-        const margin = 50;
-        if (node.x < margin) node.vx += 0.1;
-        if (node.x > canvas.width - margin) node.vx -= 0.1;
-        if (node.y < margin) node.vy += 0.1;
-        if (node.y > canvas.height - margin) node.vy -= 0.1;
+        // Soft boundary
+        const margin = 80;
+        if (node.x < margin) node.vx += 0.05;
+        if (node.x > canvas.width - margin) node.vx -= 0.05;
+        if (node.y < margin) node.vy += 0.05;
+        if (node.y > canvas.height - margin) node.vy -= 0.05;
 
-        // Draw node with glow
-        const nodeOpacity = node.opacity * (1 - chaos * 0.2);
+        const nodeOpacity = node.opacity * (1 - chaos * 0.15);
         
         // Subtle outer glow
         const gradient = ctx.createRadialGradient(
           node.x, node.y, 0,
-          node.x, node.y, node.radius * 4
+          node.x, node.y, node.radius * 5
         );
-        gradient.addColorStop(0, getColor(nodeOpacity * 0.3));
+        gradient.addColorStop(0, getColor(nodeOpacity * 0.2));
         gradient.addColorStop(1, getColor(0));
         ctx.beginPath();
-        ctx.arc(node.x, node.y, node.radius * 4, 0, Math.PI * 2);
+        ctx.arc(node.x, node.y, node.radius * 5, 0, Math.PI * 2);
         ctx.fillStyle = gradient;
         ctx.fill();
         
@@ -165,7 +172,7 @@ const NetworkCanvas = ({
         ctx.fillStyle = getColor(nodeOpacity);
         ctx.fill();
 
-        // Draw connections
+        // Draw connections with subtle pulse
         for (let j = i + 1; j < nodes.length; j++) {
           const other = nodes[j];
           const connDx = other.x - node.x;
@@ -173,19 +180,14 @@ const NetworkCanvas = ({
           const distance = Math.sqrt(connDx * connDx + connDy * connDy);
 
           if (distance < connectionDistance) {
-            const lineOpacity = (1 - distance / connectionDistance) * 0.12 * (1 - chaos * 0.4);
-            
-            // Create subtle gradient line
-            const lineGradient = ctx.createLinearGradient(node.x, node.y, other.x, other.y);
-            lineGradient.addColorStop(0, getColor(lineOpacity));
-            lineGradient.addColorStop(0.5, getColor(lineOpacity * 1.5));
-            lineGradient.addColorStop(1, getColor(lineOpacity));
+            const pulse = 0.8 + Math.sin(time * 2 + i * 0.1) * 0.2;
+            const lineOpacity = (1 - distance / connectionDistance) * 0.1 * (1 - chaos * 0.3) * pulse;
             
             ctx.beginPath();
             ctx.moveTo(node.x, node.y);
             ctx.lineTo(other.x, other.y);
-            ctx.strokeStyle = lineGradient;
-            ctx.lineWidth = 0.8;
+            ctx.strokeStyle = getColor(lineOpacity);
+            ctx.lineWidth = 0.6;
             ctx.stroke();
           }
         }
@@ -204,7 +206,7 @@ const NetworkCanvas = ({
         cancelAnimationFrame(animationRef.current);
       }
     };
-  }, [nodeCount, chaos, colorScheme]);
+  }, [nodeCount, chaos, colorScheme, scrollReactive, parallaxFactor]);
 
   return (
     <canvas
