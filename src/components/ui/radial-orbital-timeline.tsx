@@ -287,28 +287,9 @@ export default function RadialOrbitalTimeline({
               </CardTitle>
             </CardHeader>
             <CardContent className="pt-0">
-              <p className="text-xs text-muted-foreground mb-3">
+              <p className="text-sm text-muted-foreground leading-relaxed">
                 {activeItem.content}
               </p>
-
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center gap-1">
-                  <Zap className="w-3 h-3 text-primary" />
-                  <span className="text-[10px] text-muted-foreground">
-                    Energy Level
-                  </span>
-                </div>
-                <span className="text-xs font-semibold text-foreground">
-                  {activeItem.energy}%
-                </span>
-              </div>
-
-              <div className="w-full h-1 bg-muted rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-primary rounded-full transition-all duration-500"
-                  style={{ width: `${activeItem.energy}%` }}
-                />
-              </div>
 
               {activeItem.relatedIds.length > 0 && (
                 <div className="mt-3 pt-3 border-t border-border">
