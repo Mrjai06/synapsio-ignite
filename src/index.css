@@ -81,46 +81,68 @@
   }
 
   .dark {
-    --background: 0 0% 0%;
-    --foreground: 0 0% 100%;
-    --card: 203 76% 8%;
-    --card-foreground: 248 0.3% 98.4%;
-    --popover: 191 73% 20%;
-    --popover-foreground: 248 0.3% 98.4%;
-    --primary: 18 61% 63%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 0 0% 100%;
-    --secondary-foreground: 0 0% 100%;
-    --muted: 191 73% 20%;
-    --muted-foreground: 0 0% 100%;
-    --accent: 191 73% 20%;
-    --accent-foreground: 0 0% 100%;
-    --destructive: 0 0% 100%;
+    /* Synapsio Premium Dark Theme */
+    --background: 220 20% 4%;
+    --foreground: 220 10% 94%;
+    
+    --card: 220 20% 7%;
+    --card-foreground: 220 10% 94%;
+    
+    --popover: 220 20% 8%;
+    --popover-foreground: 220 10% 94%;
+    
+    /* Primary: Refined warm amber - confident, premium */
+    --primary: 35 85% 58%;
+    --primary-foreground: 220 20% 4%;
+    
+    --secondary: 220 15% 12%;
+    --secondary-foreground: 220 10% 80%;
+    
+    --muted: 220 15% 10%;
+    --muted-foreground: 220 10% 55%;
+    
+    --accent: 220 15% 14%;
+    --accent-foreground: 220 10% 90%;
+    
+    --destructive: 0 65% 55%;
     --destructive-foreground: 0 0% 100%;
-    --border: 191 73% 20%;
-    --input: 0 0% 58%;
-    --ring: 265 48% 27%;
-    --chart-1: 0 0% 100%;
-    --chart-2: 162 17% 69.6%;
-    --chart-3: 70 18.8% 76.9%;
-    --chart-4: 304 26.5% 62.7%;
-    --chart-5: 16 24.6% 64.5%;
-    --sidebar: 266 4% 20.8%;
-    --sidebar-foreground: 248 0.3% 98.4%;
-    --sidebar-primary: 264 24.3% 48.8%;
-    --sidebar-primary-foreground: 248 0.3% 98.4%;
-    --sidebar-accent: 260 4.1% 27.9%;
-    --sidebar-accent-foreground: 248 0.3% 98.4%;
-    --sidebar-border: 0 0% 100% / 10%;
-    --sidebar-ring: 264 2.7% 55.1%;
-    --shadow-2xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
-    --shadow-xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
-    --shadow-sm: 0px 0px 0px -10px hsl(0, 0%, 0%);
-    --shadow: 0px 0px 0px -10px hsl(0, 0%, 0%);
-    --shadow-md: 0px 0px 0px -10px hsl(0, 0%, 0%);
-    --shadow-lg: 0px 0px 0px -10px hsl(0, 0%, 0%);
-    --shadow-xl: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 8px 10px -1px hsl(0 0% 0% / 0.1);
-    --shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.25);
+    
+    --border: 220 15% 15%;
+    --input: 220 15% 18%;
+    --ring: 35 85% 58%;
+    
+    /* Charts */
+    --chart-1: 35 85% 58%;
+    --chart-2: 220 10% 70%;
+    --chart-3: 180 30% 50%;
+    --chart-4: 280 40% 60%;
+    --chart-5: 15 70% 60%;
+    
+    /* Sidebar */
+    --sidebar: 220 20% 6%;
+    --sidebar-foreground: 220 10% 90%;
+    --sidebar-primary: 35 85% 58%;
+    --sidebar-primary-foreground: 220 20% 4%;
+    --sidebar-accent: 220 15% 12%;
+    --sidebar-accent-foreground: 220 10% 90%;
+    --sidebar-border: 220 15% 15%;
+    --sidebar-ring: 35 85% 58%;
+    
+    /* Shadows - subtle for premium feel */
+    --shadow-2xs: 0 1px 2px 0px hsl(0 0% 0% / 0.2);
+    --shadow-xs: 0 1px 3px 0px hsl(0 0% 0% / 0.2);
+    --shadow-sm: 0 2px 4px 0px hsl(0 0% 0% / 0.15);
+    --shadow: 0 4px 8px 0px hsl(0 0% 0% / 0.15);
+    --shadow-md: 0 6px 12px 0px hsl(0 0% 0% / 0.15);
+    --shadow-lg: 0 8px 24px 0px hsl(0 0% 0% / 0.2);
+    --shadow-xl: 0 12px 40px 0px hsl(0 0% 0% / 0.25);
+    --shadow-2xl: 0 24px 60px 0px hsl(0 0% 0% / 0.3);
+    
+    /* Custom Synapsio tokens */
+    --glow-primary: 35 85% 58%;
+    --glow-accent: 220 30% 50%;
+    --gradient-start: 35 85% 58%;
+    --gradient-end: 25 75% 45%;
   }
 }
 
