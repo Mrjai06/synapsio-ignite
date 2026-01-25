@@ -1,5 +1,6 @@
 import { useRef, useEffect, useState } from "react";
 import NetworkCanvas from "./NetworkCanvas";
+import { FloatingSurface, GlassPanel, AmbientGlow } from "./DepthSystem";
 
 const SolutionSection = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -37,7 +38,11 @@ const SolutionSection = () => {
 
   return (
     <section ref={sectionRef} className="relative py-32 md:py-48">
-      {/* Calm network */}
+      {/* Layered ambient depth */}
+      <AmbientGlow color="primary" size="xl" intensity="medium" position="center" />
+      <AmbientGlow color="secondary" size="md" intensity="subtle" position="left" className="top-1/3" />
+      
+      {/* Calm network - background layer */}
       <NetworkCanvas 
         nodeCount={30} 
         chaos={0.1} 
@@ -46,11 +51,6 @@ const SolutionSection = () => {
         scrollReactive={true}
         parallaxFactor={0.08}
       />
-      
-      {/* Ambient light */}
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <div className="w-[700px] h-[700px] bg-primary/4 rounded-full blur-[250px]" />
-      </div>
       
       <div className="relative z-10 container mx-auto px-8 lg:px-20 xl:px-28">
         <div className="grid lg:grid-cols-2 gap-24 lg:gap-40 items-center">
@@ -106,50 +106,63 @@ const SolutionSection = () => {
             </div>
           </div>
           
-          {/* Orbital system visual */}
-          <div 
-            className={`relative flex items-center justify-center transition-all duration-1200 ${isVisible ? "opacity-100 scale-100" : "opacity-0 scale-95"}`}
+          {/* Orbital system visual - floating surface */}
+          <FloatingSurface
+            elevation="medium"
+            glow
+            glowColor="primary"
+            className={`
+              relative flex items-center justify-center rounded-full
+              transition-all duration-1200
+              ${isVisible ? "opacity-100 scale-100" : "opacity-0 scale-95"}
+            `}
             style={{ transitionDelay: "300ms" }}
           >
-            <div className="relative w-full max-w-md aspect-square">
+            <GlassPanel
+              intensity="subtle"
+              bordered
+              className="relative w-full max-w-md aspect-square rounded-full p-8"
+            >
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className="relative">
                   {/* Outer orbit */}
-                  <div className="w-80 h-80 rounded-full border border-border/12 absolute -translate-x-1/2 -translate-y-1/2 left-1/2 top-1/2 animate-[spin_90s_linear_infinite]">
-                    <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2.5 h-2.5 bg-primary/40 rounded-full" />
+                  <div className="w-72 h-72 rounded-full border border-border/12 absolute -translate-x-1/2 -translate-y-1/2 left-1/2 top-1/2 animate-[spin_90s_linear_infinite]">
+                    <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2.5 h-2.5 bg-primary/40 rounded-full shadow-[0_0_12px_rgba(218,138,103,0.3)]" />
                     <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-2 h-2 bg-muted-foreground/15 rounded-full" />
                   </div>
                   
                   {/* Middle orbit */}
-                  <div className="w-52 h-52 rounded-full border border-border/18 absolute -translate-x-1/2 -translate-y-1/2 left-1/2 top-1/2 animate-[spin_55s_linear_infinite_reverse]">
+                  <div className="w-48 h-48 rounded-full border border-border/18 absolute -translate-x-1/2 -translate-y-1/2 left-1/2 top-1/2 animate-[spin_55s_linear_infinite_reverse]">
                     <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 bg-muted-foreground/25 rounded-full" />
-                    <div className="absolute right-0 top-1/2 translate-x-1/2 -translate-y-1/2 w-2 h-2 bg-primary/35 rounded-full" />
+                    <div className="absolute right-0 top-1/2 translate-x-1/2 -translate-y-1/2 w-2 h-2 bg-primary/35 rounded-full shadow-[0_0_10px_rgba(218,138,103,0.25)]" />
                   </div>
                   
                   {/* Inner orbit */}
-                  <div className="w-28 h-28 rounded-full border border-border/22 absolute -translate-x-1/2 -translate-y-1/2 left-1/2 top-1/2 animate-[spin_35s_linear_infinite]">
+                  <div className="w-24 h-24 rounded-full border border-border/22 absolute -translate-x-1/2 -translate-y-1/2 left-1/2 top-1/2 animate-[spin_35s_linear_infinite]">
                     <div className="absolute left-0 top-1/2 -translate-x-1/2 -translate-y-1/2 w-1.5 h-1.5 bg-primary/25 rounded-full" />
                   </div>
                   
-                  {/* Core */}
-                  <div className="w-14 h-14 rounded-full bg-gradient-to-br from-primary/12 to-primary/4 flex items-center justify-center border border-primary/12">
-                    <div className="w-4 h-4 bg-primary/50 rounded-full" />
-                  </div>
+                  {/* Core - elevated */}
+                  <FloatingSurface elevation="high" className="rounded-full">
+                    <div className="w-14 h-14 rounded-full bg-gradient-to-br from-primary/15 to-primary/5 flex items-center justify-center border border-primary/15">
+                      <div className="w-4 h-4 bg-primary/50 rounded-full shadow-[0_0_16px_rgba(218,138,103,0.4)]" />
+                    </div>
+                  </FloatingSurface>
                 </div>
               </div>
               
-              {/* Labels */}
-              <div className="absolute top-2 right-2 text-[10px] text-muted-foreground/25 tracking-widest uppercase">
+              {/* Labels - foreground elements */}
+              <div className="absolute top-2 right-2 text-[10px] text-muted-foreground/30 tracking-widest uppercase">
                 Procurement
               </div>
-              <div className="absolute bottom-24 -left-4 text-[10px] text-muted-foreground/25 tracking-widest uppercase">
+              <div className="absolute bottom-24 -left-4 text-[10px] text-muted-foreground/30 tracking-widest uppercase">
                 Logistics
               </div>
-              <div className="absolute bottom-2 right-6 text-[10px] text-muted-foreground/25 tracking-widest uppercase">
+              <div className="absolute bottom-2 right-6 text-[10px] text-muted-foreground/30 tracking-widest uppercase">
                 Fulfillment
               </div>
-            </div>
-          </div>
+            </GlassPanel>
+          </FloatingSurface>
         </div>
       </div>
     </section>

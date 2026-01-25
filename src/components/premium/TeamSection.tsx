@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Linkedin, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { FloatingSurface, GlassPanel, AmbientGlow } from "./DepthSystem";
 
 const team = [
   {
@@ -96,10 +97,9 @@ const TeamSection = () => {
 
   return (
     <section className="relative py-32 md:py-48">
-      {/* Warm ambient light */}
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <div className="w-[900px] h-[500px] bg-primary/3 rounded-full blur-[250px]" />
-      </div>
+      {/* Warm ambient light - layered depth */}
+      <AmbientGlow color="primary" size="xl" intensity="subtle" position="center" />
+      <AmbientGlow color="accent" size="md" intensity="subtle" position="left" className="bottom-1/4" />
       
       <div className="relative z-10 container mx-auto px-8 lg:px-20 xl:px-28">
         {/* Section header */}
@@ -126,74 +126,75 @@ const TeamSection = () => {
             const isVisible = visibleCards[index];
             
             return (
-              <div
+              <FloatingSurface
                 key={index}
-                ref={el => cardsRef.current[index] = el}
+                elevation={isHovered ? "high" : "low"}
+                glow={isHovered}
+                glowColor="primary"
                 className={`
-                  group relative p-10 rounded-3xl border border-border/10
-                  bg-gradient-to-br from-card/15 to-transparent
+                  rounded-3xl
                   transition-all ease-out
                   ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}
-                  ${isHovered ? "border-border/30 from-card/30 scale-[1.02]" : "hover:border-border/20"}
+                  ${isHovered ? "scale-[1.03]" : ""}
                 `}
-                style={{ 
-                  transitionDuration: "900ms",
-                  transitionProperty: "opacity, transform, border-color, background"
-                }}
-                onMouseEnter={() => setHoveredIndex(index)}
-                onMouseLeave={() => setHoveredIndex(null)}
+                style={{ transitionDuration: "900ms" }}
               >
-                {/* Subtle glow on hover */}
-                <div 
-                  className="absolute inset-0 rounded-3xl pointer-events-none transition-opacity duration-1000"
-                  style={{ 
-                    opacity: isHovered ? 1 : 0,
-                    background: "radial-gradient(ellipse at 50% 30%, hsl(var(--primary) / 0.06) 0%, transparent 70%)"
-                  }}
-                />
-                
-                {/* Avatar with hover animation */}
-                <div className={`
-                  relative w-16 h-16 rounded-full mb-8 flex items-center justify-center
-                  bg-gradient-to-br from-card/60 to-card/20
-                  transition-all duration-700
-                  ${isHovered ? "scale-110 from-primary/10 to-card/30" : ""}
-                `}>
-                  <span className={`
-                    text-xl font-light transition-colors duration-700
-                    ${isHovered ? "text-primary/70" : "text-muted-foreground/30"}
-                  `}>
-                    {member.name.split(" ").map(n => n[0]).join("")}
-                  </span>
-                </div>
-                
-                <h3 className="relative text-lg font-normal text-foreground mb-2 tracking-tight">
-                  {member.name}
-                </h3>
-                <p className={`
-                  relative text-sm mb-5 transition-colors duration-700
-                  ${isHovered ? "text-primary" : "text-primary/60"}
-                `}>
-                  {member.role}
-                </p>
-                <p className={`
-                  relative text-sm leading-relaxed mb-8 transition-colors duration-700
-                  ${isHovered ? "text-muted-foreground/60" : "text-muted-foreground/40"}
-                `}>
-                  {member.bio}
-                </p>
-                
-                <a
-                  href={member.linkedin}
+                <GlassPanel
+                  ref={el => cardsRef.current[index] = el}
+                  intensity={isHovered ? "medium" : "subtle"}
+                  bordered
                   className={`
-                    relative inline-flex items-center gap-2 text-xs transition-all duration-700
-                    ${isHovered ? "text-foreground translate-x-1" : "text-muted-foreground/30"}
+                    p-10 rounded-3xl
+                    border-border/10
+                    transition-all duration-700
+                    ${isHovered ? "border-border/30 bg-card/30" : "hover:border-border/20"}
                   `}
+                  onMouseEnter={() => setHoveredIndex(index)}
+                  onMouseLeave={() => setHoveredIndex(null)}
                 >
-                  <Linkedin className="h-4 w-4" />
-                  <span>LinkedIn</span>
-                </a>
-              </div>
+                  {/* Avatar with hover animation */}
+                  <div className={`
+                    relative w-16 h-16 rounded-full mb-8 flex items-center justify-center
+                    bg-gradient-to-br from-card/60 to-card/20
+                    transition-all duration-700
+                    ${isHovered ? "scale-110 from-primary/10 to-card/30" : ""}
+                  `}>
+                    <span className={`
+                      text-xl font-light transition-colors duration-700
+                      ${isHovered ? "text-primary/70" : "text-muted-foreground/30"}
+                    `}>
+                      {member.name.split(" ").map(n => n[0]).join("")}
+                    </span>
+                  </div>
+                  
+                  <h3 className="relative text-lg font-normal text-foreground mb-2 tracking-tight">
+                    {member.name}
+                  </h3>
+                  <p className={`
+                    relative text-sm mb-5 transition-colors duration-700
+                    ${isHovered ? "text-primary" : "text-primary/60"}
+                  `}>
+                    {member.role}
+                  </p>
+                  <p className={`
+                    relative text-sm leading-relaxed mb-8 transition-colors duration-700
+                    ${isHovered ? "text-muted-foreground/60" : "text-muted-foreground/40"}
+                  `}>
+                    {member.bio}
+                  </p>
+                  
+                  <a
+                    href={member.linkedin}
+                    className={`
+                      relative inline-flex items-center gap-2 text-xs transition-all duration-700
+                      ${isHovered ? "text-foreground translate-x-1" : "text-muted-foreground/30"}
+                    `}
+                  >
+                    <Linkedin className="h-4 w-4" />
+                    <span>LinkedIn</span>
+                  </a>
+                </GlassPanel>
+              </FloatingSurface>
             );
           })}
         </div>
@@ -231,20 +232,24 @@ const TeamSection = () => {
               transitionDelay: "400ms"
             }}
           >
-            <Button 
-              size="lg" 
-              className="group bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-10 py-7 text-sm tracking-wide font-normal transition-all duration-1000 hover:scale-[1.02] hover:shadow-lg hover:shadow-primary/20"
-            >
-              View Pitchdeck
-              <ArrowRight className="ml-3 h-4 w-4 transition-transform duration-700 group-hover:translate-x-1" />
-            </Button>
-            <Button 
-              size="lg" 
-              variant="ghost"
-              className="text-muted-foreground/60 hover:text-foreground hover:bg-transparent rounded-full px-10 py-7 text-sm tracking-wide font-normal border border-border/20 hover:border-border/40 transition-all duration-1000"
-            >
-              Get in Touch
-            </Button>
+            <FloatingSurface elevation="high" glow glowColor="primary" className="rounded-full">
+              <Button 
+                size="lg" 
+                className="group bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-10 py-7 text-sm tracking-wide font-normal transition-all duration-1000 hover:scale-[1.02]"
+              >
+                View Pitchdeck
+                <ArrowRight className="ml-3 h-4 w-4 transition-transform duration-700 group-hover:translate-x-1" />
+              </Button>
+            </FloatingSurface>
+            <FloatingSurface elevation="medium" className="rounded-full">
+              <Button 
+                size="lg" 
+                variant="ghost"
+                className="text-muted-foreground/60 hover:text-foreground hover:bg-card/20 rounded-full px-10 py-7 text-sm tracking-wide font-normal border border-border/20 hover:border-border/40 transition-all duration-1000 backdrop-blur-sm"
+              >
+                Get in Touch
+              </Button>
+            </FloatingSurface>
           </div>
         </div>
       </div>

@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { AlertTriangle, Clock, DollarSign, Users } from "lucide-react";
 import NetworkCanvas from "./NetworkCanvas";
+import { FloatingSurface, GlassPanel, AmbientGlow } from "./DepthSystem";
 
 const painPoints = [
   {
@@ -78,7 +79,11 @@ const ProblemSection = () => {
 
   return (
     <section className="relative py-32 md:py-48">
-      {/* Chaotic network */}
+      {/* Ambient depth */}
+      <AmbientGlow color="primary" size="lg" intensity="subtle" position="left" className="top-1/4" />
+      <AmbientGlow color="secondary" size="md" intensity="subtle" position="right" className="top-2/3" />
+      
+      {/* Chaotic network - background layer */}
       <NetworkCanvas 
         nodeCount={35} 
         chaos={0.7} 
@@ -128,53 +133,55 @@ const ProblemSection = () => {
                 onMouseEnter={() => setActiveIndex(index)}
                 onMouseLeave={() => setActiveIndex(null)}
               >
-                <div
+                <FloatingSurface
+                  elevation={isActive ? "high" : "medium"}
+                  glow={isActive}
+                  glowColor="primary"
                   className={`
-                    relative p-10 lg:p-14 rounded-[2rem] cursor-pointer
-                    bg-gradient-to-br from-card/20 via-card/8 to-transparent
-                    border border-border/8 
+                    relative rounded-[2rem] cursor-pointer
                     transition-all ease-out
                     ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}
-                    ${isActive ? "border-border/25 from-card/35 scale-[1.015]" : "hover:border-border/15"}
+                    ${isActive ? "scale-[1.02]" : ""}
                   `}
                   style={{ 
                     transitionDuration: "1000ms",
-                    transitionProperty: "opacity, transform, border-color, background"
                   }}
                 >
-                  {/* Glow */}
-                  <div 
-                    className="absolute inset-0 rounded-[2rem] pointer-events-none transition-opacity duration-1000"
-                    style={{ 
-                      opacity: isActive ? 0.6 : 0,
-                      background: "radial-gradient(ellipse at center, hsl(var(--primary) / 0.04) 0%, transparent 70%)"
-                    }}
-                  />
-                  
-                  <div className="relative flex items-start gap-7">
-                    <div className={`
-                      p-4 rounded-2xl transition-all duration-800
-                      ${isActive ? "bg-primary/8 scale-110" : "bg-card/25"}
-                    `}>
-                      <Icon className={`
-                        h-5 w-5 transition-all duration-800
-                        ${isActive ? "text-primary" : "text-muted-foreground/35"}
-                      `} />
-                    </div>
-                    
-                    <div className="flex-1 pt-1">
-                      <h3 className="text-xl lg:text-[1.35rem] font-normal text-foreground mb-5 tracking-tight leading-tight">
-                        {point.title}
-                      </h3>
-                      <p className={`
-                        text-base lg:text-[1.05rem] leading-[1.7] transition-all duration-800
-                        ${isActive ? "text-muted-foreground/60" : "text-muted-foreground/35"}
+                  <GlassPanel
+                    intensity={isActive ? "medium" : "subtle"}
+                    bordered
+                    className={`
+                      p-10 lg:p-14 rounded-[2rem]
+                      border-border/8 
+                      transition-all duration-700
+                      ${isActive ? "border-border/25 bg-card/30" : "hover:border-border/15"}
+                    `}
+                  >
+                    <div className="relative flex items-start gap-7">
+                      <div className={`
+                        p-4 rounded-2xl transition-all duration-800
+                        ${isActive ? "bg-primary/12 scale-110" : "bg-card/25"}
                       `}>
-                        {isActive ? point.detail : point.preview}
-                      </p>
+                        <Icon className={`
+                          h-5 w-5 transition-all duration-800
+                          ${isActive ? "text-primary" : "text-muted-foreground/35"}
+                        `} />
+                      </div>
+                      
+                      <div className="flex-1 pt-1">
+                        <h3 className="text-xl lg:text-[1.35rem] font-normal text-foreground mb-5 tracking-tight leading-tight">
+                          {point.title}
+                        </h3>
+                        <p className={`
+                          text-base lg:text-[1.05rem] leading-[1.7] transition-all duration-800
+                          ${isActive ? "text-muted-foreground/60" : "text-muted-foreground/35"}
+                        `}>
+                          {isActive ? point.detail : point.preview}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                </div>
+                  </GlassPanel>
+                </FloatingSurface>
               </div>
             );
           })}

@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import NetworkCanvas from "./NetworkCanvas";
+import { FloatingSurface, AmbientGlow } from "./DepthSystem";
 
 const HeroSection = () => {
   const [scrollProgress, setScrollProgress] = useState(0);
@@ -36,6 +37,10 @@ const HeroSection = () => {
         scrollReactive={true}
         parallaxFactor={0.15}
       />
+      
+      {/* Ambient depth glows */}
+      <AmbientGlow color="primary" size="xl" intensity="subtle" position="right" className="top-1/4" />
+      <AmbientGlow color="secondary" size="lg" intensity="subtle" position="left" className="top-2/3" />
       
       {/* Depth layers */}
       <div 
@@ -82,25 +87,29 @@ const HeroSection = () => {
             Real-time coordination. Predictive intelligence.
           </p>
           
-          {/* CTAs */}
+          {/* CTAs - floating surfaces */}
           <div 
             className="flex flex-col sm:flex-row gap-6 animate-fade-in"
             style={{ animationDelay: "0.8s", animationDuration: "1.4s" }}
           >
-            <Button 
-              size="lg" 
-              className="group bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-12 py-8 text-sm tracking-wide font-normal transition-all duration-1000 hover:scale-[1.02] hover:shadow-xl hover:shadow-primary/15"
-            >
-              View Pitchdeck
-              <ArrowRight className="ml-3 h-4 w-4 transition-transform duration-700 group-hover:translate-x-1" />
-            </Button>
-            <Button 
-              size="lg" 
-              variant="ghost"
-              className="text-muted-foreground/50 hover:text-foreground hover:bg-transparent rounded-full px-12 py-8 text-sm tracking-wide font-normal border border-border/15 hover:border-border/35 transition-all duration-1000"
-            >
-              Explore Product
-            </Button>
+            <FloatingSurface elevation="high" glow glowColor="primary" className="rounded-full">
+              <Button 
+                size="lg" 
+                className="group bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-12 py-8 text-sm tracking-wide font-normal transition-all duration-1000 hover:scale-[1.02]"
+              >
+                View Pitchdeck
+                <ArrowRight className="ml-3 h-4 w-4 transition-transform duration-700 group-hover:translate-x-1" />
+              </Button>
+            </FloatingSurface>
+            <FloatingSurface elevation="medium" className="rounded-full">
+              <Button 
+                size="lg" 
+                variant="ghost"
+                className="text-muted-foreground/50 hover:text-foreground hover:bg-card/20 rounded-full px-12 py-8 text-sm tracking-wide font-normal border border-border/15 hover:border-border/35 transition-all duration-1000 backdrop-blur-sm"
+              >
+                Explore Product
+              </Button>
+            </FloatingSurface>
           </div>
         </div>
       </div>

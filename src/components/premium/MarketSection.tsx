@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { FloatingSurface, GlassPanel, AmbientGlow } from "./DepthSystem";
 
 const marketData = {
   tam: { value: "$847B", label: "Total Addressable Market", description: "Global supply chain management software and services" },
@@ -112,10 +113,9 @@ const MarketSection = () => {
 
   return (
     <section className="relative py-32 md:py-48">
-      {/* Subtle ambient */}
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <div className="w-[800px] h-[500px] bg-secondary/12 rounded-full blur-[250px]" />
-      </div>
+      {/* Layered ambient depth */}
+      <AmbientGlow color="secondary" size="xl" intensity="medium" position="center" />
+      <AmbientGlow color="primary" size="md" intensity="subtle" position="right" className="top-1/4" />
       
       <div className="relative z-10 container mx-auto px-8 lg:px-20 xl:px-28">
         {/* Section header */}
@@ -250,12 +250,13 @@ const MarketSection = () => {
                     }
                     
                     return (
-                      <div
+                      <FloatingSurface
                         key={competitor.name}
-                        ref={isActive ? cardRef : undefined}
+                        elevation={isActive ? "high" : "low"}
+                        glow={isActive}
+                        glowColor="primary"
                         className={`
-                          absolute inset-0 p-10 rounded-3xl border border-border/10 
-                          bg-gradient-to-br from-card/25 to-transparent
+                          absolute inset-0 rounded-3xl
                           transition-all duration-700 ease-out cursor-grab
                           ${isDragging && isActive ? "cursor-grabbing" : ""}
                         `}
@@ -265,25 +266,32 @@ const MarketSection = () => {
                           opacity,
                           pointerEvents: isActive ? "auto" : "none",
                         }}
-                        onMouseDown={handleDragStart}
-                        onMouseUp={handleDragEnd}
-                        onMouseLeave={() => isDragging && handleDragEnd}
-                        onTouchStart={handleDragStart}
-                        onTouchEnd={handleDragEnd}
                       >
-                        <div className="flex items-center justify-between mb-8">
-                          <h4 className="text-2xl font-light text-foreground">
-                            {competitor.name}
-                          </h4>
-                          <span className="text-xs text-muted-foreground/40 tracking-wide">
-                            {i + 1} / {competitors.length}
-                          </span>
-                        </div>
-                        <p className="text-sm text-primary/70 mb-4">{competitor.position}</p>
-                        <p className="text-base text-muted-foreground/45 leading-relaxed">
-                          {competitor.differentiation}
-                        </p>
-                      </div>
+                        <GlassPanel
+                          ref={isActive ? cardRef : undefined}
+                          intensity={isActive ? "medium" : "subtle"}
+                          bordered
+                          className="h-full p-10 rounded-3xl"
+                          onMouseDown={handleDragStart}
+                          onMouseUp={handleDragEnd}
+                          onMouseLeave={() => isDragging && handleDragEnd}
+                          onTouchStart={handleDragStart}
+                          onTouchEnd={handleDragEnd}
+                        >
+                          <div className="flex items-center justify-between mb-8">
+                            <h4 className="text-2xl font-light text-foreground">
+                              {competitor.name}
+                            </h4>
+                            <span className="text-xs text-muted-foreground/40 tracking-wide">
+                              {i + 1} / {competitors.length}
+                            </span>
+                          </div>
+                          <p className="text-sm text-primary/70 mb-4">{competitor.position}</p>
+                          <p className="text-base text-muted-foreground/45 leading-relaxed">
+                            {competitor.differentiation}
+                          </p>
+                        </GlassPanel>
+                      </FloatingSurface>
                     );
                   })}
                 </div>
@@ -329,21 +337,30 @@ const MarketSection = () => {
               <div className="flex items-center gap-4 text-sm flex-wrap">
                 {businessSteps.map((step, i) => (
                   <div key={step.label} className="flex items-center gap-4">
-                    <div 
+                    <FloatingSurface
+                      elevation={step.highlight ? "medium" : "low"}
+                      glow={step.highlight}
+                      glowColor="primary"
                       className={`
-                        px-6 py-4 rounded-2xl border transition-all duration-1000 ease-out
-                        ${step.highlight 
-                          ? "bg-primary/10 border-primary/20" 
-                          : "bg-card/20 border-border/10"
-                        }
+                        rounded-2xl
+                        transition-all duration-1000 ease-out
                         ${businessAnimated ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}
                       `}
                       style={{ transitionDelay: `${step.delay}ms` }}
                     >
-                      <span className={step.highlight ? "text-foreground font-medium" : "text-muted-foreground/50"}>
-                        {step.label}
-                      </span>
-                    </div>
+                      <GlassPanel
+                        intensity={step.highlight ? "medium" : "subtle"}
+                        bordered
+                        className={`
+                          px-6 py-4 rounded-2xl
+                          ${step.highlight ? "border-primary/20" : "border-border/10"}
+                        `}
+                      >
+                        <span className={step.highlight ? "text-foreground font-medium" : "text-muted-foreground/50"}>
+                          {step.label}
+                        </span>
+                      </GlassPanel>
+                    </FloatingSurface>
                     
                     {i < businessSteps.length - 1 && (
                       <div 

@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { X, Activity, Brain, Network, Shield, Zap, LineChart } from "lucide-react";
+import { FloatingSurface, GlassPanel, AmbientGlow } from "./DepthSystem";
 
 const features = [
   {
@@ -142,10 +143,10 @@ const FeaturesSection = () => {
 
   return (
     <section className="relative py-32 md:py-48">
-      {/* Subtle ambient glow */}
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <div className="w-[600px] h-[600px] bg-secondary/15 rounded-full blur-[220px]" />
-      </div>
+      {/* Layered ambient depth */}
+      <AmbientGlow color="secondary" size="xl" intensity="medium" position="center" />
+      <AmbientGlow color="primary" size="md" intensity="subtle" position="right" className="top-1/4" />
+      <AmbientGlow color="accent" size="md" intensity="subtle" position="left" className="bottom-1/4" />
       
       <div className="relative z-10 container mx-auto px-8 lg:px-20 xl:px-28">
         {/* Section header */}
@@ -214,61 +215,65 @@ const FeaturesSection = () => {
               const isVisible = visibleCards[index];
               
               return (
-                <button
+                <FloatingSurface
                   key={feature.id}
-                  ref={el => cardsRef.current[index] = el}
-                  onClick={() => setActiveFeature(feature.id)}
-                  onMouseEnter={() => setHoveredFeature(feature.id)}
-                  onMouseLeave={() => setHoveredFeature(null)}
+                  elevation={isHovered ? "high" : "low"}
+                  glow={isHovered}
+                  glowColor="primary"
                   className={`
-                    group relative p-10 rounded-3xl text-left
-                    bg-gradient-to-br from-card/20 via-card/10 to-transparent
-                    border border-border/10
+                    rounded-3xl
                     transition-all ease-out
                     ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}
-                    ${isHovered ? "border-border/30 from-card/35 scale-[1.02]" : "hover:border-border/20"}
+                    ${isHovered ? "scale-[1.03]" : ""}
                   `}
-                  style={{ 
-                    transitionDuration: "800ms",
-                    transitionProperty: "opacity, transform, border-color, background"
-                  }}
+                  style={{ transitionDuration: "800ms" }}
                 >
-                  {/* Subtle glow on hover */}
-                  <div 
-                    className="absolute inset-0 rounded-3xl pointer-events-none transition-opacity duration-1000"
-                    style={{ 
-                      opacity: isHovered ? 1 : 0,
-                      background: "radial-gradient(ellipse at center, hsl(var(--primary) / 0.06) 0%, transparent 70%)"
-                    }}
-                  />
-                  
-                  <div className="relative flex items-center gap-4 mb-5">
-                    <div className={`
-                      p-3 rounded-2xl transition-all duration-700
-                      ${isHovered ? "bg-primary/12 scale-110" : "bg-card/30"}
-                    `}>
-                      <Icon className={`
-                        h-5 w-5 transition-all duration-700
-                        ${isHovered ? "text-primary" : "text-muted-foreground/50"}
-                      `} />
-                    </div>
-                  </div>
-                  
-                  <h3 className="relative text-lg font-normal text-foreground mb-3 tracking-tight">
-                    {feature.title}
-                  </h3>
-                  <p className="relative text-sm text-muted-foreground/40 leading-relaxed">
-                    {feature.subtitle}
-                  </p>
-                  
-                  {/* Click hint */}
-                  <div className={`
-                    relative mt-6 text-xs text-primary/50 transition-all duration-700
-                    ${isHovered ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2"}
-                  `}>
-                    Click to explore →
-                  </div>
-                </button>
+                  <button
+                    ref={el => cardsRef.current[index] = el}
+                    onClick={() => setActiveFeature(feature.id)}
+                    onMouseEnter={() => setHoveredFeature(feature.id)}
+                    onMouseLeave={() => setHoveredFeature(null)}
+                    className="w-full"
+                  >
+                    <GlassPanel
+                      intensity={isHovered ? "medium" : "subtle"}
+                      bordered
+                      className={`
+                        p-10 rounded-3xl text-left
+                        border-border/10
+                        transition-all duration-700
+                        ${isHovered ? "border-border/30 bg-card/30" : "hover:border-border/20"}
+                      `}
+                    >
+                      <div className="relative flex items-center gap-4 mb-5">
+                        <div className={`
+                          p-3 rounded-2xl transition-all duration-700
+                          ${isHovered ? "bg-primary/12 scale-110" : "bg-card/30"}
+                        `}>
+                          <Icon className={`
+                            h-5 w-5 transition-all duration-700
+                            ${isHovered ? "text-primary" : "text-muted-foreground/50"}
+                          `} />
+                        </div>
+                      </div>
+                      
+                      <h3 className="relative text-lg font-normal text-foreground mb-3 tracking-tight">
+                        {feature.title}
+                      </h3>
+                      <p className="relative text-sm text-muted-foreground/40 leading-relaxed">
+                        {feature.subtitle}
+                      </p>
+                      
+                      {/* Click hint */}
+                      <div className={`
+                        relative mt-6 text-xs text-primary/50 transition-all duration-700
+                        ${isHovered ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2"}
+                      `}>
+                        Click to explore →
+                      </div>
+                    </GlassPanel>
+                  </button>
+                </FloatingSurface>
               );
             })}
           </div>
@@ -281,21 +286,29 @@ const FeaturesSection = () => {
           className="fixed inset-0 z-50 flex items-center justify-end"
           onClick={handleClosePanel}
         >
-          {/* Backdrop */}
+          {/* Frosted backdrop */}
           <div 
-            className="absolute inset-0 bg-background/90 backdrop-blur-md transition-opacity duration-700"
+            className="absolute inset-0 bg-background/80 backdrop-blur-xl transition-opacity duration-700"
             style={{ opacity: panelVisible ? 1 : 0 }}
           />
           
-          {/* Panel */}
-          <div 
-            className="relative w-full max-w-lg h-full bg-card/98 backdrop-blur-xl border-l border-border/15 p-14 overflow-y-auto transition-all duration-700 ease-out"
+          {/* Floating panel with elevation */}
+          <FloatingSurface
+            elevation="floating"
+            glow
+            glowColor="secondary"
+            className="relative w-full max-w-lg h-full transition-all duration-700 ease-out"
             style={{ 
               transform: panelVisible ? "translateX(0)" : "translateX(100%)",
               opacity: panelVisible ? 1 : 0
             }}
             onClick={e => e.stopPropagation()}
           >
+            <GlassPanel
+              intensity="strong"
+              bordered
+              className="h-full border-l border-border/15 p-14 overflow-y-auto"
+            >
             <button
               onClick={handleClosePanel}
               className="absolute top-10 right-10 p-3 rounded-full border border-border/10 text-muted-foreground/40 hover:text-foreground hover:border-border/30 transition-all duration-500"
@@ -373,7 +386,8 @@ const FeaturesSection = () => {
                 </div>
               ))}
             </div>
-          </div>
+            </GlassPanel>
+          </FloatingSurface>
         </div>
       )}
       
