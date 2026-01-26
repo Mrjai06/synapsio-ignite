@@ -1,58 +1,154 @@
-import { Linkedin, Twitter } from "lucide-react";
+'use client';
+import React from 'react';
+import type { ComponentProps, ReactNode } from 'react';
+import { motion, useReducedMotion } from 'motion/react';
+import { Linkedin, Twitter, Mail, Globe } from 'lucide-react';
+
+interface FooterLink {
+  title: string;
+  href: string;
+  icon?: React.ComponentType<{ className?: string }>;
+}
+
+interface FooterSection {
+  label: string;
+  links: FooterLink[];
+}
+
+const footerLinks: FooterSection[] = [
+  {
+    label: 'Product',
+    links: [
+      { title: 'Features', href: '#features' },
+      { title: 'Solution', href: '#solution' },
+      { title: 'Roadmap', href: '#roadmap' },
+      { title: 'Demo', href: '#demo' },
+    ],
+  },
+  {
+    label: 'Company',
+    links: [
+      { title: 'About Us', href: '#team' },
+      { title: 'Privacy Policy', href: '#' },
+      { title: 'Terms of Service', href: '#' },
+      { title: 'Imprint', href: '#' },
+    ],
+  },
+  {
+    label: 'Resources',
+    links: [
+      { title: 'Documentation', href: '#' },
+      { title: 'API Reference', href: '#' },
+      { title: 'Case Studies', href: '#' },
+      { title: 'Contact', href: '#contact' },
+    ],
+  },
+  {
+    label: 'Connect',
+    links: [
+      { title: 'LinkedIn', href: '#', icon: Linkedin },
+      { title: 'Twitter', href: '#', icon: Twitter },
+      { title: 'Email', href: '#', icon: Mail },
+      { title: 'Website', href: '#', icon: Globe },
+    ],
+  },
+];
 
 const Footer = () => {
   return (
-    <footer className="relative py-24 md:py-32 border-t border-border/6">
-      <div className="container mx-auto px-8 lg:px-20 xl:px-28">
-        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-16">
-          {/* Brand */}
-          <div className="max-w-sm">
-            <span className="text-[10px] tracking-[0.4em] uppercase text-muted-foreground/40 font-light">
-              Synapsio
-            </span>
-            <p className="text-sm text-muted-foreground/30 mt-4 leading-relaxed">
-              Intelligent orchestration for modern supply chains.
-            </p>
-            <p className="text-xs text-muted-foreground/20 mt-6">
-              © 2024 Synapsio Inc. All rights reserved.
-            </p>
-          </div>
-          
-          {/* Links */}
-          <nav className="flex flex-wrap gap-10 lg:gap-14">
-            <a href="#" className="text-sm text-muted-foreground/30 hover:text-foreground transition-colors duration-700">
-              Imprint
-            </a>
-            <a href="#" className="text-sm text-muted-foreground/30 hover:text-foreground transition-colors duration-700">
-              Privacy Policy
-            </a>
-            <a href="#" className="text-sm text-muted-foreground/30 hover:text-foreground transition-colors duration-700">
-              Terms
-            </a>
-            <a href="#" className="text-sm text-muted-foreground/30 hover:text-foreground transition-colors duration-700">
-              Contact
-            </a>
-          </nav>
-          
-          {/* Social */}
-          <div className="flex gap-5">
-            <a 
-              href="#" 
-              className="p-3 rounded-full border border-border/8 hover:border-border/25 transition-all duration-700 hover:scale-105"
-            >
-              <Linkedin className="h-4 w-4 text-muted-foreground/30" />
-            </a>
-            <a 
-              href="#" 
-              className="p-3 rounded-full border border-border/8 hover:border-border/25 transition-all duration-700 hover:scale-105"
-            >
-              <Twitter className="h-4 w-4 text-muted-foreground/30" />
-            </a>
+    <footer className="relative border-t border-border/10 bg-background">
+      <div className="mx-auto max-w-7xl px-6 py-16 lg:px-8 lg:py-24">
+        {/* Divider */}
+        <AnimatedContainer delay={0}>
+          <div className="mb-12 h-px w-full bg-gradient-to-r from-transparent via-border/30 to-transparent" />
+        </AnimatedContainer>
+
+        <div className="flex flex-col gap-12 lg:flex-row lg:justify-between">
+          {/* Brand Section */}
+          <AnimatedContainer delay={0.1}>
+            <div className="max-w-sm">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 border border-primary/20">
+                  <span className="text-lg font-semibold text-primary">S</span>
+                </div>
+                <span className="text-lg font-medium tracking-tight text-foreground">
+                  Synapsio
+                </span>
+              </div>
+              <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
+                Intelligent orchestration for modern supply chains. Transforming complexity into clarity.
+              </p>
+              <p className="mt-6 text-xs text-muted-foreground/60">
+                © {new Date().getFullYear()} Synapsio Inc. All rights reserved.
+              </p>
+            </div>
+          </AnimatedContainer>
+
+          {/* Links Grid */}
+          <div className="grid grid-cols-2 gap-8 sm:grid-cols-4 lg:gap-12">
+            {footerLinks.map((section, index) => (
+              <AnimatedContainer key={section.label} delay={0.2 + index * 0.1}>
+                <div className="space-y-4">
+                  <h3 className="text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground/50">
+                    {section.label}
+                  </h3>
+                  <ul className="space-y-3">
+                    {section.links.map((link) => (
+                      <li key={link.title}>
+                        <a
+                          href={link.href}
+                          className="group flex items-center gap-2 text-sm text-muted-foreground transition-colors duration-300 hover:text-foreground"
+                        >
+                          {link.icon && (
+                            <link.icon className="h-4 w-4 text-muted-foreground/50 transition-colors duration-300 group-hover:text-primary" />
+                          )}
+                          <span className="relative">
+                            {link.title}
+                            <span className="absolute -bottom-0.5 left-0 h-px w-0 bg-primary transition-all duration-300 group-hover:w-full" />
+                          </span>
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </AnimatedContainer>
+            ))}
           </div>
         </div>
+
+        {/* Bottom Divider */}
+        <AnimatedContainer delay={0.6}>
+          <div className="mt-12 h-px w-full bg-gradient-to-r from-transparent via-border/20 to-transparent" />
+        </AnimatedContainer>
       </div>
     </footer>
   );
 };
+
+type ViewAnimationProps = {
+  delay?: number;
+  className?: ComponentProps<'div'>['className'];
+  children: ReactNode;
+};
+
+function AnimatedContainer({ className, delay = 0.1, children }: ViewAnimationProps) {
+  const shouldReduceMotion = useReducedMotion();
+
+  if (shouldReduceMotion) {
+    return <div className={className}>{children}</div>;
+  }
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '-50px' }}
+      transition={{ duration: 0.6, delay, ease: [0.25, 0.1, 0.25, 1] }}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+}
 
 export default Footer;
