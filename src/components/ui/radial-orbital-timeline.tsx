@@ -258,7 +258,7 @@ export default function RadialOrbitalTimeline({
 
       {/* Panel below the orbital - slides down when active */}
       <div 
-        className={`w-full max-w-md mt-6 transition-all duration-500 ${
+        className={`w-full max-w-2xl mt-6 transition-all duration-500 ${
           activeItem 
             ? 'opacity-100 translate-y-0 max-h-[400px]' 
             : 'opacity-0 -translate-y-4 max-h-0 overflow-hidden pointer-events-none'
