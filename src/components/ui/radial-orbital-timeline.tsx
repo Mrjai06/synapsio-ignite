@@ -161,12 +161,12 @@ export default function RadialOrbitalTimeline({
     <div
       ref={containerRef}
       onClick={handleContainerClick}
-      className="relative w-full flex items-center justify-center gap-8"
+      className="relative w-full flex flex-col items-center justify-center"
     >
-      {/* Orbital visualization */}
+      {/* Orbital visualization - centered */}
       <div
         ref={orbitRef}
-        className="relative w-[320px] h-[400px] flex items-center justify-center flex-shrink-0"
+        className="relative w-[320px] h-[400px] flex items-center justify-center"
       >
         {/* Orbital rings */}
         <div className="absolute inset-0 flex items-center justify-center">
@@ -256,8 +256,14 @@ export default function RadialOrbitalTimeline({
         })}
       </div>
 
-      {/* Side Panel for expanded content */}
-      <div className={`w-80 flex-shrink-0 transition-all duration-500 ${activeItem ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-4 pointer-events-none'}`}>
+      {/* Panel below the orbital - slides down when active */}
+      <div 
+        className={`w-full max-w-md mt-6 transition-all duration-500 ${
+          activeItem 
+            ? 'opacity-100 translate-y-0 max-h-[400px]' 
+            : 'opacity-0 -translate-y-4 max-h-0 overflow-hidden pointer-events-none'
+        }`}
+      >
         {activeItem && (
           <Card className="bg-card/95 backdrop-blur-lg border-border shadow-xl">
             <CardHeader className="pb-2">
