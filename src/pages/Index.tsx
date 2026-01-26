@@ -1,8 +1,9 @@
 import HeroSection from "@/components/premium/HeroSection";
 import ProblemSection from "@/components/premium/ProblemSection";
 import SolutionSection from "@/components/premium/SolutionSection";
-import FeaturesSection from "@/components/premium/FeaturesSection";
-import MarketSection from "@/components/premium/MarketSection";
+import ProductSection from "@/components/premium/ProductSection";
+import OpportunitySection from "@/components/premium/OpportunitySection";
+import RoadmapSection from "@/components/premium/RoadmapSection";
 import TeamSection from "@/components/premium/TeamSection";
 import Footer from "@/components/premium/Footer";
 import ScrollProgress from "@/components/premium/ScrollProgress";
@@ -50,12 +51,12 @@ const Index = () => {
           <SolutionSection />
         </section>
         
-        {/* Narrative bridge: From solution to capabilities */}
+        {/* Narrative bridge: From solution to product */}
         <div className="relative py-20 md:py-28">
           <div className="container mx-auto px-8 lg:px-16">
             <div className="max-w-lg ml-auto text-right">
               <p className="text-sm text-muted-foreground/40 font-light leading-relaxed">
-                Powered by six core capabilities
+                Powered by intelligent capabilities
               </p>
               <div className="mt-4 flex justify-end">
                 <svg width="40" height="20" viewBox="0 0 40 20" className="text-border/40">
@@ -71,12 +72,12 @@ const Index = () => {
           </div>
         </div>
         
-        {/* Act 4: Capabilities - Living System */}
-        <section id="features">
-          <FeaturesSection />
+        {/* Act 4: Our Product - Explanation, Key Features, Examples */}
+        <section id="product">
+          <ProductSection />
         </section>
         
-        {/* Narrative bridge: From product to market */}
+        {/* Narrative bridge: From product to opportunity */}
         <div className="relative py-20 md:py-28">
           <div className="container mx-auto px-8 lg:px-16">
             <div className="max-w-lg">
@@ -87,12 +88,28 @@ const Index = () => {
           </div>
         </div>
         
-        {/* Act 5: The Opportunity - Scale */}
-        <section id="market">
-          <MarketSection />
+        {/* Act 5: Opportunity - Market, Competition, Business Model */}
+        <section id="opportunity">
+          <OpportunitySection />
         </section>
         
-        {/* Narrative bridge: From market to people */}
+        {/* Narrative bridge: From opportunity to roadmap */}
+        <div className="relative py-20 md:py-28">
+          <div className="container mx-auto px-8 lg:px-16">
+            <div className="max-w-lg ml-auto text-right">
+              <p className="text-sm text-muted-foreground/40 font-light leading-relaxed">
+                Where we're headed
+              </p>
+            </div>
+          </div>
+        </div>
+        
+        {/* Act 6: Roadmap */}
+        <section id="roadmap">
+          <RoadmapSection />
+        </section>
+        
+        {/* Narrative bridge: From roadmap to team */}
         <div className="relative py-20 md:py-28">
           <div className="container mx-auto px-8 lg:px-16">
             <div className="max-w-lg mx-auto text-center">
@@ -103,7 +120,7 @@ const Index = () => {
           </div>
         </div>
         
-        {/* Act 6: The Team - Human Trust */}
+        {/* Act 7: The Team - Human Trust */}
         <section id="team">
           <TeamSection />
         </section>

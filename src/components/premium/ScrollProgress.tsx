@@ -8,8 +8,9 @@ const ScrollProgress = () => {
     { id: "hero", label: "Introduction" },
     { id: "problem", label: "Challenge" },
     { id: "solution", label: "Solution" },
-    { id: "features", label: "Capabilities" },
-    { id: "market", label: "Opportunity" },
+    { id: "product", label: "Product" },
+    { id: "opportunity", label: "Opportunity" },
+    { id: "roadmap", label: "Roadmap" },
     { id: "team", label: "Team" },
   ];
 
