@@ -2,7 +2,6 @@ import { useEffect, useState, useRef } from "react";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import NetworkCanvas from "./NetworkCanvas";
-import OrganicAnchor from "./OrganicAnchor";
 import { FloatingSurface, AmbientGlow } from "./DepthSystem";
 const HeroSection = () => {
   const [scrollProgress, setScrollProgress] = useState(0);
@@ -22,19 +21,8 @@ const HeroSection = () => {
   const contentOpacity = 1 - scrollProgress * 1.5;
   const contentTranslate = scrollProgress * 40;
   return <section ref={sectionRef} className="relative min-h-[110vh] flex items-center justify-center overflow-hidden">
-      {/* Animated network background */}
-      <NetworkCanvas nodeCount={50} chaos={scrollProgress * 0.3} className="absolute inset-0 opacity-30" colorScheme="neutral" scrollReactive={true} parallaxFactor={0.15} />
-      
-      {/* Central organic visual anchor - offset to the right */}
-      <div 
-        className="absolute right-[5%] lg:right-[15%] top-1/2 -translate-y-1/2 w-[400px] h-[400px] md:w-[500px] md:h-[500px] lg:w-[550px] lg:h-[550px] transition-all duration-1000"
-        style={{
-          opacity: Math.max(0, 1 - scrollProgress * 2),
-          transform: `translateY(calc(-50% + ${scrollProgress * 60}px)) scale(${1 - scrollProgress * 0.2})`,
-        }}
-      >
-        <OrganicAnchor className="w-full h-full opacity-80" />
-      </div>
+      {/* Animated network */}
+      <NetworkCanvas nodeCount={50} chaos={scrollProgress * 0.3} className="absolute inset-0 opacity-40" colorScheme="neutral" scrollReactive={true} parallaxFactor={0.15} />
       
       {/* Ambient depth glows */}
       <AmbientGlow color="primary" size="xl" intensity="subtle" position="right" className="top-1/4" />
