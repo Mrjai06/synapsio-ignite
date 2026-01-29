@@ -12,9 +12,9 @@ const orbitLayers = [
     speed: 45,
     color: "primary",
     nodes: [
-      { id: "erp", name: "ERP Systems", icon: Database, angle: 0 },
-      { id: "iot", name: "IoT Sensors", icon: Cpu, angle: 120 },
-      { id: "api", name: "External APIs", icon: Globe, angle: 240 },
+      { id: "erp", name: "ERP Systems", icon: Database, angle: 0, isPrimary: true },
+      { id: "iot", name: "IoT Sensors", icon: Cpu, angle: 120, isPrimary: false },
+      { id: "api", name: "External APIs", icon: Globe, angle: 240, isPrimary: false },
     ],
     description: "Real-time data streams from across your entire supply network feed into a unified intelligence layer.",
     example: "Warehouse sensors detect inventory shifts and trigger immediate rebalancing across 50+ locations.",
@@ -27,9 +27,9 @@ const orbitLayers = [
     speed: 60,
     color: "secondary",
     nodes: [
-      { id: "demand", name: "Demand Forecasting", icon: BarChart3, angle: 45 },
-      { id: "inventory", name: "Inventory AI", icon: Box, angle: 165 },
-      { id: "routing", name: "Route Optimization", icon: Network, angle: 285 },
+      { id: "demand", name: "Demand Forecasting", icon: BarChart3, angle: 45, isPrimary: true },
+      { id: "inventory", name: "Inventory AI", icon: Box, angle: 165, isPrimary: false },
+      { id: "routing", name: "Route Optimization", icon: Network, angle: 285, isPrimary: false },
     ],
     description: "Advanced ML models continuously optimize allocation, routing, and procurement decisions.",
     example: "Predictive algorithms reroute 200 shipments ahead of a port delay, saving $1.2M in expedited costs.",
@@ -42,9 +42,9 @@ const orbitLayers = [
     speed: 80,
     color: "accent",
     nodes: [
-      { id: "fulfillment", name: "Fulfillment", icon: Truck, angle: 90 },
-      { id: "marketplace", name: "Marketplace Sync", icon: Globe, angle: 210 },
-      { id: "delivery", name: "Last Mile", icon: Zap, angle: 330 },
+      { id: "fulfillment", name: "Fulfillment", icon: Truck, angle: 90, isPrimary: true },
+      { id: "marketplace", name: "Marketplace Sync", icon: Globe, angle: 210, isPrimary: false },
+      { id: "delivery", name: "Last Mile", icon: Zap, angle: 330, isPrimary: false },
     ],
     description: "Seamless execution layer connects warehouses, carriers, and marketplaces in real-time.",
     example: "Flash sale detected → inventory auto-allocated → carrier capacity secured within 3 minutes.",
@@ -57,15 +57,45 @@ const orbitLayers = [
     speed: 100,
     color: "muted",
     nodes: [
-      { id: "analytics", name: "Analytics Engine", icon: BarChart3, angle: 20 },
-      { id: "feedback", name: "Feedback Loop", icon: RefreshCw, angle: 140 },
-      { id: "adaptation", name: "Self-Adaptation", icon: Brain, angle: 260 },
+      { id: "analytics", name: "Analytics Engine", icon: BarChart3, angle: 20, isPrimary: true },
+      { id: "feedback", name: "Feedback Loop", icon: RefreshCw, angle: 140, isPrimary: false },
+      { id: "adaptation", name: "Self-Adaptation", icon: Brain, angle: 260, isPrimary: false },
     ],
     description: "Continuous learning from outcomes refines predictions and decisions autonomously.",
     example: "System identified a carrier underperformance pattern and automatically redistributed 15% of volume.",
     metric: { value: "3.2×", label: "Faster adaptation" },
   },
 ];
+
+// Generate network connections between all nodes
+const generateNetworkConnections = () => {
+  const allNodes: { id: string; radius: number; angle: number; isPrimary: boolean }[] = [];
+  orbitLayers.forEach(orbit => {
+    orbit.nodes.forEach(node => {
+      allNodes.push({ id: node.id, radius: orbit.radius, angle: node.angle, isPrimary: node.isPrimary });
+    });
+  });
+  
+  const connections: { from: typeof allNodes[0]; to: typeof allNodes[0] }[] = [];
+  
+  // Connect each node to 2-3 others to form a network
+  for (let i = 0; i < allNodes.length; i++) {
+    for (let j = i + 1; j < allNodes.length; j++) {
+      // Connect nodes that are relatively close or across layers
+      const angleDiff = Math.abs(allNodes[i].angle - allNodes[j].angle);
+      const radiusDiff = Math.abs(allNodes[i].radius - allNodes[j].radius);
+      
+      // Connect if within same layer or adjacent layers
+      if (radiusDiff <= 80 || (radiusDiff <= 160 && angleDiff < 90) || (allNodes[i].isPrimary && allNodes[j].isPrimary)) {
+        connections.push({ from: allNodes[i], to: allNodes[j] });
+      }
+    }
+  }
+  
+  return connections;
+};
+
+const networkConnections = generateNetworkConnections();
 
 // Particle component for data flow
 const DataParticle = ({ 
@@ -234,7 +264,7 @@ const SolutionSection = () => {
                   strokeDasharray="4 8"
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={isVisible ? { 
-                    opacity: selectedOrbit && selectedOrbit !== orbit.id ? 0.1 : 0.3,
+                    opacity: selectedOrbit && selectedOrbit !== orbit.id ? 0.1 : 0.2,
                     scale: 1 
                   } : {}}
                   transition={{ duration: 0.8, delay: 0.4 + index * 0.1 }}
@@ -243,6 +273,53 @@ const SolutionSection = () => {
                   }}
                 />
               ))}
+
+              {/* Network connection lines between nodes */}
+              <g className="pointer-events-none">
+                {networkConnections.map((conn, index) => {
+                  const x1 = Math.cos((conn.from.angle * Math.PI) / 180) * conn.from.radius;
+                  const y1 = Math.sin((conn.from.angle * Math.PI) / 180) * conn.from.radius;
+                  const x2 = Math.cos((conn.to.angle * Math.PI) / 180) * conn.to.radius;
+                  const y2 = Math.sin((conn.to.angle * Math.PI) / 180) * conn.to.radius;
+                  const isPrimaryConnection = conn.from.isPrimary && conn.to.isPrimary;
+                  
+                  return (
+                    <g key={`conn-${index}`}>
+                      {/* Connection line */}
+                      <motion.line
+                        x1={x1}
+                        y1={y1}
+                        x2={x2}
+                        y2={y2}
+                        stroke={isPrimaryConnection ? "hsl(var(--primary) / 0.4)" : "hsl(var(--border) / 0.25)"}
+                        strokeWidth={isPrimaryConnection ? 1.5 : 0.75}
+                        initial={{ pathLength: 0, opacity: 0 }}
+                        animate={isVisible ? { pathLength: 1, opacity: 1 } : {}}
+                        transition={{ duration: 1.2, delay: 0.8 + index * 0.05 }}
+                      />
+                      
+                      {/* Animated pulse along the connection */}
+                      <motion.circle
+                        r={isPrimaryConnection ? 2.5 : 1.5}
+                        fill={isPrimaryConnection ? "hsl(var(--primary))" : "hsl(var(--primary) / 0.5)"}
+                        initial={{ cx: x1, cy: y1, opacity: 0 }}
+                        animate={{
+                          cx: [x1, x2],
+                          cy: [y1, y2],
+                          opacity: [0, 0.8, 0.8, 0],
+                        }}
+                        transition={{
+                          duration: 3 + Math.random() * 2,
+                          delay: 1 + index * 0.2,
+                          repeat: Infinity,
+                          repeatDelay: 2 + Math.random() * 3,
+                          ease: "easeInOut",
+                        }}
+                      />
+                    </g>
+                  );
+                })}
+              </g>
 
               {/* Data flow particles */}
               <g className="pointer-events-none">
@@ -276,13 +353,19 @@ const SolutionSection = () => {
                       const isOrbitSelected = selectedOrbit === orbit.id;
                       const isDimmed = selectedOrbit && !isOrbitSelected;
                       const Icon = node.icon;
+                      
+                      // Primary nodes are larger and more prominent
+                      const isPrimary = node.isPrimary;
+                      const baseRadius = isPrimary ? 32 : 18;
+                      const glowRadius = isPrimary ? 40 : 22;
+                      const iconSize = isPrimary ? 20 : 12;
 
                       return (
                         <motion.g
                           key={node.id}
                           initial={{ opacity: 0, scale: 0 }}
                           animate={isVisible ? { 
-                            opacity: isDimmed ? 0.3 : 1, 
+                            opacity: isDimmed ? 0.3 : (isPrimary ? 1 : 0.6), 
                             scale: 1 
                           } : {}}
                           transition={{ 
@@ -299,30 +382,37 @@ const SolutionSection = () => {
                           }}
                           style={{ cursor: "pointer" }}
                         >
-                          {/* Node glow */}
+                          {/* Node glow - larger for primary */}
                           <motion.circle
                             cx={x}
                             cy={y}
-                            r={28}
-                            fill={`hsl(var(--primary) / ${isSelected ? 0.2 : 0.05})`}
+                            r={glowRadius}
+                            fill={`hsl(var(--primary) / ${isSelected ? 0.25 : (isPrimary ? 0.1 : 0.03)})`}
                             animate={{
-                              r: isSelected ? 36 : 28,
+                              r: isSelected ? glowRadius + 10 : glowRadius,
                             }}
                             transition={{ duration: 0.3 }}
                           />
                           
-                          {/* Node background */}
+                          {/* Node background - primary nodes are bigger with accent border */}
                           <motion.circle
                             cx={x}
                             cy={y}
-                            r={24}
-                            fill="hsl(var(--card) / 0.6)"
-                            stroke={`hsl(var(--${isSelected ? 'primary' : 'border'}))`}
-                            strokeWidth={isSelected ? 2 : 1}
+                            r={baseRadius}
+                            fill={isPrimary ? "hsl(var(--card) / 0.8)" : "hsl(var(--card) / 0.4)"}
+                            stroke={isSelected 
+                              ? "hsl(var(--primary))" 
+                              : isPrimary 
+                                ? "hsl(var(--primary) / 0.5)" 
+                                : "hsl(var(--border) / 0.3)"
+                            }
+                            strokeWidth={isPrimary ? 2 : 1}
                             style={{
                               filter: isSelected 
-                                ? "drop-shadow(0 0 20px hsl(var(--primary) / 0.5))" 
-                                : "drop-shadow(0 4px 12px hsl(var(--background) / 0.5))",
+                                ? "drop-shadow(0 0 25px hsl(var(--primary) / 0.6))" 
+                                : isPrimary 
+                                  ? "drop-shadow(0 0 15px hsl(var(--primary) / 0.3))"
+                                  : "drop-shadow(0 2px 8px hsl(var(--background) / 0.3))",
                               backdropFilter: "blur(8px)",
                             }}
                             animate={{
@@ -342,16 +432,21 @@ const SolutionSection = () => {
                             style={{ transformOrigin: `${x}px ${y}px` }}
                           >
                             <foreignObject
-                              x={x - 12}
-                              y={y - 12}
-                              width={24}
-                              height={24}
+                              x={x - iconSize / 2}
+                              y={y - iconSize / 2}
+                              width={iconSize}
+                              height={iconSize}
                             >
                               <div className="w-full h-full flex items-center justify-center">
                                 <Icon 
-                                  className={`w-4 h-4 transition-colors duration-300 ${
-                                    isSelected ? 'text-primary' : 'text-muted-foreground/60'
+                                  className={`transition-colors duration-300 ${
+                                    isSelected 
+                                      ? 'text-primary' 
+                                      : isPrimary 
+                                        ? 'text-primary/80' 
+                                        : 'text-muted-foreground/40'
                                   }`}
+                                  style={{ width: iconSize, height: iconSize }}
                                 />
                               </div>
                             </foreignObject>
