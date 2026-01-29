@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import NetworkCanvas from "./NetworkCanvas";
+import { CosmicSynapseCanvas } from "@/components/ui/neurons-hero";
 import HeroVisualAnchor from "./HeroVisualAnchor";
 import { FloatingSurface, AmbientGlow } from "./DepthSystem";
 
@@ -23,8 +23,8 @@ const HeroSection = () => {
   const contentOpacity = 1 - scrollProgress * 1.5;
   const contentTranslate = scrollProgress * 40;
   return <section ref={sectionRef} className="relative min-h-[110vh] flex items-center justify-center overflow-hidden">
-      {/* Animated network */}
-      <NetworkCanvas nodeCount={50} chaos={scrollProgress * 0.3} className="absolute inset-0 opacity-40" colorScheme="neutral" scrollReactive={true} parallaxFactor={0.15} />
+      {/* Neural synapse animated background */}
+      <CosmicSynapseCanvas className="absolute inset-0 opacity-60" />
       
       {/* Ambient depth glows */}
       <AmbientGlow color="primary" size="xl" intensity="subtle" position="right" className="top-1/4" />
