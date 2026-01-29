@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { CosmicSynapseCanvas } from "@/components/ui/neurons-hero";
+import BrainCanvas from "@/components/ui/brain-canvas";
 import { FloatingSurface, AmbientGlow } from "./DepthSystem";
 
 const HeroSection = () => {
@@ -22,8 +22,8 @@ const HeroSection = () => {
   const contentOpacity = 1 - scrollProgress * 1.5;
   const contentTranslate = scrollProgress * 40;
   return <section ref={sectionRef} className="relative min-h-[110vh] flex items-center justify-center overflow-hidden">
-      {/* Neural synapse animated background */}
-      <CosmicSynapseCanvas className="absolute inset-0 opacity-60" />
+      {/* Brain-shaped neural network background */}
+      <BrainCanvas neuronColor="180,210,220" pulseColor="218,138,103" className="absolute inset-0 opacity-70" />
       
       {/* Ambient depth glows */}
       <AmbientGlow color="primary" size="xl" intensity="subtle" position="right" className="top-1/4" />
