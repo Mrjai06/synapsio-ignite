@@ -4,6 +4,7 @@ import { Brain, Database, Cpu, Truck, RefreshCw, Zap, BarChart3, Network, Box, G
 import { FloatingSurface, GlassPanel, AmbientGlow } from "./DepthSystem";
 
 // Orbit layer data
+// Orbit layer data - primary nodes spaced 90° apart for clean orbits
 const orbitLayers = [
   {
     id: "ingestion",
@@ -27,9 +28,9 @@ const orbitLayers = [
     speed: 60,
     color: "secondary",
     nodes: [
-      { id: "demand", name: "Demand Forecasting", icon: BarChart3, angle: 45, isPrimary: true },
-      { id: "inventory", name: "Inventory AI", icon: Box, angle: 165, isPrimary: false },
-      { id: "routing", name: "Route Optimization", icon: Network, angle: 285, isPrimary: false },
+      { id: "demand", name: "Demand Forecasting", icon: BarChart3, angle: 90, isPrimary: true },
+      { id: "inventory", name: "Inventory AI", icon: Box, angle: 210, isPrimary: false },
+      { id: "routing", name: "Route Optimization", icon: Network, angle: 330, isPrimary: false },
     ],
     description: "Advanced ML models continuously optimize allocation, routing, and procurement decisions.",
     example: "Predictive algorithms reroute 200 shipments ahead of a port delay, saving $1.2M in expedited costs.",
@@ -42,9 +43,9 @@ const orbitLayers = [
     speed: 80,
     color: "accent",
     nodes: [
-      { id: "fulfillment", name: "Fulfillment", icon: Truck, angle: 90, isPrimary: true },
-      { id: "marketplace", name: "Marketplace Sync", icon: Globe, angle: 210, isPrimary: false },
-      { id: "delivery", name: "Last Mile", icon: Zap, angle: 330, isPrimary: false },
+      { id: "fulfillment", name: "Fulfillment", icon: Truck, angle: 180, isPrimary: true },
+      { id: "marketplace", name: "Marketplace Sync", icon: Globe, angle: 300, isPrimary: false },
+      { id: "delivery", name: "Last Mile", icon: Zap, angle: 60, isPrimary: false },
     ],
     description: "Seamless execution layer connects warehouses, carriers, and marketplaces in real-time.",
     example: "Flash sale detected → inventory auto-allocated → carrier capacity secured within 3 minutes.",
@@ -57,9 +58,9 @@ const orbitLayers = [
     speed: 100,
     color: "muted",
     nodes: [
-      { id: "analytics", name: "Analytics Engine", icon: BarChart3, angle: 20, isPrimary: true },
-      { id: "feedback", name: "Feedback Loop", icon: RefreshCw, angle: 140, isPrimary: false },
-      { id: "adaptation", name: "Self-Adaptation", icon: Brain, angle: 260, isPrimary: false },
+      { id: "analytics", name: "Analytics Engine", icon: BarChart3, angle: 270, isPrimary: true },
+      { id: "feedback", name: "Feedback Loop", icon: RefreshCw, angle: 30, isPrimary: false },
+      { id: "adaptation", name: "Self-Adaptation", icon: Brain, angle: 150, isPrimary: false },
     ],
     description: "Continuous learning from outcomes refines predictions and decisions autonomously.",
     example: "System identified a carrier underperformance pattern and automatically redistributed 15% of volume.",
@@ -67,35 +68,20 @@ const orbitLayers = [
   },
 ];
 
-// Generate network connections between all nodes
-const generateNetworkConnections = () => {
-  const allNodes: { id: string; radius: number; angle: number; isPrimary: boolean }[] = [];
-  orbitLayers.forEach(orbit => {
-    orbit.nodes.forEach(node => {
-      allNodes.push({ id: node.id, radius: orbit.radius, angle: node.angle, isPrimary: node.isPrimary });
-    });
+// Get primary nodes for dynamic connections
+const getPrimaryNodes = () => {
+  return orbitLayers.map(orbit => {
+    const primaryNode = orbit.nodes.find(n => n.isPrimary)!;
+    return {
+      id: primaryNode.id,
+      radius: orbit.radius,
+      baseAngle: primaryNode.angle,
+      speed: orbit.speed,
+    };
   });
-  
-  const connections: { from: typeof allNodes[0]; to: typeof allNodes[0] }[] = [];
-  
-  // Connect each node to 2-3 others to form a network
-  for (let i = 0; i < allNodes.length; i++) {
-    for (let j = i + 1; j < allNodes.length; j++) {
-      // Connect nodes that are relatively close or across layers
-      const angleDiff = Math.abs(allNodes[i].angle - allNodes[j].angle);
-      const radiusDiff = Math.abs(allNodes[i].radius - allNodes[j].radius);
-      
-      // Connect if within same layer or adjacent layers
-      if (radiusDiff <= 80 || (radiusDiff <= 160 && angleDiff < 90) || (allNodes[i].isPrimary && allNodes[j].isPrimary)) {
-        connections.push({ from: allNodes[i], to: allNodes[j] });
-      }
-    }
-  }
-  
-  return connections;
 };
 
-const networkConnections = generateNetworkConnections();
+const primaryNodes = getPrimaryNodes();
 
 // Particle component for data flow
 const DataParticle = ({ 
@@ -162,7 +148,9 @@ const SolutionSection = () => {
   const [selectedOrbit, setSelectedOrbit] = useState<string | null>(null);
   const [selectedNode, setSelectedNode] = useState<string | null>(null);
   const [isVisible, setIsVisible] = useState(false);
+  const [rotationAngles, setRotationAngles] = useState<number[]>([0, 0, 0, 0]);
   const sectionRef = useRef<HTMLElement>(null);
+  const animationRef = useRef<number>();
   const isInView = useInView(sectionRef, { once: true, margin: "-100px" });
 
   useEffect(() => {
@@ -170,6 +158,32 @@ const SolutionSection = () => {
       setIsVisible(true);
     }
   }, [isInView]);
+
+  // Track rotation angles for dynamic connections
+  useEffect(() => {
+    let lastTime = performance.now();
+    
+    const animate = (currentTime: number) => {
+      const deltaTime = (currentTime - lastTime) / 1000;
+      lastTime = currentTime;
+      
+      setRotationAngles(prev => 
+        prev.map((angle, i) => {
+          const speed = orbitLayers[i].speed;
+          return (angle + (360 / speed) * deltaTime) % 360;
+        })
+      );
+      
+      animationRef.current = requestAnimationFrame(animate);
+    };
+    
+    animationRef.current = requestAnimationFrame(animate);
+    return () => {
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
+    };
+  }, []);
 
   // Get current detail data
   const currentDetail = useMemo(() => {
@@ -274,45 +288,79 @@ const SolutionSection = () => {
                 />
               ))}
 
-              {/* Network connection lines between nodes */}
+              {/* Dynamic network connections between primary nodes - follows rotation */}
               <g className="pointer-events-none">
-                {networkConnections.map((conn, index) => {
-                  const x1 = Math.cos((conn.from.angle * Math.PI) / 180) * conn.from.radius;
-                  const y1 = Math.sin((conn.from.angle * Math.PI) / 180) * conn.from.radius;
-                  const x2 = Math.cos((conn.to.angle * Math.PI) / 180) * conn.to.radius;
-                  const y2 = Math.sin((conn.to.angle * Math.PI) / 180) * conn.to.radius;
-                  const isPrimaryConnection = conn.from.isPrimary && conn.to.isPrimary;
+                {primaryNodes.map((node, i) => {
+                  // Calculate current position based on rotation
+                  const currentAngle = node.baseAngle + rotationAngles[i];
+                  const x1 = Math.cos((currentAngle * Math.PI) / 180) * node.radius;
+                  const y1 = Math.sin((currentAngle * Math.PI) / 180) * node.radius;
                   
+                  // Connect to next primary node
+                  const nextIndex = (i + 1) % primaryNodes.length;
+                  const nextNode = primaryNodes[nextIndex];
+                  const nextAngle = nextNode.baseAngle + rotationAngles[nextIndex];
+                  const x2 = Math.cos((nextAngle * Math.PI) / 180) * nextNode.radius;
+                  const y2 = Math.sin((nextAngle * Math.PI) / 180) * nextNode.radius;
+                  
+                  // Also connect to center
                   return (
-                    <g key={`conn-${index}`}>
-                      {/* Connection line */}
-                      <motion.line
+                    <g key={`primary-conn-${i}`}>
+                      {/* Connection between adjacent primary nodes */}
+                      <line
                         x1={x1}
                         y1={y1}
                         x2={x2}
                         y2={y2}
-                        stroke={isPrimaryConnection ? "hsl(var(--primary) / 0.4)" : "hsl(var(--border) / 0.25)"}
-                        strokeWidth={isPrimaryConnection ? 1.5 : 0.75}
-                        initial={{ pathLength: 0, opacity: 0 }}
-                        animate={isVisible ? { pathLength: 1, opacity: 1 } : {}}
-                        transition={{ duration: 1.2, delay: 0.8 + index * 0.05 }}
+                        stroke="hsl(var(--primary) / 0.3)"
+                        strokeWidth={1.5}
+                        strokeDasharray="4 4"
                       />
                       
-                      {/* Animated pulse along the connection */}
+                      {/* Connection to core */}
+                      <line
+                        x1={x1}
+                        y1={y1}
+                        x2={0}
+                        y2={0}
+                        stroke="hsl(var(--primary) / 0.15)"
+                        strokeWidth={1}
+                      />
+                      
+                      {/* Animated pulse along connection to next node */}
                       <motion.circle
-                        r={isPrimaryConnection ? 2.5 : 1.5}
-                        fill={isPrimaryConnection ? "hsl(var(--primary))" : "hsl(var(--primary) / 0.5)"}
-                        initial={{ cx: x1, cy: y1, opacity: 0 }}
+                        r={2.5}
+                        fill="hsl(var(--primary))"
+                        initial={{ opacity: 0 }}
                         animate={{
                           cx: [x1, x2],
                           cy: [y1, y2],
-                          opacity: [0, 0.8, 0.8, 0],
+                          opacity: [0, 0.9, 0.9, 0],
                         }}
                         transition={{
-                          duration: 3 + Math.random() * 2,
-                          delay: 1 + index * 0.2,
+                          duration: 2.5,
+                          delay: i * 0.6,
                           repeat: Infinity,
-                          repeatDelay: 2 + Math.random() * 3,
+                          repeatDelay: 1.5,
+                          ease: "easeInOut",
+                        }}
+                      />
+                      
+                      {/* Animated pulse to core */}
+                      <motion.circle
+                        r={2}
+                        fill="hsl(var(--primary) / 0.7)"
+                        initial={{ opacity: 0 }}
+                        animate={{
+                          cx: [x1, 0],
+                          cy: [y1, 0],
+                          opacity: [0, 0.7, 0.7, 0],
+                        }}
+                        transition={{
+                          duration: 2,
+                          delay: i * 0.4 + 0.5,
+                          repeat: Infinity,
+                          repeatDelay: 2,
                           ease: "easeInOut",
                         }}
                       />
