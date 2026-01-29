@@ -1,39 +1,72 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import { motion, useInView, AnimatePresence } from "framer-motion";
-import { Database, Users, ShieldAlert, TrendingUp } from "lucide-react";
+import { Database, Users, ShieldAlert, TrendingUp, AlertTriangle, Clock, DollarSign, Link2Off } from "lucide-react";
 
-const problemNodes = [
+interface ProblemNode {
+  id: string;
+  icon: typeof Database;
+  title: string;
+  shortTitle: string;
+  description: string;
+  impacts: string[];
+  position: { x: number; y: number };
+}
+
+const problemNodes: ProblemNode[] = [
   {
     id: "fragmented",
     icon: Database,
     title: "Fragmented Data",
-    description: "ERP systems, suppliers, logistics and marketplaces operate in silos.",
+    shortTitle: "Fragmented",
+    description: "Critical business data is scattered across disconnected systems, creating blind spots and decision-making delays.",
+    impacts: [
+      "ERP, CRM, and logistics systems don't communicate",
+      "Manual data reconciliation wastes 15+ hours weekly",
+      "Real-time visibility is impossible"
+    ],
     position: { x: 0, y: 0 },
   },
   {
     id: "manual",
     icon: Users,
-    title: "Manual Planning",
-    description: "Human-driven decisions introduce delay, errors and scalability limits.",
+    title: "Manual Operations",
+    shortTitle: "Manual Ops",
+    description: "Human-driven processes create bottlenecks, introduce errors, and prevent scaling beyond current capacity.",
+    impacts: [
+      "Order processing delays of 2-3 days",
+      "Human error rate of 3-5% on critical tasks",
+      "Cannot scale without proportional headcount"
+    ],
     position: { x: 1, y: 0 },
   },
   {
     id: "risk",
     icon: ShieldAlert,
     title: "Risk & Fraud",
-    description: "Limited transparency increases supplier risk, fraud and compliance exposure.",
+    shortTitle: "Risk",
+    description: "Limited visibility into supplier networks exposes organizations to fraud, compliance failures, and reputational damage.",
+    impacts: [
+      "Supplier fraud costs $42B annually globally",
+      "Compliance violations increase 23% yearly",
+      "Due diligence takes weeks, not hours"
+    ],
     position: { x: 0, y: 1 },
   },
   {
     id: "scaling",
     icon: TrendingUp,
-    title: "Scaling Breakdown",
-    description: "Operational complexity grows exponentially with volume and partners.",
+    title: "Scaling Bottlenecks",
+    shortTitle: "Scaling",
+    description: "Operational complexity grows exponentially with each new partner, market, or product line added to the network.",
+    impacts: [
+      "10x partners = 100x coordination complexity",
+      "Integration costs exceed $500K per connection",
+      "Time-to-market delays of 6-12 months"
+    ],
     position: { x: 1, y: 1 },
   },
 ];
 
-// Connection paths between nodes
 const connections = [
   { from: 0, to: 1 },
   { from: 0, to: 2 },
@@ -45,329 +78,323 @@ const connections = [
 
 const ProblemSection = () => {
   const [activeNode, setActiveNode] = useState<number | null>(null);
-  const [glitchingConnections, setGlitchingConnections] = useState<number[]>([]);
+  const [selectedNode, setSelectedNode] = useState<number | null>(0);
   const sectionRef = useRef<HTMLDivElement>(null);
-  const isInView = useInView(sectionRef, { once: true, amount: 0.3 });
+  const isInView = useInView(sectionRef, { once: true, amount: 0.2 });
 
-  // Random glitch effect on connections
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const randomConnection = Math.floor(Math.random() * connections.length);
-      setGlitchingConnections(prev => [...prev, randomConnection]);
-      
-      setTimeout(() => {
-        setGlitchingConnections(prev => prev.filter(c => c !== randomConnection));
-      }, 300 + Math.random() * 400);
-    }, 2000 + Math.random() * 2000);
+  const displayedNode = activeNode !== null ? activeNode : selectedNode;
 
-    return () => clearInterval(interval);
-  }, []);
-
-  // Calculate node positions for SVG
-  const getNodeCenter = (index: number, containerSize: number) => {
+  const getNodeCenter = (index: number) => {
     const node = problemNodes[index];
-    const padding = 80;
-    const gridSize = (containerSize - padding * 2) / 2;
-    const x = padding + node.position.x * gridSize + gridSize / 2;
-    const y = padding + node.position.y * gridSize + gridSize / 2;
+    const centerX = 200;
+    const centerY = 200;
+    const spreadX = 140;
+    const spreadY = 120;
+    
+    const x = centerX + (node.position.x - 0.5) * spreadX * 2;
+    const y = centerY + (node.position.y - 0.5) * spreadY * 2;
     return { x, y };
   };
 
   return (
-    <section ref={sectionRef} className="relative py-32 md:py-48">
-      {/* Ambient background gradients */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 -left-32 w-96 h-96 bg-primary/5 rounded-full blur-[120px]" />
-        <div className="absolute bottom-1/4 -right-32 w-80 h-80 bg-secondary/5 rounded-full blur-[100px]" />
+    <section ref={sectionRef} className="relative py-32 md:py-48 overflow-hidden">
+      {/* Background layers */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-primary/3 rounded-full blur-[150px]" />
+        <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-secondary/3 rounded-full blur-[120px]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/50 to-background" />
       </div>
 
       <div className="relative z-10 container mx-auto px-6 lg:px-16 xl:px-24">
-        {/* Two-column layout */}
-        <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 items-center">
-          {/* Left column - Text content */}
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            animate={isInView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-            className="max-w-xl"
-          >
-            <motion.p
-              initial={{ opacity: 0, y: 10 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6, delay: 0.1 }}
-              className="text-[10px] tracking-[0.4em] uppercase text-primary/50 mb-8"
-            >
-              The Challenge
-            </motion.p>
-            
-            <motion.h2
-              initial={{ opacity: 0, y: 20 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              className="text-3xl md:text-4xl lg:text-[2.75rem] font-light tracking-[-0.02em] leading-[1.15] mb-8"
-            >
-              <span className="text-foreground">Modern Supply Chains Are Built on</span>{" "}
-              <span className="text-muted-foreground/40">Broken Connections</span>
-            </motion.h2>
-            
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.8, delay: 0.3 }}
-              className="text-base lg:text-lg text-muted-foreground/50 font-light leading-relaxed"
-            >
-              Fragmented systems, manual coordination, and disconnected data create hidden risk, 
-              cost, and operational drag at scale.
-            </motion.p>
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.8 }}
+          className="text-center mb-16 md:mb-24"
+        >
+          <p className="text-[10px] tracking-[0.4em] uppercase text-primary/50 mb-6">
+            The Challenge
+          </p>
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-light tracking-[-0.02em] leading-[1.15] max-w-3xl mx-auto">
+            <span className="text-foreground">Modern Supply Chains Are Built on</span>{" "}
+            <span className="text-muted-foreground/40">Broken Connections</span>
+          </h2>
+        </motion.div>
 
-            {/* Active node description */}
-            <AnimatePresence mode="wait">
-              {activeNode !== null && (
-                <motion.div
-                  key={activeNode}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.3 }}
-                  className="mt-12 p-6 rounded-2xl bg-card/20 backdrop-blur-sm border border-border/10"
-                >
-                  <div className="flex items-center gap-3 mb-3">
-                    {(() => {
-                      const Icon = problemNodes[activeNode].icon;
-                      return <Icon className="w-5 h-5 text-primary" />;
-                    })()}
-                    <h4 className="text-lg font-medium text-foreground">
-                      {problemNodes[activeNode].title}
-                    </h4>
-                  </div>
-                  <p className="text-muted-foreground/60 text-sm leading-relaxed">
-                    {problemNodes[activeNode].description}
-                  </p>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </motion.div>
-
-          {/* Right column - Interactive network */}
+        {/* Main content grid */}
+        <div className="grid lg:grid-cols-[1fr,400px] gap-12 lg:gap-16 items-start">
+          {/* Network visualization */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
+            initial={{ opacity: 0, scale: 0.9 }}
             animate={isInView ? { opacity: 1, scale: 1 } : {}}
-            transition={{ duration: 1, delay: 0.4 }}
-            className="relative aspect-square max-w-md mx-auto lg:max-w-none"
+            transition={{ duration: 1, delay: 0.3 }}
+            className="relative order-2 lg:order-1"
           >
-            {/* SVG Network visualization */}
-            <svg
-              viewBox="0 0 400 400"
-              className="w-full h-full"
-              style={{ overflow: "visible" }}
-            >
-              {/* Connection lines */}
-              {connections.map((connection, index) => {
-                const from = getNodeCenter(connection.from, 400);
-                const to = getNodeCenter(connection.to, 400);
-                const isGlitching = glitchingConnections.includes(index);
-                const isHighlighted = activeNode === connection.from || activeNode === connection.to;
+            <div className="relative w-full max-w-[500px] mx-auto aspect-square">
+              {/* Ambient glow behind network */}
+              <div className="absolute inset-0 bg-gradient-radial from-primary/5 via-transparent to-transparent rounded-full blur-3xl" />
+              
+              <svg
+                viewBox="0 0 400 400"
+                className="w-full h-full relative z-10"
+                style={{ overflow: "visible" }}
+              >
+                {/* Connection lines */}
+                {connections.map((connection, index) => {
+                  const from = getNodeCenter(connection.from);
+                  const to = getNodeCenter(connection.to);
+                  const isHighlighted = displayedNode === connection.from || displayedNode === connection.to;
+                  const isDimmed = displayedNode !== null && !isHighlighted;
 
-                return (
-                  <g key={index}>
-                    {/* Base connection line */}
-                    <motion.line
-                      x1={from.x}
-                      y1={from.y}
-                      x2={to.x}
-                      y2={to.y}
-                      stroke={isHighlighted ? "hsl(var(--primary))" : "hsl(var(--border))"}
-                      strokeWidth={isHighlighted ? 2 : 1}
-                      strokeOpacity={isGlitching ? 0.1 : isHighlighted ? 0.8 : 0.3}
-                      initial={{ pathLength: 0 }}
+                  return (
+                    <g key={index}>
+                      <motion.line
+                        x1={from.x}
+                        y1={from.y}
+                        x2={to.x}
+                        y2={to.y}
+                        stroke={isHighlighted ? "hsl(var(--primary))" : "hsl(var(--border))"}
+                        strokeWidth={isHighlighted ? 2 : 1}
+                        strokeOpacity={isDimmed ? 0.1 : isHighlighted ? 0.6 : 0.25}
+                        strokeDasharray={isHighlighted ? "none" : "4 4"}
+                        initial={{ pathLength: 0 }}
+                        animate={isInView ? { pathLength: 1 } : {}}
+                        transition={{ duration: 1.5, delay: 0.8 + index * 0.1 }}
+                      />
+                      
+                      {/* Animated pulse on connections */}
+                      {isHighlighted && (
+                        <motion.circle
+                          r={3}
+                          fill="hsl(var(--primary))"
+                          initial={{ opacity: 0 }}
+                          animate={{
+                            opacity: [0, 0.8, 0],
+                            cx: [from.x, to.x],
+                            cy: [from.y, to.y],
+                          }}
+                          transition={{
+                            duration: 2,
+                            repeat: Infinity,
+                            ease: "linear",
+                          }}
+                        />
+                      )}
+                    </g>
+                  );
+                })}
+
+                {/* Nodes */}
+                {problemNodes.map((node, index) => {
+                  const center = getNodeCenter(index);
+                  const Icon = node.icon;
+                  const isActive = displayedNode === index;
+                  const isDimmed = displayedNode !== null && !isActive;
+
+                  return (
+                    <motion.g
+                      key={node.id}
+                      initial={{ opacity: 0, scale: 0 }}
                       animate={isInView ? { 
-                        pathLength: isGlitching ? [1, 0.3, 1] : 1,
-                        strokeOpacity: isGlitching ? [0.3, 0.05, 0.3] : isHighlighted ? 0.8 : 0.3
+                        opacity: isDimmed ? 0.4 : 1, 
+                        scale: 1,
                       } : {}}
                       transition={{ 
-                        pathLength: { duration: 1.5, delay: 0.5 + index * 0.1 },
-                        strokeOpacity: { duration: 0.3 }
+                        duration: 0.6, 
+                        delay: 0.4 + index * 0.15,
+                        type: "spring",
+                        stiffness: 200,
                       }}
-                    />
-                    
-                    {/* Animated flow particle */}
-                    {!isGlitching && (
+                      onMouseEnter={() => setActiveNode(index)}
+                      onMouseLeave={() => setActiveNode(null)}
+                      onClick={() => setSelectedNode(index)}
+                      style={{ cursor: "pointer" }}
+                    >
+                      {/* Outer glow ring - animated */}
                       <motion.circle
-                        r={2}
-                        fill={isHighlighted ? "hsl(var(--primary))" : "hsl(var(--muted-foreground))"}
-                        opacity={0.6}
-                        initial={{ opacity: 0 }}
-                        animate={isInView ? {
-                          opacity: [0, 0.6, 0],
-                          cx: [from.x, to.x],
-                          cy: [from.y, to.y],
-                        } : {}}
+                        cx={center.x}
+                        cy={center.y}
+                        r={75}
+                        fill="none"
+                        stroke={isActive ? "hsl(var(--primary))" : "hsl(var(--border))"}
+                        strokeWidth={1}
+                        strokeOpacity={isActive ? 0.4 : 0.1}
+                        animate={{
+                          r: isActive ? [75, 80, 75] : [70, 72, 70],
+                        }}
                         transition={{
-                          duration: 3,
-                          delay: 1 + index * 0.5,
+                          duration: 4,
                           repeat: Infinity,
-                          repeatDelay: 2 + Math.random() * 3,
-                          ease: "linear",
+                          ease: "easeInOut",
                         }}
                       />
-                    )}
-                  </g>
-                );
-              })}
 
-              {/* Nodes */}
-              {problemNodes.map((node, index) => {
-                const center = getNodeCenter(index, 400);
-                const Icon = node.icon;
-                const isActive = activeNode === index;
+                      {/* Glass card background */}
+                      <motion.rect
+                        x={center.x - 65}
+                        y={center.y - 65}
+                        width={130}
+                        height={130}
+                        rx={24}
+                        fill="hsl(var(--card))"
+                        fillOpacity={isActive ? 0.5 : 0.25}
+                        stroke={isActive ? "hsl(var(--primary))" : "hsl(var(--border))"}
+                        strokeWidth={isActive ? 1.5 : 1}
+                        strokeOpacity={isActive ? 0.7 : 0.2}
+                        style={{
+                          filter: isActive 
+                            ? "drop-shadow(0 0 30px hsl(var(--primary) / 0.25))" 
+                            : "drop-shadow(0 8px 24px hsl(var(--background) / 0.6))",
+                        }}
+                        animate={{
+                          scale: isActive ? 1.05 : 1,
+                          y: isActive ? -5 : [0, -3, 0],
+                        }}
+                        transition={{ 
+                          scale: { duration: 0.3 },
+                          y: isActive ? { duration: 0.3 } : { duration: 6, repeat: Infinity, ease: "easeInOut", delay: index * 0.5 }
+                        }}
+                      />
 
-                return (
-                  <motion.g
-                    key={node.id}
-                    initial={{ opacity: 0, scale: 0 }}
-                    animate={isInView ? { opacity: 1, scale: 1 } : {}}
-                    transition={{ 
-                      duration: 0.6, 
-                      delay: 0.3 + index * 0.15,
-                      type: "spring",
-                      stiffness: 200,
-                    }}
-                    onMouseEnter={() => setActiveNode(index)}
-                    onMouseLeave={() => setActiveNode(null)}
-                    style={{ cursor: "pointer" }}
-                  >
-                    {/* Outer glow ring */}
-                    <motion.circle
-                      cx={center.x}
-                      cy={center.y}
-                      r={isActive ? 55 : 50}
-                      fill="none"
-                      stroke={isActive ? "hsl(var(--primary))" : "hsl(var(--border))"}
-                      strokeWidth={1}
-                      strokeOpacity={isActive ? 0.5 : 0.15}
-                      animate={{
-                        r: isActive ? [55, 58, 55] : [50, 52, 50],
-                        strokeOpacity: isActive ? [0.5, 0.3, 0.5] : [0.15, 0.1, 0.15],
-                      }}
-                      transition={{
-                        duration: 3,
-                        repeat: Infinity,
-                        ease: "easeInOut",
-                      }}
-                    />
+                      {/* Icon */}
+                      <foreignObject
+                        x={center.x - 24}
+                        y={center.y - 35}
+                        width={48}
+                        height={48}
+                      >
+                        <div className="w-full h-full flex items-center justify-center">
+                          <Icon 
+                            className={`w-8 h-8 transition-all duration-500 ${
+                              isActive ? "text-primary" : "text-muted-foreground/60"
+                            }`} 
+                          />
+                        </div>
+                      </foreignObject>
 
-                    {/* Card background */}
-                    <motion.rect
-                      x={center.x - 45}
-                      y={center.y - 45}
-                      width={90}
-                      height={90}
-                      rx={20}
-                      fill="hsl(var(--card))"
-                      fillOpacity={isActive ? 0.6 : 0.3}
-                      stroke={isActive ? "hsl(var(--primary))" : "hsl(var(--border))"}
-                      strokeWidth={1}
-                      strokeOpacity={isActive ? 0.6 : 0.2}
-                      style={{
-                        filter: isActive 
-                          ? "drop-shadow(0 0 20px hsl(var(--primary) / 0.3))" 
-                          : "drop-shadow(0 4px 12px hsl(var(--background) / 0.5))",
-                      }}
-                      animate={{
-                        scale: isActive ? 1.05 : 1,
-                      }}
-                      transition={{ duration: 0.3 }}
-                    />
+                      {/* Node title */}
+                      <text
+                        x={center.x}
+                        y={center.y + 30}
+                        textAnchor="middle"
+                        className={`text-xs font-medium fill-current transition-colors duration-300 ${
+                          isActive ? "text-foreground" : "text-muted-foreground/70"
+                        }`}
+                        style={{ fontSize: "11px" }}
+                      >
+                        {node.shortTitle}
+                      </text>
+                    </motion.g>
+                  );
+                })}
+              </svg>
+            </div>
+          </motion.div>
 
-                    {/* Icon container */}
-                    <foreignObject
-                      x={center.x - 20}
-                      y={center.y - 28}
-                      width={40}
-                      height={40}
+          {/* Info panel */}
+          <motion.div
+            initial={{ opacity: 0, x: 30 }}
+            animate={isInView ? { opacity: 1, x: 0 } : {}}
+            transition={{ duration: 0.8, delay: 0.5 }}
+            className="order-1 lg:order-2 lg:sticky lg:top-32"
+          >
+            <div className="relative">
+              {/* Glass panel background */}
+              <div className="absolute inset-0 bg-card/30 backdrop-blur-xl rounded-3xl border border-border/20" />
+              
+              <div className="relative p-8 md:p-10">
+                <AnimatePresence mode="wait">
+                  {displayedNode !== null && (
+                    <motion.div
+                      key={displayedNode}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.4, ease: "easeOut" }}
                     >
-                      <div className="w-full h-full flex items-center justify-center">
-                        <Icon 
-                          className={`w-6 h-6 transition-colors duration-300 ${
-                            isActive ? "text-primary" : "text-muted-foreground/50"
-                          }`} 
-                        />
+                      {/* Header */}
+                      <div className="flex items-center gap-4 mb-6">
+                        <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
+                          {(() => {
+                            const Icon = problemNodes[displayedNode].icon;
+                            return <Icon className="w-6 h-6 text-primary" />;
+                          })()}
+                        </div>
+                        <div>
+                          <p className="text-[10px] tracking-[0.3em] uppercase text-primary/60 mb-1">
+                            Problem {displayedNode + 1} of 4
+                          </p>
+                          <h3 className="text-xl font-medium text-foreground">
+                            {problemNodes[displayedNode].title}
+                          </h3>
+                        </div>
                       </div>
-                    </foreignObject>
 
-                    {/* Node title */}
-                    <text
-                      x={center.x}
-                      y={center.y + 22}
-                      textAnchor="middle"
-                      className={`text-[10px] font-medium fill-current transition-colors duration-300 ${
-                        isActive ? "text-foreground" : "text-muted-foreground/60"
-                      }`}
-                    >
-                      {node.title.split(" ")[0]}
-                    </text>
-                  </motion.g>
-                );
-              })}
-            </svg>
+                      {/* Description */}
+                      <p className="text-muted-foreground/70 text-sm leading-relaxed mb-8">
+                        {problemNodes[displayedNode].description}
+                      </p>
 
-            {/* Ambient particle effect */}
-            <div className="absolute inset-0 pointer-events-none">
-              {[...Array(6)].map((_, i) => (
-                <motion.div
-                  key={i}
-                  className="absolute w-1 h-1 rounded-full bg-primary/30"
-                  style={{
-                    left: `${20 + Math.random() * 60}%`,
-                    top: `${20 + Math.random() * 60}%`,
-                  }}
-                  animate={{
-                    opacity: [0, 0.5, 0],
-                    scale: [0.5, 1, 0.5],
-                    y: [0, -20, 0],
-                  }}
-                  transition={{
-                    duration: 4 + Math.random() * 2,
-                    delay: i * 0.8,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                  }}
-                />
-              ))}
+                      {/* Impacts */}
+                      <div className="space-y-4">
+                        <p className="text-[10px] tracking-[0.3em] uppercase text-muted-foreground/50">
+                          Business Impact
+                        </p>
+                        <ul className="space-y-3">
+                          {problemNodes[displayedNode].impacts.map((impact, i) => (
+                            <motion.li
+                              key={i}
+                              initial={{ opacity: 0, x: -10 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              transition={{ delay: 0.1 + i * 0.1 }}
+                              className="flex items-start gap-3 text-sm text-muted-foreground/60"
+                            >
+                              <span className="w-1.5 h-1.5 rounded-full bg-primary/50 mt-2 shrink-0" />
+                              {impact}
+                            </motion.li>
+                          ))}
+                        </ul>
+                      </div>
+
+                      {/* Node indicator dots */}
+                      <div className="flex items-center gap-2 mt-10 pt-6 border-t border-border/10">
+                        {problemNodes.map((_, i) => (
+                          <button
+                            key={i}
+                            onClick={() => setSelectedNode(i)}
+                            className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                              displayedNode === i 
+                                ? "bg-primary w-6" 
+                                : "bg-muted-foreground/30 hover:bg-muted-foreground/50"
+                            }`}
+                          />
+                        ))}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
             </div>
           </motion.div>
         </div>
 
-        {/* Transition text */}
+        {/* Transition element */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8, delay: 1.2 }}
+          transition={{ duration: 0.8, delay: 1.4 }}
           className="mt-32 md:mt-48 text-center"
         >
-          <p className="text-sm md:text-base text-muted-foreground/30 font-light italic">
+          <p className="text-base md:text-lg text-muted-foreground/30 font-light italic">
             "What if the system could manage itself?"
           </p>
           <motion.div
-            className="mt-6 flex justify-center"
-            animate={{ y: [0, 6, 0] }}
-            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+            className="mt-8 flex justify-center"
+            animate={{ y: [0, 8, 0] }}
+            transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
           >
-            <svg 
-              width="20" 
-              height="30" 
-              viewBox="0 0 20 30" 
-              className="text-muted-foreground/20"
-            >
-              <path
-                d="M10 5 L10 20 M5 15 L10 20 L15 15"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                fill="none"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
+            <div className="w-px h-16 bg-gradient-to-b from-primary/30 to-transparent" />
           </motion.div>
         </motion.div>
       </div>
