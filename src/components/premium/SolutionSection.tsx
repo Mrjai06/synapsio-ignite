@@ -255,34 +255,54 @@ const SolutionSection = () => {
               className="w-full max-w-[640px] h-auto"
               style={{ overflow: "visible" }}
             >
-              {/* Orbit rings */}
+              {/* Orbit path rings - visible circular paths for nodes */}
               {orbitLayers.map((orbit, index) => (
-                <motion.circle
-                  key={orbit.id}
-                  cx={0}
-                  cy={0}
-                  r={orbit.radius}
-                  fill="none"
-                  stroke={`hsl(var(--border))`}
-                  strokeWidth={1}
-                  strokeDasharray="4 8"
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={isVisible ? { 
-                    opacity: selectedOrbit && selectedOrbit !== orbit.id ? 0.1 : 0.2,
-                    scale: 1 
-                  } : {}}
-                  transition={{ duration: 0.8, delay: 0.4 + index * 0.1 }}
-                  style={{
-                    filter: selectedOrbit === orbit.id ? "drop-shadow(0 0 8px hsl(var(--primary) / 0.3))" : "none"
-                  }}
-                />
+                <g key={`orbit-ring-${orbit.id}`}>
+                  {/* Main orbit path */}
+                  <motion.circle
+                    cx={0}
+                    cy={0}
+                    r={orbit.radius}
+                    fill="none"
+                    stroke={`hsl(var(--border))`}
+                    strokeWidth={1}
+                    strokeDasharray="2 6"
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={isVisible ? { 
+                      opacity: selectedOrbit && selectedOrbit !== orbit.id ? 0.08 : 0.25,
+                      scale: 1 
+                    } : {}}
+                    transition={{ duration: 0.8, delay: 0.4 + index * 0.1 }}
+                    style={{
+                      filter: selectedOrbit === orbit.id ? "drop-shadow(0 0 8px hsl(var(--primary) / 0.3))" : "none"
+                    }}
+                  />
+                  
+                  {/* Accent arc segment following primary node */}
+                  <motion.circle
+                    cx={0}
+                    cy={0}
+                    r={orbit.radius}
+                    fill="none"
+                    stroke={`hsl(var(--primary) / 0.4)`}
+                    strokeWidth={2}
+                    strokeDasharray={`${orbit.radius * 0.5} ${orbit.radius * 6}`}
+                    strokeLinecap="round"
+                    initial={{ opacity: 0 }}
+                    animate={isVisible ? { opacity: 0.6 } : {}}
+                    style={{
+                      transform: `rotate(${orbit.primaryAngleOffset + rotationAngles[index] - 15}deg)`,
+                      transformOrigin: 'center',
+                    }}
+                    transition={{ duration: 0.8, delay: 0.5 + index * 0.1 }}
+                  />
+                </g>
               ))}
 
-              {/* Dynamic network connections between primary nodes - synced with orbit rotation */}
+              {/* Dynamic curved bezier connections between primary nodes */}
               <g className="pointer-events-none">
                 {orbitLayers.map((orbit, i) => {
                   // Get the primary node's current position
-                  const primaryNode = orbit.nodes.find(n => n.isPrimary)!;
                   const currentAngle = orbit.primaryAngleOffset + rotationAngles[i];
                   const x1 = Math.cos((currentAngle * Math.PI) / 180) * orbit.radius;
                   const y1 = Math.sin((currentAngle * Math.PI) / 180) * orbit.radius;
@@ -294,62 +314,75 @@ const SolutionSection = () => {
                   const x2 = Math.cos((nextAngle * Math.PI) / 180) * nextOrbit.radius;
                   const y2 = Math.sin((nextAngle * Math.PI) / 180) * nextOrbit.radius;
                   
+                  // Calculate bezier control point - curve toward center for organic feel
+                  const midX = (x1 + x2) / 2;
+                  const midY = (y1 + y2) / 2;
+                  // Pull control point toward center
+                  const controlX = midX * 0.3;
+                  const controlY = midY * 0.3;
+                  
+                  // Create curved path
+                  const curvePath = `M ${x1} ${y1} Q ${controlX} ${controlY} ${x2} ${y2}`;
+                  
+                  // Curved path to core
+                  const coreControlX = x1 * 0.4;
+                  const coreControlY = y1 * 0.4;
+                  const corePath = `M ${x1} ${y1} Q ${coreControlX * 0.5} ${coreControlY * 0.5} 0 0`;
+                  
                   return (
                     <g key={`primary-conn-${i}`}>
-                      {/* Connection between adjacent primary nodes */}
-                      <line
-                        x1={x1}
-                        y1={y1}
-                        x2={x2}
-                        y2={y2}
-                        stroke="hsl(var(--primary) / 0.4)"
+                      {/* Curved connection between adjacent primary nodes */}
+                      <path
+                        d={curvePath}
+                        fill="none"
+                        stroke="hsl(var(--primary) / 0.35)"
                         strokeWidth={1.5}
+                        strokeLinecap="round"
                       />
                       
-                      {/* Connection to core */}
-                      <line
-                        x1={x1}
-                        y1={y1}
-                        x2={0}
-                        y2={0}
-                        stroke="hsl(var(--primary) / 0.2)"
+                      {/* Curved connection to core */}
+                      <path
+                        d={corePath}
+                        fill="none"
+                        stroke="hsl(var(--primary) / 0.15)"
                         strokeWidth={1}
+                        strokeLinecap="round"
                       />
                       
-                      {/* Animated pulse along connection to next node */}
+                      {/* Animated pulse along curved connection - approximated with keyframes */}
                       <motion.circle
                         r={2.5}
                         fill="hsl(var(--primary))"
                         initial={{ opacity: 0 }}
                         animate={{
-                          cx: [x1, x2],
-                          cy: [y1, y2],
+                          cx: [x1, controlX, x2],
+                          cy: [y1, controlY, y2],
                           opacity: [0, 0.9, 0.9, 0],
                         }}
                         transition={{
-                          duration: 2,
-                          delay: i * 0.5,
+                          duration: 2.5,
+                          delay: i * 0.6,
                           repeat: Infinity,
-                          repeatDelay: 1,
+                          repeatDelay: 1.2,
                           ease: "easeInOut",
                         }}
                       />
                       
-                      {/* Animated pulse to core */}
+                      {/* Animated pulse to core along curve */}
                       <motion.circle
                         r={2}
                         fill="hsl(var(--primary) / 0.7)"
                         initial={{ opacity: 0 }}
                         animate={{
-                          cx: [x1, 0],
-                          cy: [y1, 0],
+                          cx: [x1, coreControlX * 0.5, 0],
+                          cy: [y1, coreControlY * 0.5, 0],
                           opacity: [0, 0.7, 0.7, 0],
                         }}
                         transition={{
-                          duration: 1.5,
-                          delay: i * 0.3 + 0.2,
+                          duration: 1.8,
+                          delay: i * 0.4 + 0.3,
                           repeat: Infinity,
-                          repeatDelay: 1.5,
+                          repeatDelay: 1.8,
                           ease: "easeInOut",
                         }}
                       />
