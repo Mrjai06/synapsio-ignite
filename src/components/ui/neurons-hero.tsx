@@ -73,9 +73,9 @@ const CosmicSynapseCanvas = ({ className }: { className?: string }) => {
                 const { x, y, scale } = this.project();
                 ctx!.beginPath();
                 ctx!.arc(x, y, this.radius * scale, 0, Math.PI * 2);
-                // Using brand teal/primary color palette
-                const alpha = 0.15 + this.activation * 0.6;
-                ctx!.fillStyle = `rgba(14, 75, 88, ${alpha})`; // Surface teal color
+                // Whiter nodes for better visibility
+                const alpha = 0.3 + this.activation * 0.7;
+                ctx!.fillStyle = `rgba(180, 210, 220, ${alpha})`; // Light teal-white
                 ctx!.fill();
             }
 
