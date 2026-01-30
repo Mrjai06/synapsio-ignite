@@ -1,66 +1,7 @@
 import { useState, useRef, useEffect } from "react";
-import { Brain, Network, Zap, Code, FileText, Lightbulb, Package, TrendingUp } from "lucide-react";
+import { Lightbulb, Package, TrendingUp } from "lucide-react";
 import { FloatingSurface, GlassPanel, AmbientGlow } from "./DepthSystem";
-import RadialOrbitalTimeline from "@/components/ui/radial-orbital-timeline";
-
-// Timeline data for the orbital visualization
-const timelineData = [
-  {
-    id: 1,
-    title: "Data Ingestion",
-    date: "Real-time",
-    content: "Our intelligent data ingestion layer connects seamlessly to your existing infrastructure. It pulls from ERPs, IoT sensors, logistics APIs, and third-party data sources to create a unified view of your entire supply chain in real-time.",
-    category: "Input",
-    icon: FileText,
-    relatedIds: [2],
-    status: "completed" as const,
-    energy: 100,
-  },
-  {
-    id: 2,
-    title: "Processing",
-    date: "< 50ms",
-    content: "Advanced machine learning models analyze millions of data points in milliseconds. Pattern recognition algorithms detect anomalies, while predictive models identify emerging trends before they become visible to traditional analytics.",
-    category: "Analysis",
-    icon: Code,
-    relatedIds: [1, 3],
-    status: "completed" as const,
-    energy: 90,
-  },
-  {
-    id: 3,
-    title: "Prediction",
-    date: "Ongoing",
-    content: "Forecast potential disruptions days or weeks before they occur. Our prediction engine accounts for weather patterns, geopolitical events, supplier health, and demand fluctuations to give you actionable foresight.",
-    category: "Intelligence",
-    icon: Brain,
-    relatedIds: [2, 4],
-    status: "in-progress" as const,
-    energy: 75,
-  },
-  {
-    id: 4,
-    title: "Optimization",
-    date: "Continuous",
-    content: "Dynamic resource allocation that adapts in real-time. Automatically rebalance inventory, reroute shipments, and adjust procurement strategies based on current conditions and predicted future states.",
-    category: "Action",
-    icon: Zap,
-    relatedIds: [3, 5],
-    status: "in-progress" as const,
-    energy: 60,
-  },
-  {
-    id: 5,
-    title: "Execution",
-    date: "Automated",
-    content: "Seamlessly implement optimized decisions across your network. Integrations with warehouse management, transportation systems, and supplier portals ensure changes propagate instantly and accurately.",
-    category: "Output",
-    icon: Network,
-    relatedIds: [4],
-    status: "pending" as const,
-    energy: 40,
-  },
-];
+import FeaturesSection from "./FeaturesSection";
 
 const examples = [
   {
@@ -165,48 +106,13 @@ const ProductSection = () => {
             </p>
           </div>
         </div>
-        
-        {/* Subcategory 2: Key Features */}
-        <div className="mb-32 md:mb-48">
-          <p className="text-xs tracking-[0.25em] uppercase text-muted-foreground/35 mb-12">
-            Key Features
-          </p>
-          <div className="relative max-w-5xl mx-auto">
-            {/* Orbital Timeline Visualization - Hidden on mobile, shown on larger screens */}
-            <div className="hidden lg:block">
-              <FloatingSurface elevation="medium" glow glowColor="primary" className="rounded-3xl">
-                <GlassPanel intensity="subtle" bordered className="rounded-3xl p-6">
-                  <RadialOrbitalTimeline 
-                    timelineData={timelineData} 
-                    centerIcon={Brain}
-                    centerLabel="AI Core"
-                  />
-                </GlassPanel>
-              </FloatingSurface>
-            </div>
-            
-            {/* Mobile fallback - simple list */}
-            <div className="lg:hidden space-y-6">
-              {timelineData.map((item, index) => (
-                <FloatingSurface key={item.id} elevation="low" className="rounded-2xl">
-                  <GlassPanel intensity="subtle" bordered className="rounded-2xl p-6">
-                    <div className="flex items-start gap-4">
-                      <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
-                        <item.icon className="w-5 h-5 text-primary" />
-                      </div>
-                      <div>
-                        <h4 className="text-lg font-medium text-foreground mb-2">{item.title}</h4>
-                        <p className="text-sm text-muted-foreground/60 leading-relaxed">{item.content}</p>
-                      </div>
-                    </div>
-                  </GlassPanel>
-                </FloatingSurface>
-              ))}
-            </div>
-          </div>
-        </div>
-        
-        {/* Subcategory 3: Everyday Examples */}
+      </div>
+      
+      {/* Subcategory 2: How Synapsio Works - Full width interactive section */}
+      <FeaturesSection />
+      
+      {/* Subcategory 3: Everyday Examples */}
+      <div className="relative z-10 container mx-auto px-8 lg:px-20 xl:px-28">
         <div ref={examplesRef}>
           <p className="text-xs tracking-[0.25em] uppercase text-muted-foreground/35 mb-12">
             Everyday Examples
