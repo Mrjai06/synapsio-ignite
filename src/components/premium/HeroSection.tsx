@@ -3,6 +3,7 @@ import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CosmicSynapseCanvas } from "@/components/ui/neurons-hero";
 import { FloatingSurface, AmbientGlow } from "./DepthSystem";
+import synapsioLogo from "@/assets/synapsio-logo.png";
 
 const HeroSection = () => {
   const [scrollProgress, setScrollProgress] = useState(0);
@@ -42,10 +43,11 @@ const HeroSection = () => {
     }}>
         <div className="max-w-5xl lg:max-w-2xl xl:max-w-3xl">
           {/* Branding - very subtle */}
-          <div className="mb-20 animate-fade-in" style={{
+          <div className="mb-20 animate-fade-in flex items-center gap-4" style={{
           animationDelay: "0.2s",
           animationDuration: "1.2s"
         }}>
+            <img src={synapsioLogo} alt="Synapsio" className="h-10 w-auto opacity-60" />
             <span className="tracking-[0.5em] uppercase text-muted-foreground/40 font-light text-4xl font-mono">
               Synapsio
             </span>

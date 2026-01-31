@@ -3,6 +3,7 @@ import React from 'react';
 import type { ComponentProps, ReactNode } from 'react';
 import { motion, useReducedMotion } from 'motion/react';
 import { Linkedin, Twitter, Mail, Globe } from 'lucide-react';
+import synapsioLogo from "@/assets/synapsio-logo.png";
 
 interface FooterLink {
   title: string;
@@ -68,9 +69,7 @@ const Footer = () => {
           <AnimatedContainer delay={0.1}>
             <div className="max-w-sm">
               <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 border border-primary/20">
-                  <span className="text-lg font-semibold text-primary">S</span>
-                </div>
+                <img src={synapsioLogo} alt="Synapsio" className="h-10 w-auto" />
                 <span className="text-lg font-medium tracking-tight text-foreground">
                   Synapsio
                 </span>
