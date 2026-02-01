@@ -152,22 +152,65 @@ const CosmicSynapseCanvas = ({ className }: { className?: string }) => {
 
         const init = () => {
             neurons = [];
-            const numNeurons = 600; // Reduced for performance
-            const radius = 280;
+            const numNeurons = 500;
+            
+            // Create brain shape using two hemispheres
             for (let i = 0; i < numNeurons; i++) {
-                const phi = Math.acos(-1 + (2 * i) / numNeurons);
+                const t = i / numNeurons;
+                const phi = Math.acos(-1 + 2 * t);
                 const theta = Math.sqrt(numNeurons * Math.PI) * phi;
-                const x = radius * Math.cos(theta) * Math.sin(phi);
-                const y = radius * Math.sin(phi) * Math.sin(theta);
-                const z = radius * Math.cos(phi);
+                
+                // Brain dimensions - wider than tall, with two lobes
+                const baseRadius = 180;
+                const xScale = 1.4; // Wider
+                const yScale = 1.1; // Slightly tall
+                const zScale = 1.2; // Deep
+                
+                let x = baseRadius * xScale * Math.cos(theta) * Math.sin(phi);
+                let y = baseRadius * yScale * Math.cos(phi) - 30; // Offset down slightly
+                let z = baseRadius * zScale * Math.sin(theta) * Math.sin(phi);
+                
+                // Create the central fissure (gap between hemispheres)
+                const fissureDepth = 25 * Math.exp(-Math.pow(y + 30, 2) / 8000);
+                if (Math.abs(x) < 40) {
+                    const fissureFactor = 1 - (1 - Math.abs(x) / 40) * 0.4;
+                    x *= fissureFactor;
+                    y -= fissureDepth * (1 - Math.abs(x) / 40);
+                }
+                
+                // Add cortical folding (gyri and sulci) - brain wrinkles
+                const foldFreq = 6;
+                const foldAmp = 12;
+                const fold = Math.sin(theta * foldFreq) * Math.sin(phi * foldFreq * 0.7) * foldAmp;
+                const normal = { x: Math.cos(theta) * Math.sin(phi), y: Math.cos(phi), z: Math.sin(theta) * Math.sin(phi) };
+                x += normal.x * fold;
+                y += normal.y * fold;
+                z += normal.z * fold;
+                
+                // Flatten the bottom (brainstem area)
+                if (y > 80) {
+                    y = 80 + (y - 80) * 0.3;
+                }
+                
                 neurons.push(new Neuron(x, y, z));
+            }
+            
+            // Add some neurons for the brainstem
+            for (let i = 0; i < 40; i++) {
+                const t = i / 40;
+                const angle = t * Math.PI * 2;
+                const stemY = 80 + t * 60;
+                const stemRadius = 25 * (1 - t * 0.5);
+                const x = Math.cos(angle) * stemRadius;
+                const z = Math.sin(angle) * stemRadius;
+                neurons.push(new Neuron(x, stemY, z));
             }
             
             neurons.forEach(neuron => {
                 neurons.forEach(other => {
                     if (neuron !== other) {
                         const dist = Math.hypot(neuron.x - other.x, neuron.y - other.y, neuron.z - other.z);
-                        if (dist < 50) {
+                        if (dist < 55) {
                             neuron.neighbors.push(other);
                         }
                     }
