@@ -33,11 +33,11 @@ const ScrollProgress = () => {
   }, []);
 
   return (
-    <div className="fixed right-8 top-1/2 -translate-y-1/2 z-40 hidden lg:flex flex-col items-end gap-6">
+    <div className="fixed right-8 top-1/2 -translate-y-1/2 z-40 hidden lg:flex flex-col items-end gap-4">
       {sections.map((section, index) => (
         <div 
           key={section.id}
-          className="flex items-center gap-4 group cursor-pointer"
+          className="flex items-center gap-3 group cursor-pointer"
           onClick={() => {
             const element = document.getElementById(section.id);
             element?.scrollIntoView({ behavior: "smooth" });
@@ -61,10 +61,10 @@ const ScrollProgress = () => {
             className={`
               rounded-full transition-all duration-700
               ${index === activeSection 
-                ? "w-4 h-4 bg-primary/80" 
+                ? "w-3 h-3 bg-primary/80" 
                 : index < activeSection 
-                  ? "w-3 h-3 bg-muted-foreground/30" 
-                  : "w-3 h-3 bg-border/40 group-hover:bg-muted-foreground/20"
+                  ? "w-2 h-2 bg-muted-foreground/30" 
+                  : "w-2 h-2 bg-border/40 group-hover:bg-muted-foreground/20"
               }
             `}
           />
