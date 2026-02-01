@@ -152,84 +152,22 @@ const CosmicSynapseCanvas = ({ className }: { className?: string }) => {
 
         const init = () => {
             neurons = [];
-            const size = 320; // Triangle size
+            const numNeurons = 600; // Reduced for performance
+            const radius = 280;
+            for (let i = 0; i < numNeurons; i++) {
+                const phi = Math.acos(-1 + (2 * i) / numNeurons);
+                const theta = Math.sqrt(numNeurons * Math.PI) * phi;
+                const x = radius * Math.cos(theta) * Math.sin(phi);
+                const y = radius * Math.sin(phi) * Math.sin(theta);
+                const z = radius * Math.cos(phi);
+                neurons.push(new Neuron(x, y, z));
+            }
             
-            // Define 3D tetrahedron vertices (triangular pyramid)
-            const vertices = [
-                { x: 0, y: -size * 0.8, z: 0 },           // Top vertex
-                { x: -size, y: size * 0.6, z: -size * 0.5 }, // Bottom left back
-                { x: size, y: size * 0.6, z: -size * 0.5 },  // Bottom right back
-                { x: 0, y: size * 0.6, z: size * 0.8 },      // Bottom front
-            ];
-            
-            // Define edges of the tetrahedron
-            const edges = [
-                [0, 1], [0, 2], [0, 3], // Top to bottom vertices
-                [1, 2], [2, 3], [3, 1], // Bottom triangle
-            ];
-            
-            // Create neurons along edges
-            const neuronsPerEdge = 35;
-            edges.forEach(([startIdx, endIdx]) => {
-                const start = vertices[startIdx];
-                const end = vertices[endIdx];
-                
-                for (let i = 0; i <= neuronsPerEdge; i++) {
-                    const t = i / neuronsPerEdge;
-                    const x = start.x + (end.x - start.x) * t + (Math.random() - 0.5) * 8;
-                    const y = start.y + (end.y - start.y) * t + (Math.random() - 0.5) * 8;
-                    const z = start.z + (end.z - start.z) * t + (Math.random() - 0.5) * 8;
-                    neurons.push(new Neuron(x, y, z));
-                }
-            });
-            
-            // Add neurons on the faces (surfaces) of the tetrahedron
-            const faces = [
-                [0, 1, 2], // Back face
-                [0, 2, 3], // Right face
-                [0, 3, 1], // Left face
-                [1, 3, 2], // Bottom face
-            ];
-            
-            const neuronsPerFace = 60;
-            faces.forEach(([aIdx, bIdx, cIdx]) => {
-                const a = vertices[aIdx];
-                const b = vertices[bIdx];
-                const c = vertices[cIdx];
-                
-                for (let i = 0; i < neuronsPerFace; i++) {
-                    // Random barycentric coordinates
-                    let u = Math.random();
-                    let v = Math.random();
-                    if (u + v > 1) {
-                        u = 1 - u;
-                        v = 1 - v;
-                    }
-                    const w = 1 - u - v;
-                    
-                    const x = a.x * u + b.x * v + c.x * w + (Math.random() - 0.5) * 6;
-                    const y = a.y * u + b.y * v + c.y * w + (Math.random() - 0.5) * 6;
-                    const z = a.z * u + b.z * v + c.z * w + (Math.random() - 0.5) * 6;
-                    neurons.push(new Neuron(x, y, z));
-                }
-            });
-            
-            // Add neurons at vertices (concentrated)
-            vertices.forEach(v => {
-                for (let i = 0; i < 8; i++) {
-                    const x = v.x + (Math.random() - 0.5) * 15;
-                    const y = v.y + (Math.random() - 0.5) * 15;
-                    const z = v.z + (Math.random() - 0.5) * 15;
-                    neurons.push(new Neuron(x, y, z));
-                }
-            });
-            
-            // Connect neighbors
             neurons.forEach(neuron => {
                 neurons.forEach(other => {
                     if (neuron !== other) {
                         const dist = Math.hypot(neuron.x - other.x, neuron.y - other.y, neuron.z - other.z);
-                        if (dist < 60) {
+                        if (dist < 50) {
                             neuron.neighbors.push(other);
                         }
                     }
