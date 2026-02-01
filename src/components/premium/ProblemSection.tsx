@@ -313,7 +313,7 @@ const ProblemSection = () => {
                       <h3 className="text-xl font-medium text-foreground mb-4">
                         Hover over a node
                       </h3>
-                      <p className="text-muted-foreground/60 text-sm leading-relaxed">
+                      <p className="text-muted-foreground/60 text-base leading-relaxed">
                         Fragmented systems, manual coordination, and disconnected data create hidden risk, 
                         cost, and operational drag at scale.
                       </p>
@@ -358,7 +358,7 @@ const ProblemSection = () => {
                       </div>
 
                       {/* Description */}
-                      <p className="text-muted-foreground/70 text-sm leading-relaxed mb-8">
+                      <p className="text-muted-foreground/70 text-base md:text-lg leading-relaxed mb-8">
                         {problemNodes[activeNode].description}
                       </p>
 
@@ -374,7 +374,7 @@ const ProblemSection = () => {
                               initial={{ opacity: 0, x: -10 }}
                               animate={{ opacity: 1, x: 0 }}
                               transition={{ delay: 0.1 + i * 0.1 }}
-                              className="flex items-start gap-3 text-sm text-muted-foreground/60"
+                              className="flex items-start gap-3 text-base text-muted-foreground/60"
                             >
                               <span className="w-1.5 h-1.5 rounded-full bg-primary/50 mt-2 shrink-0" />
                               {impact}
