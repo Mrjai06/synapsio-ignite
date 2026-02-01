@@ -400,7 +400,7 @@ const MarketplaceVisualization = () => {
             animate={{ opacity: 1 }}
             transition={{ delay: idx * 0.1 + 0.3 }}
           >
-            Score
+            Rating
           </motion.text>
           
           {/* Optimal badge */}
