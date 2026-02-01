@@ -120,7 +120,7 @@ const ProblemSection = () => {
         </motion.div>
 
         {/* Main content grid */}
-        <div className="grid lg:grid-cols-[1fr,400px] gap-12 lg:gap-16 items-start">
+        <div className="grid lg:grid-cols-[minmax(300px,450px),1fr] gap-12 lg:gap-20 items-start">
           {/* Network visualization */}
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
