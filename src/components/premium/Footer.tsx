@@ -58,10 +58,14 @@ const footerLinks: FooterSection[] = [
 const Footer = () => {
   return (
     <footer className="relative border-t border-border/10 bg-black">
-      <div className="mx-auto max-w-7xl px-6 py-16 lg:px-8 lg:py-24">
+      {/* Upward glow effect */}
+      <div className="absolute -top-32 left-0 right-0 h-32 bg-gradient-to-t from-primary/20 via-primary/5 to-transparent pointer-events-none" />
+      <div className="absolute -top-24 left-1/4 right-1/4 h-24 bg-gradient-to-t from-primary/30 to-transparent blur-2xl pointer-events-none" />
+      
+      <div className="mx-auto max-w-7xl px-6 py-12 lg:px-8 lg:py-16">
         {/* Divider */}
         <AnimatedContainer delay={0}>
-          <div className="mb-12 h-px w-full bg-gradient-to-r from-transparent via-border/30 to-transparent" />
+          <div className="mb-8 h-px w-full bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
         </AnimatedContainer>
 
         <div className="flex flex-col gap-12 lg:flex-row lg:justify-between">
@@ -117,7 +121,7 @@ const Footer = () => {
 
         {/* Bottom Divider */}
         <AnimatedContainer delay={0.6}>
-          <div className="mt-12 h-px w-full bg-gradient-to-r from-transparent via-border/20 to-transparent" />
+          <div className="mt-8 h-px w-full bg-gradient-to-r from-transparent via-border/20 to-transparent" />
         </AnimatedContainer>
       </div>
     </footer>
