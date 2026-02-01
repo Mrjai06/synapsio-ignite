@@ -176,9 +176,8 @@ const CosmicSynapseCanvas = ({ className }: { className?: string }) => {
         };
 
         const animate = () => {
-            // Use brand background color with transparency for trail effect
-            ctx!.fillStyle = 'rgba(5, 24, 36, 0.12)'; // Brand background
-            ctx!.fillRect(0, 0, canvas.width, canvas.height);
+            // Clear canvas completely to prevent color accumulation
+            ctx!.clearRect(0, 0, canvas.width, canvas.height);
             
             // Less frequent firing for calmer effect
             if (Math.random() > 0.995) {
