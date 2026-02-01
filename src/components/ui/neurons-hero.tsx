@@ -66,17 +66,36 @@ const CosmicSynapseCanvas = ({ className }: { className?: string }) => {
                 const scale = perspective / (perspective + z2);
                 const projectedX = (x1 * scale) + canvas.width / 2;
                 const projectedY = (y1 * scale) + canvas.height / 2;
-                return { x: projectedX, y: projectedY, scale };
+                return { x: projectedX, y: projectedY, scale, z: z2 };
             }
 
             draw() {
-                const { x, y, scale } = this.project();
+                const { x, y, scale, z } = this.project();
+                
+                // Depth-based coloring - brighter in front, darker in back
+                const depthFactor = (z + 300) / 600; // Normalize z to 0-1 range
+                const brightness = Math.max(0.15, Math.min(1, 1.2 - depthFactor * 0.8));
+                const baseAlpha = 0.2 + brightness * 0.6 + this.activation * 0.4;
+                
+                // Larger nodes in front, smaller in back
+                const depthRadius = this.radius * scale * (0.6 + brightness * 0.6);
+                
                 ctx!.beginPath();
-                ctx!.arc(x, y, this.radius * scale, 0, Math.PI * 2);
-                // Whiter nodes for better visibility
-                const alpha = 0.3 + this.activation * 0.7;
-                ctx!.fillStyle = `rgba(180, 210, 220, ${alpha})`; // Light teal-white
+                ctx!.arc(x, y, depthRadius, 0, Math.PI * 2);
+                
+                // Gradient color based on depth - warm tones in front, cool in back
+                const r = Math.floor(160 + brightness * 60);
+                const g = Math.floor(190 + brightness * 40);
+                const b = Math.floor(210 + brightness * 30);
+                ctx!.fillStyle = `rgba(${r}, ${g}, ${b}, ${baseAlpha})`;
+                
+                // Add glow to front neurons
+                if (brightness > 0.6) {
+                    ctx!.shadowColor = `rgba(180, 210, 220, ${brightness * 0.4})`;
+                    ctx!.shadowBlur = 6 * brightness;
+                }
                 ctx!.fill();
+                ctx!.shadowBlur = 0;
             }
 
             update() {
@@ -218,6 +237,25 @@ const CosmicSynapseCanvas = ({ className }: { className?: string }) => {
             });
         };
 
+        const drawConnections = () => {
+            neurons.forEach(neuron => {
+                const pos1 = neuron.project();
+                neuron.neighbors.forEach(neighbor => {
+                    const pos2 = neighbor.project();
+                    const avgZ = (pos1.z + pos2.z) / 2;
+                    const depthFactor = (avgZ + 300) / 600;
+                    const alpha = Math.max(0.02, 0.15 * (1 - depthFactor * 0.7));
+                    
+                    ctx!.beginPath();
+                    ctx!.moveTo(pos1.x, pos1.y);
+                    ctx!.lineTo(pos2.x, pos2.y);
+                    ctx!.strokeStyle = `rgba(120, 160, 180, ${alpha})`;
+                    ctx!.lineWidth = 0.5 * pos1.scale;
+                    ctx!.stroke();
+                });
+            });
+        };
+
         const animate = () => {
             // Clear canvas completely to prevent color accumulation
             ctx!.clearRect(0, 0, canvas.width, canvas.height);
@@ -227,7 +265,18 @@ const CosmicSynapseCanvas = ({ className }: { className?: string }) => {
                 neurons[Math.floor(Math.random() * neurons.length)].fire();
             }
 
-            neurons.forEach(neuron => neuron.update());
+            // Sort neurons by z-depth for proper layering (back to front)
+            const sortedNeurons = [...neurons].sort((a, b) => {
+                const aZ = a.project().z;
+                const bZ = b.project().z;
+                return bZ - aZ; // Back to front
+            });
+
+            // Draw connections first (behind neurons)
+            drawConnections();
+            
+            // Update and draw neurons
+            sortedNeurons.forEach(neuron => neuron.update());
             
             pulses = pulses.filter(pulse => !pulse.update());
             pulses.forEach(pulse => pulse.draw());
