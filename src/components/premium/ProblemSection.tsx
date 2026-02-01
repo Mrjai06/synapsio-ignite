@@ -120,7 +120,7 @@ const ProblemSection = () => {
         </motion.div>
 
         {/* Main content grid */}
-        <div className="grid lg:grid-cols-[minmax(300px,450px),1fr] gap-12 lg:gap-20 items-start">
+        <div className="grid lg:grid-cols-[minmax(300px,450px),1fr] gap-12 lg:gap-20 items-stretch">
           {/* Network visualization */}
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
@@ -290,13 +290,13 @@ const ProblemSection = () => {
             initial={{ opacity: 0, x: 30 }}
             animate={isInView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.8, delay: 0.5 }}
-            className="order-1 lg:order-2 lg:sticky lg:top-32 lg:ml-12 xl:ml-20"
+            className="order-1 lg:order-2 lg:ml-12 xl:ml-20 flex flex-col"
           >
-            <div className="relative">
+            <div className="relative flex-1 flex flex-col">
               {/* Glass panel background */}
               <div className="absolute inset-0 bg-card/30 backdrop-blur-xl rounded-3xl border border-border/20" />
               
-              <div className="relative p-8 md:p-10">
+              <div className="relative p-8 md:p-10 flex-1 flex flex-col">
                 {/* Intro text when no node is hovered */}
                 <AnimatePresence mode="wait">
                   {activeNode === null ? (
