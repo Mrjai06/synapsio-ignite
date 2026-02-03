@@ -413,31 +413,34 @@ const LiveExplanationPanel = ({
   ];
 
   return (
-    <div className="w-64 bg-background/90 backdrop-blur-sm rounded-xl border border-border/30 overflow-hidden">
-      <div className="p-3 border-b border-border/20">
-        <p className="text-[9px] uppercase tracking-widest text-muted-foreground/50">Live System Activity</p>
-      </div>
-      <div className="p-3 space-y-2">
-        {steps.map((step, idx) => {
-          const isActive = 
-            (state === "idle" && step.id === "idle") ||
-            (state === "decision" && (step.id === "idle" || step.id === "decision")) ||
-            (state === "execution");
-          const isCurrent = step.id === state;
-          
-          return (
-            <motion.div
-              key={step.id}
-              className={`flex items-start gap-2 transition-all duration-500 ${
-                isActive ? "opacity-100" : "opacity-30"
-              }`}
-              animate={isCurrent ? { x: [0, 2, 0] } : {}}
-              transition={{ duration: 0.5 }}
-            >
-              {/* Step indicator */}
-              <div className="flex flex-col items-center mt-1">
+    <div className="w-full bg-background/90 backdrop-blur-sm rounded-xl border border-border/30 overflow-hidden">
+      <div className="flex items-center gap-6 px-4 py-3">
+        {/* Title */}
+        <p className="text-[9px] uppercase tracking-widest text-muted-foreground/50 whitespace-nowrap">
+          Live System Activity
+        </p>
+        
+        {/* Steps in horizontal layout */}
+        <div className="flex-1 flex items-center gap-4">
+          {steps.map((step, idx) => {
+            const isActive = 
+              (state === "idle" && step.id === "idle") ||
+              (state === "decision" && (step.id === "idle" || step.id === "decision")) ||
+              (state === "execution");
+            const isCurrent = step.id === state;
+            
+            return (
+              <motion.div
+                key={step.id}
+                className={`flex items-center gap-2 flex-1 transition-all duration-500 ${
+                  isActive ? "opacity-100" : "opacity-30"
+                }`}
+                animate={isCurrent ? { x: [0, 2, 0] } : {}}
+                transition={{ duration: 0.5 }}
+              >
+                {/* Step indicator */}
                 <motion.div 
-                  className={`w-2 h-2 rounded-full ${
+                  className={`w-2 h-2 rounded-full shrink-0 ${
                     isCurrent 
                       ? step.id === "idle" 
                         ? "bg-foreground" 
@@ -449,50 +452,52 @@ const LiveExplanationPanel = ({
                   animate={isCurrent ? { scale: [1, 1.5, 1] } : {}}
                   transition={{ duration: 0.6, repeat: isCurrent ? Infinity : 0, repeatDelay: 1 }}
                 />
+                
+                {/* Content */}
+                <div className="flex-1 min-w-0">
+                  <p className={`text-[9px] uppercase tracking-wider ${
+                    isCurrent 
+                      ? step.id === "idle" 
+                        ? "text-foreground/70" 
+                        : step.id === "decision" 
+                          ? "text-accent/70" 
+                          : "text-primary/70"
+                      : "text-muted-foreground/40"
+                  }`}>
+                    {step.label}
+                  </p>
+                  <p className={`text-[10px] leading-tight truncate ${
+                    isCurrent ? "text-foreground/90" : "text-muted-foreground/50"
+                  }`}>
+                    {step.text}
+                  </p>
+                </div>
+                
+                {/* Connector arrow */}
                 {idx < 2 && (
-                  <div className={`w-px h-6 ${isActive ? "bg-border" : "bg-border/30"}`} />
+                  <div className={`text-[10px] ${isActive ? "text-border" : "text-border/30"}`}>→</div>
                 )}
-              </div>
-              
-              {/* Content */}
-              <div className="flex-1 min-w-0">
-                <p className={`text-[9px] uppercase tracking-wider mb-0.5 ${
-                  isCurrent 
-                    ? step.id === "idle" 
-                      ? "text-foreground/70" 
-                      : step.id === "decision" 
-                        ? "text-accent/70" 
-                        : "text-primary/70"
-                    : "text-muted-foreground/40"
-                }`}>
-                  {step.label}
-                </p>
-                <p className={`text-[10px] leading-relaxed ${
-                  isCurrent ? "text-foreground/90" : "text-muted-foreground/50"
-                }`}>
-                  {step.text}
-                </p>
-              </div>
-            </motion.div>
-          );
-        })}
-      </div>
-      
-      {/* Progress bar */}
-      <div className="h-1 bg-border/20">
-        <motion.div
-          className={`h-full ${
-            state === "idle" 
-              ? "bg-foreground/30" 
-              : state === "decision" 
-                ? "bg-accent" 
-                : "bg-primary"
-          }`}
-          animate={{
-            width: state === "idle" ? "33%" : state === "decision" ? "66%" : "100%"
-          }}
-          transition={{ duration: 0.5, ease: "easeOut" }}
-        />
+              </motion.div>
+            );
+          })}
+        </div>
+        
+        {/* Progress bar */}
+        <div className="w-24 h-1 bg-border/20 rounded-full overflow-hidden shrink-0">
+          <motion.div
+            className={`h-full ${
+              state === "idle" 
+                ? "bg-foreground/30" 
+                : state === "decision" 
+                  ? "bg-accent" 
+                  : "bg-primary"
+            }`}
+            animate={{
+              width: state === "idle" ? "33%" : state === "decision" ? "66%" : "100%"
+            }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
+          />
+        </div>
       </div>
     </div>
   );
