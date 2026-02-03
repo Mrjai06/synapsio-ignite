@@ -290,16 +290,18 @@ const FeaturesSection = () => {
           </div>
         </div>
 
-        {/* VISUALIZATION - Full width below cards */}
-        <div className="relative w-full aspect-[16/9] max-h-[600px] rounded-3xl border border-border/20 bg-background/40 backdrop-blur-sm overflow-hidden">
-          {/* System State Indicator - Top Right */}
-          <SystemStateIndicator state={systemState} />
-          
-          {/* Live Explanation Panel - Top Left, synced to animation */}
+        {/* Live Explanation Panel - Above visualization */}
+        <div className="mb-4">
           <LiveExplanationPanel 
             semantics={activeData.semantics} 
             state={systemState} 
           />
+        </div>
+
+        {/* VISUALIZATION - Full width below cards */}
+        <div className="relative w-full aspect-[16/9] max-h-[600px] rounded-3xl border border-border/20 bg-background/40 backdrop-blur-sm overflow-hidden">
+          {/* System State Indicator - Top Right */}
+          <SystemStateIndicator state={systemState} />
           
           <AnimatePresence mode="wait">
             <motion.div
@@ -411,7 +413,7 @@ const LiveExplanationPanel = ({
   ];
 
   return (
-    <div className="absolute top-2 left-4 z-20 w-56 bg-background/90 backdrop-blur-sm rounded-xl border border-border/30 overflow-hidden">
+    <div className="w-64 bg-background/90 backdrop-blur-sm rounded-xl border border-border/30 overflow-hidden">
       <div className="p-3 border-b border-border/20">
         <p className="text-[9px] uppercase tracking-widest text-muted-foreground/50">Live System Activity</p>
       </div>
