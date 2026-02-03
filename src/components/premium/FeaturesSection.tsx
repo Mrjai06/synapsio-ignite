@@ -852,28 +852,20 @@ const OperationsVisualization = ({ state }: { state: SystemState }) => {
           >
             <rect
               x={node.x - 35}
-              y={120}
+              y={165}
               width="70"
-              height="55"
+              height="50"
               rx="10"
               fill="hsl(var(--background))"
               stroke={isCurrent ? (state === "decision" ? "hsl(var(--accent))" : "hsl(var(--primary))") : isActive ? "hsl(var(--border))" : "hsl(var(--border))"}
               strokeWidth={isCurrent ? 2 : 1}
               opacity={isActive ? 1 : 0.4}
             />
-            <text 
-              x={node.x} 
-              y={153} 
-              textAnchor="middle" 
-              className={`text-[11px] font-medium ${isActive ? "fill-foreground" : "fill-muted-foreground/40"}`}
-            >
-              {node.label}
-            </text>
             
-            {/* Status indicator */}
+            {/* Status indicator - positioned above text */}
             <motion.circle
               cx={node.x}
-              cy={188}
+              cy={183}
               r="8"
               fill={isCurrent ? (state === "decision" ? "hsl(var(--accent))" : "hsl(var(--primary))") : isActive ? "hsl(var(--primary))" : "hsl(var(--muted-foreground))"}
               opacity={isActive ? 1 : 0.2}
@@ -882,13 +874,23 @@ const OperationsVisualization = ({ state }: { state: SystemState }) => {
                 opacity: [0.6, 1, 0.6],
               } : {}}
               transition={{
-                duration: state === "decision" ? 0.5 : 1, // Faster = acceleration during decision
+                duration: state === "decision" ? 0.5 : 1,
                 repeat: isCurrent ? Infinity : 0,
               }}
             />
             {isActive && idx < activeNodeIndex && (
-              <text x={node.x} y={192} textAnchor="middle" className="fill-background text-[8px] font-bold">✓</text>
+              <text x={node.x} y={187} textAnchor="middle" className="fill-background text-[8px] font-bold">✓</text>
             )}
+            
+            {/* Label text - positioned below indicator */}
+            <text 
+              x={node.x} 
+              y={203} 
+              textAnchor="middle" 
+              className={`text-[11px] font-medium ${isActive ? "fill-foreground" : "fill-muted-foreground/40"}`}
+            >
+              {node.label}
+            </text>
           </motion.g>
         );
       })}
