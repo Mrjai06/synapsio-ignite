@@ -132,7 +132,7 @@ const FeaturesSection = () => {
     const interval = setInterval(() => {
       currentIndex = (currentIndex + 1) % stateSequence.length;
       setSystemState(stateSequence[currentIndex]);
-    }, 2500);
+    }, 3200);
 
     return () => clearInterval(interval);
   }, [activeFeature]);
@@ -414,14 +414,14 @@ const LiveExplanationPanel = ({
 
   return (
     <div className="w-full bg-background/90 backdrop-blur-sm rounded-xl border border-border/30 overflow-hidden">
-      <div className="flex items-center gap-6 px-4 py-3">
+      <div className="flex items-center gap-4 px-4 py-3">
         {/* Title */}
-        <p className="text-[9px] uppercase tracking-widest text-muted-foreground/50 whitespace-nowrap">
+        <p className="text-[9px] uppercase tracking-widest text-muted-foreground/50 whitespace-nowrap shrink-0">
           Live System Activity
         </p>
         
         {/* Steps in horizontal layout */}
-        <div className="flex-1 flex items-center gap-4">
+        <div className="flex-1 flex items-center gap-2 min-w-0 overflow-hidden">
           {steps.map((step, idx) => {
             const isActive = 
               (state === "idle" && step.id === "idle") ||
@@ -432,11 +432,11 @@ const LiveExplanationPanel = ({
             return (
               <motion.div
                 key={step.id}
-                className={`flex items-center gap-2 flex-1 transition-all duration-500 ${
+                className={`flex items-center gap-2 flex-1 min-w-0 transition-all duration-500 ${
                   isActive ? "opacity-100" : "opacity-30"
                 }`}
                 animate={isCurrent ? { x: [0, 2, 0] } : {}}
-                transition={{ duration: 0.5 }}
+                transition={{ duration: 0.6 }}
               >
                 {/* Step indicator */}
                 <motion.div 
@@ -450,12 +450,12 @@ const LiveExplanationPanel = ({
                       : "bg-border"
                   }`}
                   animate={isCurrent ? { scale: [1, 1.5, 1] } : {}}
-                  transition={{ duration: 0.6, repeat: isCurrent ? Infinity : 0, repeatDelay: 1 }}
+                  transition={{ duration: 0.75, repeat: isCurrent ? Infinity : 0, repeatDelay: 1.25 }}
                 />
                 
                 {/* Content */}
-                <div className="flex-1 min-w-0">
-                  <p className={`text-[9px] uppercase tracking-wider ${
+                <div className="flex-1 min-w-0 overflow-hidden">
+                  <p className={`text-[9px] uppercase tracking-wider truncate ${
                     isCurrent 
                       ? step.id === "idle" 
                         ? "text-foreground/70" 
@@ -468,7 +468,7 @@ const LiveExplanationPanel = ({
                   </p>
                   <p className={`text-[10px] leading-tight truncate ${
                     isCurrent ? "text-foreground/90" : "text-muted-foreground/50"
-                  }`}>
+                  }`} title={step.text}>
                     {step.text}
                   </p>
                 </div>
@@ -495,7 +495,7 @@ const LiveExplanationPanel = ({
             animate={{
               width: state === "idle" ? "33%" : state === "decision" ? "66%" : "100%"
             }}
-            transition={{ duration: 0.5, ease: "easeOut" }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
           />
         </div>
       </div>
