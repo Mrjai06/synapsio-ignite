@@ -204,25 +204,6 @@ const ProblemSection = () => {
                       onMouseLeave={() => setActiveNode(null)}
                       style={{ cursor: "pointer" }}
                     >
-                      {/* Outer glow ring - animated */}
-                      <motion.circle
-                        cx={center.x}
-                        cy={center.y}
-                        r={75}
-                        fill="none"
-                        stroke={isActive ? "hsl(var(--primary))" : "hsl(var(--border))"}
-                        strokeWidth={1}
-                        strokeOpacity={isActive ? 0.4 : 0.1}
-                        animate={{
-                          r: isActive ? [75, 80, 75] : [70, 72, 70],
-                        }}
-                        transition={{
-                          duration: 4,
-                          repeat: Infinity,
-                          ease: "easeInOut",
-                        }}
-                      />
-
                       {/* Glass card background */}
                       <motion.rect
                         x={center.x - 65}
