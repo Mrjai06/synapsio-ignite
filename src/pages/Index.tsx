@@ -6,6 +6,7 @@ import ProductSection from "@/components/premium/ProductSection";
 import OpportunitySection from "@/components/premium/OpportunitySection";
 import RoadmapSection from "@/components/premium/RoadmapSection";
 import TeamSection from "@/components/premium/TeamSection";
+import VisionSection from "@/components/premium/VisionSection";
 import Footer from "@/components/premium/Footer";
 import ProgressNavbar from "@/components/ProgressNavbar";
 import BackgroundSystem from "@/components/premium/BackgroundSystem";
@@ -140,6 +141,7 @@ const Index = () => {
         {/* Act 7: The Team - Human Trust */}
         <section id="team">
           <TeamSection />
+          <VisionSection />
         </section>
       </main>
       
