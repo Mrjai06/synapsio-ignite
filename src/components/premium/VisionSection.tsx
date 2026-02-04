@@ -1,45 +1,60 @@
 import { motion } from "framer-motion";
+import { ArrowRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { FloatingSurface } from "./DepthSystem";
 
 const VisionSection = () => {
   return (
     <section className="relative py-20 md:py-28">
       <div className="container mx-auto px-8 lg:px-16">
-        <div className="max-w-3xl mx-auto text-center">
-          {/* Section label */}
-          <motion.p 
-            className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground/40 mb-6"
-            initial={{ opacity: 0, y: 10 }}
+        <div className="max-w-2xl mx-auto text-center">
+          {/* CTA content */}
+          <motion.h2 
+            className="text-3xl md:text-4xl font-light text-foreground mb-8 tracking-tight leading-tight"
+            initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
+            transition={{ duration: 0.8 }}
           >
-            Our Vision
-          </motion.p>
+            Ready to transform your supply chain?
+          </motion.h2>
           
-          {/* Main statement */}
-          <motion.h2 
-            className="text-2xl md:text-3xl lg:text-4xl font-light leading-[1.3] mb-8 text-foreground/90"
+          <motion.p 
+            className="text-lg text-muted-foreground/40 mb-14 leading-relaxed"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, delay: 0.1 }}
           >
-            A world where supply chains{" "}
-            <span className="text-primary">adapt, predict, and optimize</span>{" "}
-            themselves — freeing businesses to focus on what matters most.
-          </motion.h2>
+            Join forward-thinking enterprises building resilient, intelligent operations.
+          </motion.p>
           
-          {/* Supporting text */}
-          <motion.p 
-            className="text-sm md:text-base text-muted-foreground/60 font-light leading-relaxed max-w-xl mx-auto"
+          <motion.div 
+            className="flex flex-col sm:flex-row gap-5 justify-center"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, delay: 0.2 }}
           >
-            We believe the future of supply chain management is autonomous, intelligent, 
-            and seamlessly integrated — creating resilience and efficiency at every level.
-          </motion.p>
+            <FloatingSurface elevation="high" glow glowColor="primary" className="rounded-full">
+              <Button 
+                size="lg" 
+                className="group bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-10 py-7 text-sm tracking-wide font-normal transition-all duration-1000 hover:scale-[1.02]"
+              >
+                View Pitchdeck
+                <ArrowRight className="ml-3 h-4 w-4 transition-transform duration-700 group-hover:translate-x-1" />
+              </Button>
+            </FloatingSurface>
+            <FloatingSurface elevation="medium" className="rounded-full">
+              <Button 
+                size="lg" 
+                variant="ghost"
+                className="text-muted-foreground/60 hover:text-foreground hover:bg-card/20 rounded-full px-10 py-7 text-sm tracking-wide font-normal border border-border/20 hover:border-border/40 transition-all duration-1000 backdrop-blur-sm"
+              >
+                Get in Touch
+              </Button>
+            </FloatingSurface>
+          </motion.div>
         </div>
       </div>
     </section>

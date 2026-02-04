@@ -121,58 +121,43 @@ const TeamSection = () => {
           <TestimonialCarousel testimonials={team} />
         </div>
         
-        {/* Final CTA - warm and inviting with staggered animation */}
+        {/* Vision statement */}
         <div 
           ref={ctaRef}
-          className="max-w-2xl mx-auto text-center"
+          className="max-w-3xl mx-auto text-center"
         >
-          <h3 
-            className="text-3xl md:text-4xl font-light text-foreground mb-8 tracking-tight leading-tight transition-all duration-1000"
+          <p 
+            className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground/40 mb-6 transition-all duration-1000"
             style={{ 
               opacity: ctaVisible ? 1 : 0,
-              transform: ctaVisible ? "translateY(0)" : "translateY(20px)"
+              transform: ctaVisible ? "translateY(0)" : "translateY(10px)"
             }}
           >
-            Ready to transform your supply chain?
+            Our Vision
+          </p>
+          <h3 
+            className="text-2xl md:text-3xl lg:text-4xl font-light text-foreground/90 mb-8 leading-[1.3] transition-all duration-1000"
+            style={{ 
+              opacity: ctaVisible ? 1 : 0,
+              transform: ctaVisible ? "translateY(0)" : "translateY(20px)",
+              transitionDelay: "100ms"
+            }}
+          >
+            A world where supply chains{" "}
+            <span className="text-primary">adapt, predict, and optimize</span>{" "}
+            themselves — freeing businesses to focus on what matters most.
           </h3>
           <p 
-            className="text-lg text-muted-foreground/40 mb-14 leading-relaxed transition-all duration-1000"
+            className="text-sm md:text-base text-muted-foreground/60 font-light leading-relaxed max-w-xl mx-auto transition-all duration-1000"
             style={{ 
               opacity: ctaVisible ? 1 : 0,
               transform: ctaVisible ? "translateY(0)" : "translateY(20px)",
               transitionDelay: "200ms"
             }}
           >
-            Join forward-thinking enterprises building resilient, intelligent operations.
+            We believe the future of supply chain management is autonomous, intelligent, 
+            and seamlessly integrated — creating resilience and efficiency at every level.
           </p>
-          
-          <div 
-            className="flex flex-col sm:flex-row gap-5 justify-center transition-all duration-1000"
-            style={{ 
-              opacity: ctaVisible ? 1 : 0,
-              transform: ctaVisible ? "translateY(0)" : "translateY(20px)",
-              transitionDelay: "400ms"
-            }}
-          >
-            <FloatingSurface elevation="high" glow glowColor="primary" className="rounded-full">
-              <Button 
-                size="lg" 
-                className="group bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-10 py-7 text-sm tracking-wide font-normal transition-all duration-1000 hover:scale-[1.02]"
-              >
-                View Pitchdeck
-                <ArrowRight className="ml-3 h-4 w-4 transition-transform duration-700 group-hover:translate-x-1" />
-              </Button>
-            </FloatingSurface>
-            <FloatingSurface elevation="medium" className="rounded-full">
-              <Button 
-                size="lg" 
-                variant="ghost"
-                className="text-muted-foreground/60 hover:text-foreground hover:bg-card/20 rounded-full px-10 py-7 text-sm tracking-wide font-normal border border-border/20 hover:border-border/40 transition-all duration-1000 backdrop-blur-sm"
-              >
-                Get in Touch
-              </Button>
-            </FloatingSurface>
-          </div>
         </div>
       </div>
     </section>
