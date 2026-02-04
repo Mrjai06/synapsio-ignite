@@ -49,13 +49,13 @@ const ProgressNavbar = () => {
 
   return (
     <nav className="fixed right-6 top-1/2 -translate-y-1/2 z-40 hidden lg:block">
-      <div className="relative flex flex-col items-center">
-        {/* Background track */}
-        <div className="absolute left-1/2 -translate-x-1/2 top-0 bottom-0 w-px bg-border/15" />
+      <div className="relative">
+        {/* Background track - same width as dots */}
+        <div className="absolute left-1/2 -translate-x-1/2 top-0 bottom-0 w-2 rounded-full bg-border/20" />
         
-        {/* Filled progress */}
+        {/* Filled progress - same width as dots */}
         <div 
-          className="absolute left-1/2 -translate-x-1/2 top-0 w-px bg-primary/40 transition-all duration-200 ease-out"
+          className="absolute left-1/2 -translate-x-1/2 top-0 w-2 rounded-full bg-primary/50 transition-all duration-200 ease-out"
           style={{ height: `${progress * 100}%` }}
         />
         
@@ -85,15 +85,15 @@ const ProgressNavbar = () => {
                   {section.label}
                 </span>
                 
-                {/* Dot indicator */}
+                {/* Dot indicator - blends with bar */}
                 <div 
                   className={`
-                    rounded-full transition-all duration-500
+                    w-2 h-2 rounded-full transition-all duration-500 relative z-10
                     ${isActive 
-                      ? "w-2 h-2 bg-primary/70" 
+                      ? "bg-primary scale-125" 
                       : isPast 
-                        ? "w-1.5 h-1.5 bg-muted-foreground/25" 
-                        : "w-1.5 h-1.5 bg-border/30 group-hover:bg-muted-foreground/20"
+                        ? "bg-primary/50" 
+                        : "bg-border/30 group-hover:bg-muted-foreground/30"
                     }
                   `}
                 />
