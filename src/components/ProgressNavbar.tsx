@@ -12,7 +12,7 @@ const ProgressNavbar = () => {
     { id: "product", label: "Product" },
     { id: "opportunity", label: "Opportunity" },
     { id: "roadmap", label: "Roadmap" },
-    { id: "team", label: "Team" },
+    { id: "team", label: "Team & Vision" },
   ];
 
   useEffect(() => {
