@@ -93,6 +93,53 @@ const ProblemSection = () => {
     return { x, y };
   };
 
+  // Calculate edge intersection point for lines to dock on square sides
+  const getEdgePoint = (fromIndex: number, toIndex: number) => {
+    const from = getNodeCenter(fromIndex);
+    const to = getNodeCenter(toIndex);
+    const halfSize = 65; // Half of the 130x130 square
+    
+    // Direction vector from 'from' to 'to'
+    const dx = to.x - from.x;
+    const dy = to.y - from.y;
+    
+    // Calculate intersection with the square edge
+    // We need to find where the line exits the square around 'from'
+    // and where it enters the square around 'to'
+    
+    const getIntersection = (center: { x: number; y: number }, dirX: number, dirY: number) => {
+      // Normalize direction
+      const len = Math.sqrt(dirX * dirX + dirY * dirY);
+      if (len === 0) return center;
+      
+      const nx = dirX / len;
+      const ny = dirY / len;
+      
+      // Find intersection with square edges
+      // Check which edge we hit first
+      let t = Infinity;
+      
+      if (nx !== 0) {
+        const tRight = halfSize / Math.abs(nx);
+        if (tRight < t) t = tRight;
+      }
+      if (ny !== 0) {
+        const tBottom = halfSize / Math.abs(ny);
+        if (tBottom < t) t = tBottom;
+      }
+      
+      return {
+        x: center.x + nx * t,
+        y: center.y + ny * t
+      };
+    };
+    
+    const fromEdge = getIntersection(from, dx, dy);
+    const toEdge = getIntersection(to, -dx, -dy);
+    
+    return { from: fromEdge, to: toEdge };
+  };
+
   return (
     <section ref={sectionRef} className="relative py-32 md:py-48 overflow-hidden">
       {/* Background layers */}
@@ -139,8 +186,9 @@ const ProblemSection = () => {
               >
                 {/* Connection lines - always visible with animation */}
                 {connections.map((connection, index) => {
-                  const from = getNodeCenter(connection.from);
-                  const to = getNodeCenter(connection.to);
+                  const edgePoints = getEdgePoint(connection.from, connection.to);
+                  const from = edgePoints.from;
+                  const to = edgePoints.to;
                   const isHighlighted = activeNode === connection.from || activeNode === connection.to;
 
                   return (
