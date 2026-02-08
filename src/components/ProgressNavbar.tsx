@@ -82,9 +82,9 @@ const ProgressNavbar = () => {
   return (
     <nav className="fixed right-6 top-1/2 -translate-y-1/2 z-40 hidden lg:block">
       <div className="relative" ref={containerRef}>
-        {/* Background track */}
+        {/* Background track - same width as dots */}
         <div 
-          className="absolute left-1/2 -translate-x-1/2 w-[3px] rounded-full bg-border/20"
+          className="absolute left-1/2 -translate-x-1/2 w-2 rounded-full bg-border/20"
           style={{ 
             top: dotPositions[0] || 0,
             height: dotPositions.length > 0 
@@ -93,9 +93,9 @@ const ProgressNavbar = () => {
           }}
         />
         
-        {/* Filled progress bar - reaches exactly to the active dot */}
+        {/* Filled progress - same width as dots, reaches exactly to the active dot */}
         <div 
-          className="absolute left-1/2 -translate-x-1/2 w-[3px] rounded-full bg-gradient-to-b from-primary/80 to-primary transition-all duration-300 ease-out"
+          className="absolute left-1/2 -translate-x-1/2 w-2 rounded-full bg-primary/50 transition-all duration-500 ease-out"
           style={{ 
             top: dotPositions[0] || 0,
             height: Math.max(0, getProgressHeight() - (dotPositions[0] || 0))
@@ -114,42 +114,32 @@ const ProgressNavbar = () => {
                 onClick={() => scrollToSection(section.id, index)}
                 className="group flex items-center gap-3 relative"
               >
-                {/* Label - appears on hover or when active */}
+                {/* Label - appears on hover */}
                 <span 
                   className={`
                     text-[10px] tracking-wide uppercase transition-all duration-300 whitespace-nowrap
-                    absolute right-full mr-4
+                    absolute right-full mr-3
                     ${isActive 
-                      ? "opacity-70 text-primary font-medium" 
-                      : isPast
-                        ? "opacity-0 group-hover:opacity-50 text-primary/70"
-                        : "opacity-0 group-hover:opacity-40 text-muted-foreground"
+                      ? "opacity-50 text-foreground" 
+                      : "opacity-0 group-hover:opacity-40 text-muted-foreground"
                     }
                   `}
                 >
                   {section.label}
                 </span>
                 
-                {/* Dot indicator */}
+                {/* Dot indicator - blends with bar */}
                 <div 
                   className={`
-                    dot-indicator rounded-full transition-all duration-300 relative z-10
+                    dot-indicator w-2 h-2 rounded-full transition-all duration-500 relative z-10
                     ${isActive 
-                      ? "w-3 h-3 bg-primary shadow-[0_0_12px_2px_hsl(var(--primary)/0.5)]" 
+                      ? "bg-primary scale-125" 
                       : isPast 
-                        ? "w-2 h-2 bg-primary/70" 
-                        : "w-2 h-2 bg-border/40 group-hover:bg-muted-foreground/40"
+                        ? "bg-primary/50" 
+                        : "bg-border/30 group-hover:bg-muted-foreground/30"
                     }
                   `}
                 />
-                
-                {/* Active ring indicator */}
-                {isActive && (
-                  <div 
-                    className="absolute left-0 w-3 h-3 rounded-full border-2 border-primary/30 animate-ping"
-                    style={{ animationDuration: '2s' }}
-                  />
-                )}
               </button>
             );
           })}
