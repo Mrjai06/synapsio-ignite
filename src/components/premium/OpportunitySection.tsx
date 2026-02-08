@@ -1,21 +1,130 @@
 import { useState, useRef, useEffect } from "react";
-import { ChevronLeft, ChevronRight, Building2, Layers, Zap } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Building2, Layers, Zap, Check, X } from "lucide-react";
 import { FloatingSurface, GlassPanel, AmbientGlow } from "./DepthSystem";
 
-const marketData = {
-  tam: { value: "$847B", label: "Total Addressable Market", description: "Global supply chain management software and services" },
-  sam: { value: "$124B", label: "Serviceable Available Market", description: "Enterprise SCM platforms for mid-to-large organizations" },
-  som: { value: "$8.2B", label: "Serviceable Obtainable Market", description: "AI-native SCM solutions in target verticals" }
-};
-
-const competitors = [
-  { name: "SAP SCM", position: "Legacy leader", differentiation: "30-year-old architecture, 18+ month implementations" },
-  { name: "Oracle SCM", position: "Enterprise incumbent", differentiation: "Complex pricing, siloed modules" },
-  { name: "Blue Yonder", position: "Planning specialist", differentiation: "Limited real-time capabilities" },
-  { name: "Kinaxis", position: "Concurrent planning", differentiation: "Narrow focus on planning only" },
-  { name: "Coupa", position: "Procurement focus", differentiation: "Limited end-to-end visibility" }
+// Market Opportunity Data (Pyramid)
+const marketLayers = [
+  { 
+    id: "tam", 
+    label: "TAM", 
+    title: "Global AI-powered supply-chain market",
+    value: "$50B+",
+    description: "Revenue potential"
+  },
+  { 
+    id: "sam", 
+    label: "SAM", 
+    title: "Initial target market (EU)",
+    value: "$7B-20B",
+    description: "Revenue potential"
+  },
+  { 
+    id: "som", 
+    label: "SOM", 
+    title: "Local market (DACH)",
+    value: "$25-60M",
+    description: "5 Year revenue potential: ARR"
+  }
 ];
 
+const opportunityPoints = [
+  {
+    category: "AI",
+    color: "primary",
+    points: [
+      "Supply chain spend on AI is growing with a ~35% CAGR increase",
+      "Shifting from pilots to core infrastructure in various industries",
+      "Operational budgets reallocating from legacy tools into AI platforms"
+    ]
+  },
+  {
+    category: "Focused entry",
+    color: "primary",
+    points: [
+      "DACH combines industrial density, logistics leadership, and early AI adoption"
+    ]
+  },
+  {
+    category: "Global scalability",
+    color: "primary",
+    points: [
+      "Asset-light SaaS model enables global expansion without proportional cost growth"
+    ]
+  }
+];
+
+// Why Now Data
+const whyNowData = {
+  technology: [
+    "SMEs can now access enterprise-grade AI capabilities at low cost",
+    "AI has reached production-level reliability for operational automation",
+    "Significant advances in model stability, infrastructure and tooling"
+  ],
+  technologyHighlight: "Foundation model performance doubled in the last 3 years",
+  technologySource: "Stanford AI Index, 2025",
+  
+  shift: [
+    "SCM-Budgets are shifting toward AI-Based Solutions",
+    "Early Platforms move toward AI-native architectures"
+  ],
+  shiftHighlight: "Global AI spend in supply chain expected to grow >35% CAGR until 2030",
+  shiftSource: "Gartner, IDC, 2025",
+  
+  pressure: [
+    "Increasing operational complexity in global supply chains",
+    "Geopolitical disruptions and rising supplier risk lead to fragmented supply chains",
+    "Strong cost pressure and margin compression for SMEs"
+  ],
+  pressureHighlight: "63% of businesses report higher-than-expected losses",
+  pressureSource: "WTW, 2025"
+};
+
+const marketGrowthData = {
+  years: ["2023/24", "2029/2030"],
+  segments: [
+    { label: "AI-SCM-solution spend | Germany", color: "muted", values: [0.67, 1.94] },
+    { label: "SCM-solution spend | Germany", color: "muted-foreground", values: [6.42, 3.45] },
+    { label: "AI-SCM-solution spend | Global", color: "primary", values: [15.27, 48.51] },
+    { label: "SCM-solution spend | Global", color: "secondary", values: [77.64, 46.11] }
+  ]
+};
+
+// Competition Data
+const competitionTable = {
+  headers: ["Feature", "ERP-Systems", "SCM-Tools", "Synapsio"],
+  rows: [
+    { feature: "Automation", values: ["Low", "Medium", "High"] },
+    { feature: "AI-native", values: ["No", "Partially", "Yes"] },
+    { feature: "Marketplace", values: ["No", "No", "Yes"] },
+    { feature: "SME Focus", values: ["Medium", "Low", "High"] },
+    { feature: "End-to-End", values: ["Partial", "Partial", "Yes"] },
+    { feature: "Autonomous", values: ["No", "No", "Yes"] }
+  ]
+};
+
+const marketLandscape = [
+  {
+    category: "ERP systems (SAP, Odoo)",
+    points: [
+      "Strong internal planning and accounting",
+      "Limited automation and flexibility",
+      "No cross-company intelligence",
+      "Long implementation cycles"
+    ]
+  },
+  {
+    category: "SCM-Software (Coupa, Tacto, Jaggaer)",
+    points: [
+      "Process optimization and analytics",
+      "AI-forward Platforms",
+      "Limited autonomy and closed ecosystems",
+      "Human-driven workflows"
+    ]
+  }
+];
+
+// Business Model Data
 const tiers = [
   {
     icon: Building2,
@@ -43,101 +152,252 @@ const tiers = [
   }
 ];
 
+// Market Pyramid Component
+const MarketPyramid = ({ activeLayer, onLayerClick }: { activeLayer: string; onLayerClick: (id: string) => void }) => {
+  return (
+    <svg viewBox="0 0 400 300" className="w-full max-w-lg mx-auto">
+      {/* TAM - Bottom layer */}
+      <motion.g
+        onClick={() => onLayerClick("tam")}
+        className="cursor-pointer"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2 }}
+      >
+        <motion.path
+          d="M10 280 L200 40 L390 280 Z"
+          fill="none"
+          stroke={activeLayer === "tam" ? "hsl(var(--primary))" : "hsl(var(--border))"}
+          strokeWidth={activeLayer === "tam" ? 2 : 1}
+          className="transition-all duration-500"
+        />
+        <motion.path
+          d="M10 280 L200 40 L390 280 Z"
+          fill={activeLayer === "tam" ? "hsl(var(--primary) / 0.1)" : "hsl(var(--secondary) / 0.3)"}
+          className="transition-all duration-500"
+        />
+        <text x="70" y="260" className="fill-foreground text-lg font-light">TAM</text>
+      </motion.g>
+      
+      {/* SAM - Middle layer */}
+      <motion.g
+        onClick={() => onLayerClick("sam")}
+        className="cursor-pointer"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.4 }}
+      >
+        <motion.path
+          d="M60 220 L200 80 L340 220 Z"
+          fill="none"
+          stroke={activeLayer === "sam" ? "hsl(var(--primary))" : "hsl(var(--border))"}
+          strokeWidth={activeLayer === "sam" ? 2 : 1}
+          className="transition-all duration-500"
+        />
+        <motion.path
+          d="M60 220 L200 80 L340 220 Z"
+          fill={activeLayer === "sam" ? "hsl(var(--primary) / 0.15)" : "hsl(var(--secondary) / 0.5)"}
+          className="transition-all duration-500"
+        />
+        <text x="85" y="200" className="fill-foreground text-lg font-light">SAM</text>
+      </motion.g>
+      
+      {/* SOM - Top layer */}
+      <motion.g
+        onClick={() => onLayerClick("som")}
+        className="cursor-pointer"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.6 }}
+      >
+        <motion.path
+          d="M120 160 L200 100 L280 160 Z"
+          fill="none"
+          stroke={activeLayer === "som" ? "hsl(var(--primary))" : "hsl(var(--border))"}
+          strokeWidth={activeLayer === "som" ? 2 : 1}
+          className="transition-all duration-500"
+        />
+        <motion.path
+          d="M120 160 L200 100 L280 160 Z"
+          fill={activeLayer === "som" ? "hsl(var(--primary) / 0.2)" : "hsl(var(--secondary) / 0.7)"}
+          className="transition-all duration-500"
+        />
+        <text x="140" y="145" className="fill-foreground text-sm font-light">SOM</text>
+      </motion.g>
+      
+      {/* Info callouts */}
+      <AnimatePresence mode="wait">
+        {activeLayer === "tam" && (
+          <motion.g
+            key="tam-info"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+          >
+            <line x1="300" y1="200" x2="360" y2="200" stroke="hsl(var(--primary))" strokeWidth="1" />
+            <circle cx="360" cy="200" r="4" fill="hsl(var(--primary))" />
+          </motion.g>
+        )}
+        {activeLayer === "sam" && (
+          <motion.g
+            key="sam-info"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+          >
+            <line x1="280" y1="160" x2="360" y2="160" stroke="hsl(var(--primary))" strokeWidth="1" />
+            <circle cx="360" cy="160" r="4" fill="hsl(var(--primary))" />
+          </motion.g>
+        )}
+        {activeLayer === "som" && (
+          <motion.g
+            key="som-info"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+          >
+            <line x1="250" y1="130" x2="360" y2="130" stroke="hsl(var(--primary))" strokeWidth="1" />
+            <circle cx="360" cy="130" r="4" fill="hsl(var(--primary))" />
+          </motion.g>
+        )}
+      </AnimatePresence>
+    </svg>
+  );
+};
+
+// Circle Visualization for Why Now
+const GrowthCircles = ({ year, values }: { year: string; values: number[] }) => {
+  const maxRadius = 100;
+  const total = values.reduce((a, b) => a + b, 0);
+  
+  return (
+    <div className="relative">
+      <p className="text-2xl font-light text-foreground mb-6 text-center">{year}</p>
+      <div className="relative w-48 h-48 mx-auto">
+        {/* Background circle */}
+        <motion.div
+          className="absolute rounded-full bg-muted-foreground/20"
+          style={{
+            width: `${(values[3] / 100) * 200}px`,
+            height: `${(values[3] / 100) * 200}px`,
+            left: '50%',
+            top: '50%',
+            transform: 'translate(-50%, -50%)'
+          }}
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={{ delay: 0.2, duration: 0.8, ease: "easeOut" }}
+        />
+        {/* Primary circle (AI spend) */}
+        <motion.div
+          className="absolute rounded-full bg-primary/40"
+          style={{
+            width: `${(values[2] / 100) * 200}px`,
+            height: `${(values[2] / 100) * 200}px`,
+            left: '50%',
+            top: '50%',
+            transform: 'translate(-50%, -50%)'
+          }}
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={{ delay: 0.4, duration: 0.8, ease: "easeOut" }}
+        />
+        {/* Germany circle */}
+        <motion.div
+          className="absolute rounded-full bg-muted/60"
+          style={{
+            width: `${(values[1] / 100) * 200}px`,
+            height: `${(values[1] / 100) * 200}px`,
+            left: '50%',
+            top: '50%',
+            transform: 'translate(-50%, -50%)'
+          }}
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={{ delay: 0.6, duration: 0.8, ease: "easeOut" }}
+        />
+        {/* Inner circle */}
+        <motion.div
+          className="absolute rounded-full bg-foreground"
+          style={{
+            width: `${Math.max((values[0] / 100) * 200, 16)}px`,
+            height: `${Math.max((values[0] / 100) * 200, 16)}px`,
+            left: '50%',
+            top: '50%',
+            transform: 'translate(-50%, -50%)'
+          }}
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={{ delay: 0.8, duration: 0.8, ease: "easeOut" }}
+        />
+      </div>
+      {/* Labels */}
+      <div className="mt-6 space-y-1">
+        {values.map((val, i) => (
+          <motion.div 
+            key={i}
+            className="flex items-center justify-between text-xs"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.5 + i * 0.1 }}
+          >
+            <span className="text-muted-foreground/50">
+              {i === 2 ? `${val.toFixed(2)} %, ~ +35 % CAGR` : `${val.toFixed(2)} %`}
+            </span>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
 const OpportunitySection = () => {
-  const [activeMarket, setActiveMarket] = useState<"tam" | "sam" | "som">("sam");
-  const [competitorIndex, setCompetitorIndex] = useState(0);
-  const [isDragging, setIsDragging] = useState(false);
-  const [dragStart, setDragStart] = useState(0);
-  const [marketHover, setMarketHover] = useState<"tam" | "sam" | "som" | null>(null);
+  const [activeLayer, setActiveLayer] = useState("som");
   const [headerVisible, setHeaderVisible] = useState(false);
+  const [marketVisible, setMarketVisible] = useState(false);
+  const [whyNowVisible, setWhyNowVisible] = useState(false);
+  const [competitionVisible, setCompetitionVisible] = useState(false);
   const [businessVisible, setBusinessVisible] = useState(false);
+  
   const headerRef = useRef<HTMLDivElement>(null);
-  const cardRef = useRef<HTMLDivElement>(null);
+  const marketRef = useRef<HTMLDivElement>(null);
+  const whyNowRef = useRef<HTMLDivElement>(null);
+  const competitionRef = useRef<HTMLDivElement>(null);
   const businessRef = useRef<HTMLDivElement>(null);
 
-  // Header observer
+  // Observers
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) setHeaderVisible(true);
-      },
-      { threshold: 0.3 }
-    );
-    if (headerRef.current) observer.observe(headerRef.current);
-    return () => observer.disconnect();
-  }, []);
-
-  // Business observer
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) setBusinessVisible(true);
-      },
-      { threshold: 0.2 }
-    );
-    if (businessRef.current) observer.observe(businessRef.current);
-    return () => observer.disconnect();
-  }, []);
-
-  const nextCompetitor = () => {
-    setCompetitorIndex((i) => (i + 1) % competitors.length);
-  };
-  
-  const prevCompetitor = () => {
-    setCompetitorIndex((i) => (i - 1 + competitors.length) % competitors.length);
-  };
-
-  // Touch/drag handlers for swipeable deck
-  const handleDragStart = (e: React.MouseEvent | React.TouchEvent) => {
-    setIsDragging(true);
-    const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
-    setDragStart(clientX);
-  };
-
-  const handleDragEnd = (e: React.MouseEvent | React.TouchEvent) => {
-    if (!isDragging) return;
-    setIsDragging(false);
-    
-    const clientX = 'changedTouches' in e ? e.changedTouches[0].clientX : e.clientX;
-    const diff = clientX - dragStart;
-    
-    if (Math.abs(diff) > 50) {
-      if (diff > 0) {
-        prevCompetitor();
-      } else {
-        nextCompetitor();
-      }
-    }
-  };
-
-  // Get ring sizes and styles based on active/hover state
-  const getRingStyle = (ring: "tam" | "sam" | "som") => {
-    const isActive = activeMarket === ring;
-    const isHovered = marketHover === ring;
-    
-    const baseScale = isActive ? 1.02 : isHovered ? 1.01 : 1;
-    const borderOpacity = isActive ? 0.4 : isHovered ? 0.3 : 0.15;
-    const bgOpacity = isActive ? 0.08 : isHovered ? 0.04 : 0;
-    
-    return {
-      transform: `scale(${baseScale})`,
-      borderColor: `hsl(var(--primary) / ${borderOpacity})`,
-      backgroundColor: `hsl(var(--primary) / ${bgOpacity})`,
+    const createObserver = (ref: React.RefObject<HTMLDivElement>, setter: (v: boolean) => void, threshold = 0.2) => {
+      const observer = new IntersectionObserver(
+        ([entry]) => { if (entry.isIntersecting) setter(true); },
+        { threshold }
+      );
+      if (ref.current) observer.observe(ref.current);
+      return observer;
     };
-  };
+    
+    const observers = [
+      createObserver(headerRef, setHeaderVisible, 0.3),
+      createObserver(marketRef, setMarketVisible),
+      createObserver(whyNowRef, setWhyNowVisible),
+      createObserver(competitionRef, setCompetitionVisible),
+      createObserver(businessRef, setBusinessVisible)
+    ];
+    
+    return () => observers.forEach(obs => obs.disconnect());
+  }, []);
+
+  const activeMarketData = marketLayers.find(l => l.id === activeLayer);
 
   return (
     <section className="relative py-32 md:py-48">
-      {/* Layered ambient depth */}
       <AmbientGlow color="secondary" size="xl" intensity="medium" position="center" />
       <AmbientGlow color="primary" size="md" intensity="subtle" position="right" className="top-1/4" />
       
       <div className="relative z-10 container mx-auto px-8 lg:px-20 xl:px-28">
         {/* Section header */}
         <div ref={headerRef} className="max-w-2xl mb-28 md:mb-36">
-          <p 
-            className={`text-[10px] tracking-[0.4em] uppercase text-primary/50 mb-10 transition-all duration-1000 ${headerVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}
-          >
+          <p className={`text-[10px] tracking-[0.4em] uppercase text-primary/50 mb-10 transition-all duration-1000 ${headerVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}>
             Opportunity
           </p>
           <h2 
@@ -150,203 +410,295 @@ const OpportunitySection = () => {
           </h2>
         </div>
         
-        {/* Subcategory 1: Market Opportunity */}
-        <div className="mb-32 md:mb-48">
-          <p className="text-xs tracking-[0.25em] uppercase text-muted-foreground/35 mb-12">
+        {/* === MARKET OPPORTUNITY === */}
+        <div ref={marketRef} className="mb-40 md:mb-56">
+          <p className="text-xs tracking-[0.25em] uppercase text-muted-foreground/35 mb-16">
             Market Opportunity
           </p>
           
-          <div className="max-w-3xl mx-auto">
-            <div className="relative flex items-center justify-center py-16">
-              <div className="relative">
-                {/* TAM - outermost */}
-                <button
-                  onClick={() => setActiveMarket("tam")}
-                  onMouseEnter={() => setMarketHover("tam")}
-                  onMouseLeave={() => setMarketHover(null)}
-                  className="w-80 h-80 rounded-full border-2 flex items-center justify-center transition-all duration-1000 ease-out"
-                  style={getRingStyle("tam")}
-                >
-                  {/* SAM - middle */}
-                  <button
-                    onClick={(e) => { e.stopPropagation(); setActiveMarket("sam"); }}
-                    onMouseEnter={(e) => { e.stopPropagation(); setMarketHover("sam"); }}
-                    onMouseLeave={() => setMarketHover(null)}
-                    className="w-56 h-56 rounded-full border-2 flex items-center justify-center transition-all duration-1000 ease-out"
-                    style={getRingStyle("sam")}
+          <div className={`grid lg:grid-cols-2 gap-16 transition-all duration-1000 ${marketVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
+            {/* Pyramid */}
+            <div>
+              <MarketPyramid activeLayer={activeLayer} onLayerClick={setActiveLayer} />
+              
+              {/* Active layer info */}
+              <AnimatePresence mode="wait">
+                {activeMarketData && (
+                  <motion.div
+                    key={activeMarketData.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className="mt-8 text-center"
                   >
-                    {/* SOM - innermost */}
-                    <button
-                      onClick={(e) => { e.stopPropagation(); setActiveMarket("som"); }}
-                      onMouseEnter={(e) => { e.stopPropagation(); setMarketHover("som"); }}
-                      onMouseLeave={() => setMarketHover(null)}
-                      className="w-32 h-32 rounded-full border-2 flex items-center justify-center transition-all duration-1000 ease-out"
-                      style={getRingStyle("som")}
-                    >
-                      <span className={`text-xs tracking-wider transition-all duration-700 ${activeMarket === "som" ? "text-foreground scale-110" : "text-muted-foreground/40"}`}>
-                        SOM
-                      </span>
-                    </button>
-                  </button>
-                </button>
-                
-                {/* Labels with fade based on selection */}
-                <span className={`absolute -top-6 left-1/2 -translate-x-1/2 text-xs tracking-wider transition-all duration-700 ${activeMarket === "tam" ? "text-primary/80" : "text-muted-foreground/25"}`}>
-                  TAM
-                </span>
-                <span className={`absolute top-8 left-1/2 -translate-x-1/2 text-xs tracking-wider transition-all duration-700 ${activeMarket === "sam" ? "text-primary/80" : "text-muted-foreground/25"}`}>
-                  SAM
-                </span>
-                
-                {/* Pulse ring on active */}
-                <div 
-                  className="absolute inset-0 rounded-full pointer-events-none transition-all duration-1000"
-                  style={{
-                    width: activeMarket === "tam" ? "320px" : activeMarket === "sam" ? "224px" : "128px",
-                    height: activeMarket === "tam" ? "320px" : activeMarket === "sam" ? "224px" : "128px",
-                    left: "50%",
-                    top: "50%",
-                    transform: "translate(-50%, -50%)",
-                    boxShadow: `0 0 60px -20px hsl(var(--primary) / 0.3)`,
-                  }}
-                />
-              </div>
+                    <GlassPanel intensity="subtle" bordered className="inline-block px-6 py-4 rounded-xl">
+                      <p className="text-xs text-primary mb-1">• {activeMarketData.title}</p>
+                      <p className="text-xs text-muted-foreground/60">• {activeMarketData.description}: <span className="text-foreground font-medium">{activeMarketData.value}</span></p>
+                    </GlassPanel>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
             
-            {/* Active market info with smooth transitions */}
-            <div className="text-center mt-8">
-              <p 
-                className="text-5xl font-light text-foreground mb-3 transition-all duration-700"
-                key={activeMarket}
-              >
-                {marketData[activeMarket].value}
-              </p>
-              <p className="text-sm text-muted-foreground/50 mb-4 transition-all duration-500">
-                {marketData[activeMarket].label}
-              </p>
-              <p className="text-sm text-muted-foreground/35 max-w-sm mx-auto transition-all duration-500">
-                {marketData[activeMarket].description}
-              </p>
+            {/* Opportunity points */}
+            <div className="space-y-8">
+              <h3 className="text-xl text-primary/80 mb-6">Opportunity:</h3>
+              {opportunityPoints.map((section, i) => (
+                <motion.div
+                  key={section.category}
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={marketVisible ? { opacity: 1, x: 0 } : {}}
+                  transition={{ delay: 0.3 + i * 0.15 }}
+                >
+                  <h4 className="text-primary text-sm mb-3">{section.category}:</h4>
+                  <ul className="space-y-2">
+                    {section.points.map((point, j) => (
+                      <li key={j} className="text-sm text-muted-foreground/60 flex items-start gap-3">
+                        <span className="text-muted-foreground/40 mt-1">-</span>
+                        {point}
+                      </li>
+                    ))}
+                  </ul>
+                </motion.div>
+              ))}
             </div>
           </div>
         </div>
         
-        {/* Subcategory 2: Competitive Landscape */}
-        <div className="mb-32 md:mb-48">
-          <p className="text-xs tracking-[0.25em] uppercase text-muted-foreground/35 mb-12">
-            Competitive Landscape
+        {/* === WHY NOW === */}
+        <div ref={whyNowRef} className="mb-40 md:mb-56">
+          <p className="text-xs tracking-[0.25em] uppercase text-muted-foreground/35 mb-16">
+            Why now – AI as the operating system of supply-chains
           </p>
           
-          <div className="max-w-2xl mx-auto">
-            {/* Stacked card deck effect */}
-            <div className="relative h-[200px]">
-              {competitors.map((competitor, i) => {
-                const offset = i - competitorIndex;
-                const isActive = i === competitorIndex;
-                const isPrev = offset === -1 || (competitorIndex === 0 && i === competitors.length - 1);
-                const isNext = offset === 1 || (competitorIndex === competitors.length - 1 && i === 0);
-                
-                // Calculate z-index and transforms for deck effect
-                let zIndex = 10 - Math.abs(offset);
-                let translateX = 0;
-                let scale = 1;
-                let opacity = 0;
-                
-                if (isActive) {
-                  zIndex = 20;
-                  opacity = 1;
-                } else if (isPrev) {
-                  translateX = -20;
-                  scale = 0.95;
-                  opacity = 0.3;
-                  zIndex = 15;
-                } else if (isNext) {
-                  translateX = 20;
-                  scale = 0.95;
-                  opacity = 0.3;
-                  zIndex = 15;
-                }
-                
-                return (
-                  <FloatingSurface
-                    key={competitor.name}
-                    elevation={isActive ? "high" : "low"}
-                    glow={isActive}
-                    glowColor="primary"
-                    className={`
-                      absolute inset-0 rounded-3xl
-                      transition-all duration-700 ease-out cursor-grab
-                      ${isDragging && isActive ? "cursor-grabbing" : ""}
-                    `}
-                    style={{
-                      zIndex,
-                      transform: `translateX(${translateX}px) scale(${scale})`,
-                      opacity,
-                      pointerEvents: isActive ? "auto" : "none",
-                    }}
-                  >
-                    <GlassPanel
-                      ref={isActive ? cardRef : undefined}
-                      intensity={isActive ? "medium" : "subtle"}
-                      bordered
-                      className="h-full p-10 rounded-3xl"
-                      onMouseDown={handleDragStart}
-                      onMouseUp={handleDragEnd}
-                      onMouseLeave={() => isDragging && handleDragEnd}
-                      onTouchStart={handleDragStart}
-                      onTouchEnd={handleDragEnd}
-                    >
-                      <div className="flex items-center justify-between mb-8">
-                        <h4 className="text-2xl font-light text-foreground">
-                          {competitor.name}
-                        </h4>
-                        <span className="text-xs text-muted-foreground/40 tracking-wide">
-                          {i + 1} / {competitors.length}
-                        </span>
-                      </div>
-                      <p className="text-sm text-primary/70 mb-4">{competitor.position}</p>
-                      <p className="text-base text-muted-foreground/45 leading-relaxed">
-                        {competitor.differentiation}
-                      </p>
-                    </GlassPanel>
-                  </FloatingSurface>
-                );
-              })}
+          <div className={`grid lg:grid-cols-2 gap-16 transition-all duration-1000 ${whyNowVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
+            {/* Left: Text content */}
+            <div className="space-y-10">
+              {/* Technology */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={whyNowVisible ? { opacity: 1, y: 0 } : {}}
+                transition={{ delay: 0.2 }}
+              >
+                <GlassPanel intensity="subtle" bordered className="p-6 rounded-xl">
+                  <h4 className="text-foreground text-sm mb-4">Technology:</h4>
+                  <ul className="space-y-2 mb-4">
+                    {whyNowData.technology.map((point, i) => (
+                      <li key={i} className="text-xs text-muted-foreground/60 flex items-start gap-3">
+                        <span className="text-muted-foreground/40 mt-0.5">-</span>
+                        {point}
+                      </li>
+                    ))}
+                  </ul>
+                  <p className="text-xs">
+                    <span className="text-primary">{whyNowData.technologyHighlight}</span>
+                    <span className="text-muted-foreground/40 ml-2">({whyNowData.technologySource})</span>
+                  </p>
+                </GlassPanel>
+              </motion.div>
+              
+              {/* Shift/Future */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={whyNowVisible ? { opacity: 1, y: 0 } : {}}
+                transition={{ delay: 0.4 }}
+              >
+                <GlassPanel intensity="subtle" bordered className="p-6 rounded-xl">
+                  <h4 className="text-foreground text-sm mb-4">Shift/Future:</h4>
+                  <ul className="space-y-2 mb-4">
+                    {whyNowData.shift.map((point, i) => (
+                      <li key={i} className="text-xs text-muted-foreground/60 flex items-start gap-3">
+                        <span className="text-muted-foreground/40 mt-0.5">-</span>
+                        {point}
+                      </li>
+                    ))}
+                  </ul>
+                  <p className="text-xs">
+                    <span className="text-primary">{whyNowData.shiftHighlight}</span>
+                    <span className="text-muted-foreground/40 ml-2">({whyNowData.shiftSource})</span>
+                  </p>
+                </GlassPanel>
+              </motion.div>
+              
+              {/* Market Pressure */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={whyNowVisible ? { opacity: 1, y: 0 } : {}}
+                transition={{ delay: 0.6 }}
+              >
+                <GlassPanel intensity="subtle" bordered className="p-6 rounded-xl">
+                  <h4 className="text-foreground text-sm mb-4">Market Pressure:</h4>
+                  <ul className="space-y-2 mb-4">
+                    {whyNowData.pressure.map((point, i) => (
+                      <li key={i} className="text-xs text-muted-foreground/60 flex items-start gap-3">
+                        <span className="text-muted-foreground/40 mt-0.5">-</span>
+                        {point}
+                      </li>
+                    ))}
+                  </ul>
+                  <p className="text-xs">
+                    <span className="text-primary">{whyNowData.pressureHighlight}</span>
+                    <span className="text-muted-foreground/40 ml-2">({whyNowData.pressureSource})</span>
+                  </p>
+                </GlassPanel>
+              </motion.div>
+              
+              {/* Conclusion */}
+              <motion.p
+                className="text-sm text-muted-foreground/70"
+                initial={{ opacity: 0 }}
+                animate={whyNowVisible ? { opacity: 1 } : {}}
+                transition={{ delay: 0.8 }}
+              >
+                AI is becoming the dominating operating system of supply chains by 2030 – <span className="text-primary">Now is the time to act!</span>
+              </motion.p>
             </div>
             
-            {/* Navigation dots and arrows */}
-            <div className="flex items-center justify-center gap-6 mt-8">
-              <button
-                onClick={prevCompetitor}
-                className="p-3 rounded-full border border-border/15 hover:border-border/40 transition-all duration-500 hover:scale-105"
+            {/* Right: Circle visualizations */}
+            <div className="grid grid-cols-2 gap-8">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={whyNowVisible ? { opacity: 1, scale: 1 } : {}}
+                transition={{ delay: 0.4 }}
               >
-                <ChevronLeft className="h-4 w-4 text-muted-foreground/40" />
-              </button>
-              
-              <div className="flex gap-2">
-                {competitors.map((_, i) => (
-                  <button
-                    key={i}
-                    onClick={() => setCompetitorIndex(i)}
-                    className={`
-                      w-2 h-2 rounded-full transition-all duration-500
-                      ${i === competitorIndex ? "bg-primary/60 w-6" : "bg-border/30 hover:bg-border/50"}
-                    `}
-                  />
-                ))}
-              </div>
-              
-              <button
-                onClick={nextCompetitor}
-                className="p-3 rounded-full border border-border/15 hover:border-border/40 transition-all duration-500 hover:scale-105"
+                <GlassPanel intensity="subtle" bordered className="p-6 rounded-xl h-full">
+                  <GrowthCircles year="2023/24" values={[0.67, 6.42, 15.27, 77.64]} />
+                </GlassPanel>
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={whyNowVisible ? { opacity: 1, scale: 1 } : {}}
+                transition={{ delay: 0.6 }}
               >
-                <ChevronRight className="h-4 w-4 text-muted-foreground/40" />
-              </button>
+                <GlassPanel intensity="subtle" bordered className="p-6 rounded-xl h-full">
+                  <GrowthCircles year="2029/2030" values={[1.94, 3.45, 48.51, 46.11]} />
+                </GlassPanel>
+              </motion.div>
             </div>
+          </div>
+          
+          {/* Legend */}
+          <motion.div 
+            className="flex flex-wrap gap-6 justify-center mt-10"
+            initial={{ opacity: 0 }}
+            animate={whyNowVisible ? { opacity: 1 } : {}}
+            transition={{ delay: 1 }}
+          >
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 rounded-full bg-foreground" />
+              <span className="text-xs text-muted-foreground/50">AI-SCM-solution spend | Germany</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 rounded-full bg-primary/40" />
+              <span className="text-xs text-muted-foreground/50">AI-SCM-solution spend | Global</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 rounded-full bg-muted/60" />
+              <span className="text-xs text-muted-foreground/50">SCM-solution spend | Germany</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 rounded-full bg-muted-foreground/20" />
+              <span className="text-xs text-muted-foreground/50">SCM-solution spend | Global</span>
+            </div>
+          </motion.div>
+        </div>
+        
+        {/* === COMPETITION === */}
+        <div ref={competitionRef} className="mb-40 md:mb-56">
+          <p className="text-xs tracking-[0.25em] uppercase text-muted-foreground/35 mb-16">
+            Competition
+          </p>
+          
+          <div className={`grid lg:grid-cols-2 gap-16 transition-all duration-1000 ${competitionVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
+            {/* Comparison Table */}
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={competitionVisible ? { opacity: 1, x: 0 } : {}}
+              transition={{ delay: 0.2 }}
+            >
+              <GlassPanel intensity="subtle" bordered className="p-6 rounded-xl overflow-hidden">
+                <table className="w-full">
+                  <thead>
+                    <tr className="border-b border-border/30">
+                      {competitionTable.headers.map((header, i) => (
+                        <th 
+                          key={header} 
+                          className={`py-3 px-2 text-left text-xs font-medium ${i === 3 ? "text-primary" : "text-muted-foreground/60"}`}
+                        >
+                          {header}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {competitionTable.rows.map((row, rowIndex) => (
+                      <motion.tr 
+                        key={row.feature}
+                        className="border-b border-border/20"
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={competitionVisible ? { opacity: 1, y: 0 } : {}}
+                        transition={{ delay: 0.3 + rowIndex * 0.08 }}
+                      >
+                        <td className="py-3 px-2 text-xs text-foreground">{row.feature}</td>
+                        {row.values.map((value, i) => (
+                          <td key={i} className={`py-3 px-2 text-xs ${i === 2 ? "text-primary" : "text-muted-foreground/60"}`}>
+                            {value === "Yes" ? (
+                              <Check className="w-4 h-4 text-primary" />
+                            ) : value === "No" ? (
+                              <X className="w-4 h-4 text-destructive/50" />
+                            ) : (
+                              value
+                            )}
+                          </td>
+                        ))}
+                      </motion.tr>
+                    ))}
+                  </tbody>
+                </table>
+              </GlassPanel>
+              
+              {/* Synapsio tagline */}
+              <motion.p
+                className="mt-6 text-sm text-foreground/80"
+                initial={{ opacity: 0 }}
+                animate={competitionVisible ? { opacity: 1 } : {}}
+                transition={{ delay: 0.8 }}
+              >
+                Synapsio combines marketplace liquidity, autonomous execution and AI-native orchestration in <span className="text-primary">one platform</span>
+              </motion.p>
+            </motion.div>
+            
+            {/* Market Landscape */}
+            <motion.div
+              className="space-y-8"
+              initial={{ opacity: 0, x: 20 }}
+              animate={competitionVisible ? { opacity: 1, x: 0 } : {}}
+              transition={{ delay: 0.4 }}
+            >
+              <h3 className="text-xl text-primary/80 mb-6">Market landscape:</h3>
+              {marketLandscape.map((segment, i) => (
+                <motion.div
+                  key={segment.category}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={competitionVisible ? { opacity: 1, y: 0 } : {}}
+                  transition={{ delay: 0.5 + i * 0.2 }}
+                >
+                  <h4 className="text-primary text-sm mb-3">{segment.category}:</h4>
+                  <ul className="space-y-2">
+                    {segment.points.map((point, j) => (
+                      <li key={j} className="text-sm text-muted-foreground/60 flex items-start gap-3">
+                        <span className="text-muted-foreground/40 mt-1">-</span>
+                        {point}
+                      </li>
+                    ))}
+                  </ul>
+                </motion.div>
+              ))}
+            </motion.div>
           </div>
         </div>
         
-        {/* Subcategory 3: Business Model */}
+        {/* === BUSINESS MODEL (unchanged) === */}
         <div ref={businessRef}>
           <p className="text-xs tracking-[0.25em] uppercase text-muted-foreground/35 mb-12">
             Business Model
