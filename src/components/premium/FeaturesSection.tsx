@@ -181,26 +181,26 @@ const FeaturesSection = () => {
           </h2>
         </div>
 
-        {/* 2-Column Layout: Cards + Details */}
-        <div className="grid lg:grid-cols-[1fr_400px] gap-8 lg:gap-12 xl:gap-16 items-start mb-12">
-          
-          {/* LEFT: Feature Cards - Horizontal on desktop */}
-          <div className="grid sm:grid-cols-3 gap-4">
-            {features.map((feature) => {
-              const isActive = activeFeature === feature.id;
-              const Icon = feature.icon;
-              
-              return (
+        {/* Feature Cards - Expandable */}
+        <div className="grid sm:grid-cols-3 gap-4 mb-12">
+          {features.map((feature) => {
+            const isActive = activeFeature === feature.id;
+            const Icon = feature.icon;
+            
+            return (
+              <motion.div
+                key={feature.id}
+                layout
+                className={`rounded-2xl border transition-colors duration-500 overflow-hidden ${
+                  isActive 
+                    ? "bg-accent/10 border-accent/40 ring-2 ring-accent/20" 
+                    : "bg-background/40 border-border/20 hover:border-border/40"
+                }`}
+              >
                 <motion.button
-                  key={feature.id}
-                  onClick={() => setActiveFeature(feature.id)}
-                  className={`text-left p-5 rounded-2xl border transition-all duration-500 ${
-                    isActive 
-                      ? "bg-accent/10 border-accent/40 ring-2 ring-accent/20" 
-                      : "bg-background/40 border-border/20 hover:border-border/40"
-                  }`}
-                  whileHover={{ scale: isActive ? 1 : 1.02 }}
-                  whileTap={{ scale: 0.98 }}
+                  layout="position"
+                  onClick={() => setActiveFeature(isActive ? "" : feature.id)}
+                  className="w-full text-left p-5"
                 >
                   <div className="flex items-center gap-3 mb-3">
                     <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-colors duration-500 ${
@@ -215,89 +215,84 @@ const FeaturesSection = () => {
                     }`}>
                       {feature.title}
                     </h3>
+                    <motion.div 
+                      className="ml-auto"
+                      animate={{ rotate: isActive ? 45 : 0 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <svg className={`w-5 h-5 transition-colors ${isActive ? "text-accent" : "text-muted-foreground/40"}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                      </svg>
+                    </motion.div>
                   </div>
                   <p className="text-sm text-muted-foreground/50 leading-relaxed">
                     {feature.description}
                   </p>
-                  
-                  <AnimatePresence>
-                    {isActive && (
-                      <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: "auto" }}
-                        exit={{ opacity: 0, height: 0 }}
-                        className="flex items-center gap-2 mt-3 pt-3 border-t border-accent/20"
-                      >
-                        <span className="text-xs text-accent/70 uppercase tracking-wider">Viewing</span>
-                        <ArrowRight className="w-3 h-3 text-accent/70" />
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
                 </motion.button>
-              );
-            })}
-          </div>
-
-          {/* RIGHT: Decision-Focused Explanation */}
-          <div className="lg:sticky lg:top-32">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={activeFeature}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.4 }}
-                className="space-y-5"
-              >
-                {/* Headline */}
-                <h3 className="text-xl md:text-2xl font-light text-foreground leading-tight">
-                  {activeData.content.headline}
-                </h3>
-
-                {/* Decision automated */}
-                <div className="p-4 rounded-xl bg-accent/5 border border-accent/20">
-                  <p className="text-xs uppercase tracking-wider text-accent/70 mb-2">
-                    Decision Automated
-                  </p>
-                  <p className="text-foreground/90 leading-relaxed text-sm">
-                    {activeData.content.decision}
-                  </p>
-                </div>
-
-                {/* Constraint optimized */}
-                <div className="p-4 rounded-xl bg-primary/5 border border-primary/20">
-                  <p className="text-xs uppercase tracking-wider text-primary/70 mb-2">
-                    Constraint Optimized
-                  </p>
-                  <p className="text-foreground/80 leading-relaxed text-sm">
-                    {activeData.content.constraint}
-                  </p>
-                </div>
-
-                {/* Metrics - horizontal */}
-                <div className="grid grid-cols-3 gap-2">
-                  {activeData.content.metrics.map((metric, idx) => {
-                    const Icon = metric.icon;
-                    return (
-                      <motion.div
-                        key={metric.label}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.2 + idx * 0.1 }}
-                        className="text-center p-3 rounded-xl bg-background/50 border border-border/10"
-                      >
-                        <Icon className="w-4 h-4 text-accent mx-auto mb-1" />
-                        <p className="text-lg font-medium text-accent">{metric.value}</p>
-                        <p className="text-[9px] text-muted-foreground/50 uppercase tracking-wider">
-                          {metric.label}
+                
+                <AnimatePresence>
+                  {isActive && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      exit={{ opacity: 0, height: 0 }}
+                      transition={{ duration: 0.4, ease: "easeInOut" }}
+                      className="overflow-hidden"
+                    >
+                      <div className="px-5 pb-5 space-y-4 border-t border-accent/20 pt-4">
+                        {/* Headline */}
+                        <p className="text-sm text-foreground/90 leading-relaxed">
+                          {feature.content.headline}
                         </p>
-                      </motion.div>
-                    );
-                  })}
-                </div>
+
+                        {/* Decision automated */}
+                        <div className="p-3 rounded-lg bg-accent/5 border border-accent/20">
+                          <p className="text-[10px] uppercase tracking-wider text-accent/70 mb-1">
+                            Decision Automated
+                          </p>
+                          <p className="text-foreground/80 leading-relaxed text-xs">
+                            {feature.content.decision}
+                          </p>
+                        </div>
+
+                        {/* Constraint optimized */}
+                        <div className="p-3 rounded-lg bg-primary/5 border border-primary/20">
+                          <p className="text-[10px] uppercase tracking-wider text-primary/70 mb-1">
+                            Constraint Optimized
+                          </p>
+                          <p className="text-foreground/70 leading-relaxed text-xs">
+                            {feature.content.constraint}
+                          </p>
+                        </div>
+
+                        {/* Metrics */}
+                        <div className="grid grid-cols-3 gap-2">
+                          {feature.content.metrics.map((metric, idx) => {
+                            const MetricIcon = metric.icon;
+                            return (
+                              <motion.div
+                                key={metric.label}
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.1 + idx * 0.05 }}
+                                className="text-center p-2 rounded-lg bg-background/50 border border-border/10"
+                              >
+                                <MetricIcon className="w-3 h-3 text-accent mx-auto mb-1" />
+                                <p className="text-sm font-medium text-accent">{metric.value}</p>
+                                <p className="text-[8px] text-muted-foreground/50 uppercase tracking-wider">
+                                  {metric.label}
+                                </p>
+                              </motion.div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </motion.div>
-            </AnimatePresence>
-          </div>
+            );
+          })}
         </div>
 
         {/* Live Explanation Panel - Above visualization */}
