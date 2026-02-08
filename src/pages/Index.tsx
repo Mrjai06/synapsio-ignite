@@ -1,4 +1,5 @@
 import HeroSection from "@/components/premium/HeroSection";
+import PrefaceSection from "@/components/premium/PrefaceSection";
 import ProblemSection from "@/components/premium/ProblemSection";
 import SolutionSection from "@/components/premium/SolutionSection";
 import ProcessOverviewSection from "@/components/premium/ProcessOverviewSection";
@@ -27,9 +28,19 @@ const Index = () => {
           <HeroSection />
         </section>
         
-        {/* Narrative bridge: From order to chaos */}
+        {/* Narrative bridge: From intro to preface */}
         <div className="relative h-32 -mt-16">
           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/50 to-background" />
+        </div>
+        
+        {/* Preface: What Synapsio is */}
+        <section id="preface">
+          <PrefaceSection />
+        </section>
+        
+        {/* Narrative bridge: From preface to challenge */}
+        <div className="relative h-16">
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent to-background/30" />
         </div>
         
         {/* Act 2: The Challenge - Friction Emerges */}

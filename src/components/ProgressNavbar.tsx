@@ -6,6 +6,7 @@ const ProgressNavbar = () => {
   
   const sections = [
     { id: "hero", label: "Intro" },
+    { id: "preface", label: "Preface" },
     { id: "problem", label: "Challenge" },
     { id: "solution", label: "Solution" },
     { id: "process", label: "Process" },

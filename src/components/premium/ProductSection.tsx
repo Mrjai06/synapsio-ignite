@@ -23,10 +23,8 @@ const examples = [
 
 const ProductSection = () => {
   const [headerVisible, setHeaderVisible] = useState(false);
-  const [explanationVisible, setExplanationVisible] = useState(false);
   const [examplesVisible, setExamplesVisible] = useState(false);
   const headerRef = useRef<HTMLDivElement>(null);
-  const explanationRef = useRef<HTMLDivElement>(null);
   const examplesRef = useRef<HTMLDivElement>(null);
 
   // Header observer
@@ -38,18 +36,6 @@ const ProductSection = () => {
       { threshold: 0.3 }
     );
     if (headerRef.current) observer.observe(headerRef.current);
-    return () => observer.disconnect();
-  }, []);
-
-  // Explanation observer
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) setExplanationVisible(true);
-      },
-      { threshold: 0.2 }
-    );
-    if (explanationRef.current) observer.observe(explanationRef.current);
     return () => observer.disconnect();
   }, []);
 
@@ -74,37 +60,20 @@ const ProductSection = () => {
       
       <div className="relative z-10 container mx-auto px-8 lg:px-20 xl:px-28">
         {/* Section header */}
-        <div ref={headerRef} className="max-w-2xl mb-28 md:mb-36">
+        <div ref={headerRef} className="max-w-2xl mb-20 md:mb-28">
           <p 
             className={`text-[10px] tracking-[0.4em] uppercase text-primary/50 mb-10 transition-all duration-1000 ${headerVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}
           >
             Our Product
           </p>
           <h2 
-            className={`text-4xl md:text-5xl lg:text-[3.5rem] font-light tracking-[-0.02em] mb-12 leading-[1.08] transition-all duration-1000 ${headerVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
+            className={`text-4xl md:text-5xl lg:text-[3.5rem] font-light tracking-[-0.02em] leading-[1.08] transition-all duration-1000 ${headerVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
             style={{ transitionDelay: "100ms" }}
           >
             <span className="text-foreground">A living system</span>
             <br />
             <span className="text-muted-foreground/30">that grows with you</span>
           </h2>
-        </div>
-        
-        {/* Subcategory 1: Explanation */}
-        <div ref={explanationRef} className="mb-32 md:mb-48">
-          <p className="text-xs tracking-[0.25em] uppercase text-muted-foreground/35 mb-12">
-            Explanation
-          </p>
-          <div 
-            className={`max-w-3xl transition-all duration-1000 ${explanationVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
-          >
-            <p className="text-xl md:text-2xl text-muted-foreground/70 leading-relaxed mb-8">
-              Synapsio is an AI-native supply chain intelligence platform that transforms fragmented data into actionable insights. Unlike legacy systems that require months of integration, our platform connects to your existing infrastructure in weeks.
-            </p>
-            <p className="text-lg text-muted-foreground/50 leading-relaxed">
-              By continuously analyzing patterns across your entire supply network, we predict disruptions before they occur, optimize inventory in real-time, and automate routine decisions—freeing your team to focus on strategic initiatives.
-            </p>
-          </div>
         </div>
       </div>
       
