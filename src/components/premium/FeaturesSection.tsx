@@ -96,6 +96,7 @@ const features = [
 const FeaturesSection = () => {
   const [activeFeature, setActiveFeature] = useState<string>("marketplace");
   const [systemState, setSystemState] = useState<SystemState>("idle");
+  const [isLoopPaused, setIsLoopPaused] = useState(false);
   const [headerVisible, setHeaderVisible] = useState(false);
   const headerRef = useRef<HTMLDivElement>(null);
 
@@ -124,10 +125,12 @@ const FeaturesSection = () => {
     };
   }, []);
 
-  // Cycle through system states for the animation
+  // Cycle through system states for the animation (only when not paused)
   useEffect(() => {
+    if (isLoopPaused) return;
+    
     const stateSequence: SystemState[] = ["idle", "decision", "execution"];
-    let currentIndex = 0;
+    let currentIndex = stateSequence.indexOf(systemState);
     
     const interval = setInterval(() => {
       currentIndex = (currentIndex + 1) % stateSequence.length;
@@ -135,11 +138,18 @@ const FeaturesSection = () => {
     }, 3200);
 
     return () => clearInterval(interval);
-  }, [activeFeature]);
+  }, [activeFeature, isLoopPaused, systemState]);
+
+  // Handler for clicking a state
+  const handleStateClick = (clickedState: SystemState) => {
+    setSystemState(clickedState);
+    setIsLoopPaused(true);
+  };
 
   // Reset state when feature changes
   useEffect(() => {
     setSystemState("idle");
+    setIsLoopPaused(false);
   }, [activeFeature]);
 
   const activeData = features.find(f => f.id === activeFeature)!;
@@ -301,7 +311,7 @@ const FeaturesSection = () => {
         {/* VISUALIZATION - Full width below cards */}
         <div className="relative w-full aspect-[16/9] max-h-[600px] rounded-3xl border border-border/20 bg-background/40 backdrop-blur-sm overflow-hidden">
           {/* System State Indicator - Top Right */}
-          <SystemStateIndicator state={systemState} />
+          <SystemStateIndicator state={systemState} onStateClick={handleStateClick} isPaused={isLoopPaused} />
           
           <AnimatePresence mode="wait">
             <motion.div
@@ -358,7 +368,15 @@ const FeaturesSection = () => {
 // SYSTEM STATE INDICATOR
 // Shows current state: Idle, Decision, Execution
 // ============================================================
-const SystemStateIndicator = ({ state }: { state: SystemState }) => {
+const SystemStateIndicator = ({ 
+  state, 
+  onStateClick, 
+  isPaused 
+}: { 
+  state: SystemState; 
+  onStateClick: (state: SystemState) => void;
+  isPaused: boolean;
+}) => {
   const states: { id: SystemState; label: string; icon: typeof Circle }[] = [
     { id: "idle", label: "Idle", icon: Circle },
     { id: "decision", label: "Decision", icon: Play },
@@ -372,25 +390,31 @@ const SystemStateIndicator = ({ state }: { state: SystemState }) => {
         const isActive = state === s.id;
         const Icon = s.icon;
         return (
-          <motion.div
+          <motion.button
             key={s.id}
-            className={`flex items-center gap-1.5 px-2 py-1 rounded-full transition-all duration-300 ${
+            onClick={() => onStateClick(s.id)}
+            className={`flex items-center gap-1.5 px-2 py-1 rounded-full transition-all duration-300 cursor-pointer ${
               isActive 
                 ? s.id === "idle" 
                   ? "bg-muted-foreground/20 text-foreground" 
                   : s.id === "decision" 
                     ? "bg-accent/20 text-accent" 
                     : "bg-primary/20 text-primary"
-                : "text-muted-foreground/30"
+                : "text-muted-foreground/30 hover:text-muted-foreground/60 hover:bg-muted-foreground/10"
             }`}
             animate={isActive ? { scale: [1, 1.05, 1] } : {}}
             transition={{ duration: 0.3 }}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
           >
             <Icon className={`w-3 h-3 ${isActive && s.id === "execution" ? "animate-pulse" : ""}`} />
             <span className="text-[10px] font-medium">{s.label}</span>
-          </motion.div>
+          </motion.button>
         );
       })}
+      {isPaused && (
+        <span className="text-[8px] uppercase tracking-wider text-accent/70 ml-1">Paused</span>
+      )}
     </div>
   );
 };
