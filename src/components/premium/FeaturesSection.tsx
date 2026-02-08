@@ -94,7 +94,7 @@ const features = [
 ];
 
 const FeaturesSection = () => {
-  const [activeFeature, setActiveFeature] = useState<string>("marketplace");
+  const [activeFeature, setActiveFeature] = useState<string>("");
   const [systemState, setSystemState] = useState<SystemState>("idle");
   const [isLoopPaused, setIsLoopPaused] = useState(false);
   const [headerVisible, setHeaderVisible] = useState(false);
@@ -152,7 +152,7 @@ const FeaturesSection = () => {
     setIsLoopPaused(false);
   }, [activeFeature]);
 
-  const activeData = features.find(f => f.id === activeFeature)!;
+  const activeData = features.find(f => f.id === activeFeature) || features[0];
 
   return (
     <section data-features-section className="relative py-32 md:py-48 overflow-hidden">
@@ -200,20 +200,17 @@ const FeaturesSection = () => {
                     opacity: 1
                   }}
                   transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
-                  className={`rounded-2xl border transition-colors duration-500 overflow-hidden ${
+                  onClick={() => setActiveFeature(isActive ? "" : feature.id)}
+                  className={`rounded-2xl border transition-colors duration-500 overflow-hidden cursor-pointer ${
                     isActive 
                       ? "bg-accent/10 border-accent/40 ring-2 ring-accent/20" 
                       : isInactive
-                        ? "bg-background/20 border-border/10"
+                        ? "bg-background/20 border-border/10 hover:border-border/30"
                         : "bg-background/40 border-border/20 hover:border-border/40"
                   }`}
                 >
                   {/* Card Header - Always visible */}
-                  <motion.button
-                    layout="position"
-                    onClick={() => setActiveFeature(isActive ? "" : feature.id)}
-                    className={`text-left w-full ${isInactive ? "p-3" : "p-5"}`}
-                  >
+                  <div className={`${isInactive ? "p-3" : "p-5"}`}>
                     <div className={`flex items-center ${isInactive ? "flex-col gap-2" : "gap-3 mb-3"}`}>
                       <div className={`rounded-xl flex items-center justify-center transition-all duration-500 shrink-0 ${
                         isActive ? "bg-accent/20 w-10 h-10" : isInactive ? "bg-primary/5 w-8 h-8" : "bg-primary/10 w-10 h-10"
@@ -235,7 +232,7 @@ const FeaturesSection = () => {
                           animate={{ opacity: 1 }}
                           className="ml-auto shrink-0"
                         >
-                          <svg className="w-5 h-5 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <svg className="w-5 h-5 text-accent/60" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                           </svg>
                         </motion.div>
@@ -246,7 +243,7 @@ const FeaturesSection = () => {
                         {feature.description}
                       </p>
                     )}
-                  </motion.button>
+                  </div>
                   
                   {/* Expanded Content - Only when active */}
                   <AnimatePresence>
