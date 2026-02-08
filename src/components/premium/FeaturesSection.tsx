@@ -181,118 +181,166 @@ const FeaturesSection = () => {
           </h2>
         </div>
 
-        {/* Feature Cards - Expandable */}
-        <div className="grid sm:grid-cols-3 gap-4 mb-12">
-          {features.map((feature) => {
-            const isActive = activeFeature === feature.id;
-            const Icon = feature.icon;
-            
-            return (
-              <motion.div
-                key={feature.id}
-                layout
-                className={`rounded-2xl border transition-colors duration-500 overflow-hidden ${
-                  isActive 
-                    ? "bg-accent/10 border-accent/40 ring-2 ring-accent/20" 
-                    : "bg-background/40 border-border/20 hover:border-border/40"
-                }`}
-              >
-                <motion.button
-                  layout="position"
-                  onClick={() => setActiveFeature(isActive ? "" : feature.id)}
-                  className="w-full text-left p-5"
-                >
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-colors duration-500 ${
-                      isActive ? "bg-accent/20" : "bg-primary/10"
-                    }`}>
-                      <Icon className={`w-5 h-5 transition-colors duration-500 ${
-                        isActive ? "text-accent" : "text-primary/60"
-                      }`} />
-                    </div>
-                    <h3 className={`font-medium text-base transition-colors duration-500 ${
-                      isActive ? "text-accent" : "text-foreground"
-                    }`}>
-                      {feature.title}
-                    </h3>
-                    <motion.div 
-                      className="ml-auto"
-                      animate={{ rotate: isActive ? 45 : 0 }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      <svg className={`w-5 h-5 transition-colors ${isActive ? "text-accent" : "text-muted-foreground/40"}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                      </svg>
-                    </motion.div>
-                  </div>
-                  <p className="text-sm text-muted-foreground/50 leading-relaxed">
-                    {feature.description}
-                  </p>
-                </motion.button>
+        {/* Feature Cards - Horizontal expand on click */}
+        <div className="relative mb-12">
+          <div className="flex gap-4 items-stretch">
+            <AnimatePresence mode="wait">
+              {features.map((feature) => {
+                const isActive = activeFeature === feature.id;
+                const isAnyActive = activeFeature !== "";
+                const Icon = feature.icon;
                 
-                <AnimatePresence>
-                  {isActive && (
+                // Hide non-active cards when one is selected
+                if (isAnyActive && !isActive) {
+                  return (
                     <motion.div
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: "auto" }}
-                      exit={{ opacity: 0, height: 0 }}
+                      key={feature.id}
+                      initial={{ opacity: 1, width: "auto" }}
+                      animate={{ opacity: 0, width: 0 }}
+                      exit={{ opacity: 1, width: "auto" }}
                       transition={{ duration: 0.4, ease: "easeInOut" }}
                       className="overflow-hidden"
+                    />
+                  );
+                }
+                
+                return (
+                  <motion.div
+                    key={feature.id}
+                    layout
+                    initial={false}
+                    animate={{ 
+                      flex: isActive ? 1 : "0 0 auto",
+                      width: isActive ? "100%" : "auto"
+                    }}
+                    transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
+                    className={`rounded-2xl border transition-colors duration-500 overflow-hidden ${
+                      isActive 
+                        ? "bg-accent/10 border-accent/40 ring-2 ring-accent/20" 
+                        : "bg-background/40 border-border/20 hover:border-border/40"
+                    }`}
+                  >
+                    {/* Card Header - Always visible */}
+                    <motion.button
+                      layout="position"
+                      onClick={() => setActiveFeature(isActive ? "" : feature.id)}
+                      className={`text-left p-5 ${isActive ? "w-full" : ""}`}
                     >
-                      <div className="px-5 pb-5 space-y-4 border-t border-accent/20 pt-4">
-                        {/* Headline */}
-                        <p className="text-sm text-foreground/90 leading-relaxed">
-                          {feature.content.headline}
-                        </p>
-
-                        {/* Decision automated */}
-                        <div className="p-3 rounded-lg bg-accent/5 border border-accent/20">
-                          <p className="text-[10px] uppercase tracking-wider text-accent/70 mb-1">
-                            Decision Automated
-                          </p>
-                          <p className="text-foreground/80 leading-relaxed text-xs">
-                            {feature.content.decision}
-                          </p>
+                      <div className="flex items-center gap-3 mb-3">
+                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-colors duration-500 shrink-0 ${
+                          isActive ? "bg-accent/20" : "bg-primary/10"
+                        }`}>
+                          <Icon className={`w-5 h-5 transition-colors duration-500 ${
+                            isActive ? "text-accent" : "text-primary/60"
+                          }`} />
                         </div>
-
-                        {/* Constraint optimized */}
-                        <div className="p-3 rounded-lg bg-primary/5 border border-primary/20">
-                          <p className="text-[10px] uppercase tracking-wider text-primary/70 mb-1">
-                            Constraint Optimized
-                          </p>
-                          <p className="text-foreground/70 leading-relaxed text-xs">
-                            {feature.content.constraint}
-                          </p>
-                        </div>
-
-                        {/* Metrics */}
-                        <div className="grid grid-cols-3 gap-2">
-                          {feature.content.metrics.map((metric, idx) => {
-                            const MetricIcon = metric.icon;
-                            return (
-                              <motion.div
-                                key={metric.label}
-                                initial={{ opacity: 0, y: 10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: 0.1 + idx * 0.05 }}
-                                className="text-center p-2 rounded-lg bg-background/50 border border-border/10"
-                              >
-                                <MetricIcon className="w-3 h-3 text-accent mx-auto mb-1" />
-                                <p className="text-sm font-medium text-accent">{metric.value}</p>
-                                <p className="text-[8px] text-muted-foreground/50 uppercase tracking-wider">
-                                  {metric.label}
-                                </p>
-                              </motion.div>
-                            );
-                          })}
-                        </div>
+                        <h3 className={`font-medium text-base transition-colors duration-500 whitespace-nowrap ${
+                          isActive ? "text-accent" : "text-foreground"
+                        }`}>
+                          {feature.title}
+                        </h3>
+                        {isActive && (
+                          <motion.div 
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            className="ml-auto shrink-0"
+                          >
+                            <svg className="w-5 h-5 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                          </motion.div>
+                        )}
                       </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </motion.div>
-            );
-          })}
+                      <p className="text-sm text-muted-foreground/50 leading-relaxed">
+                        {feature.description}
+                      </p>
+                    </motion.button>
+                    
+                    {/* Expanded Content - Only when active */}
+                    <AnimatePresence>
+                      {isActive && (
+                        <motion.div
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          transition={{ duration: 0.3, delay: 0.2 }}
+                          className="px-5 pb-5"
+                        >
+                          <div className="grid md:grid-cols-[1fr_1fr_auto] gap-6 border-t border-accent/20 pt-4">
+                            {/* Left: Headline & Details */}
+                            <div className="space-y-4">
+                              <p className="text-base text-foreground/90 leading-relaxed font-light">
+                                {feature.content.headline}
+                              </p>
+
+                              <div className="p-3 rounded-lg bg-accent/5 border border-accent/20">
+                                <p className="text-[10px] uppercase tracking-wider text-accent/70 mb-1">
+                                  Decision Automated
+                                </p>
+                                <p className="text-foreground/80 leading-relaxed text-sm">
+                                  {feature.content.decision}
+                                </p>
+                              </div>
+
+                              <div className="p-3 rounded-lg bg-primary/5 border border-primary/20">
+                                <p className="text-[10px] uppercase tracking-wider text-primary/70 mb-1">
+                                  Constraint Optimized
+                                </p>
+                                <p className="text-foreground/70 leading-relaxed text-sm">
+                                  {feature.content.constraint}
+                                </p>
+                              </div>
+                            </div>
+
+                            {/* Middle: What's Eliminated */}
+                            <div className="space-y-3">
+                              <p className="text-[10px] uppercase tracking-wider text-muted-foreground/50">
+                                What's Eliminated
+                              </p>
+                              {Object.entries(feature.content.removal).map(([key, value], idx) => (
+                                <motion.div
+                                  key={key}
+                                  initial={{ opacity: 0, x: 10 }}
+                                  animate={{ opacity: 1, x: 0 }}
+                                  transition={{ delay: 0.3 + idx * 0.1 }}
+                                  className="flex items-start gap-2 text-sm"
+                                >
+                                  <span className="w-1.5 h-1.5 rounded-full bg-accent/60 shrink-0 mt-1.5" />
+                                  <span className="text-muted-foreground/70">{value}</span>
+                                </motion.div>
+                              ))}
+                            </div>
+
+                            {/* Right: Metrics */}
+                            <div className="flex flex-col gap-2">
+                              {feature.content.metrics.map((metric, idx) => {
+                                const MetricIcon = metric.icon;
+                                return (
+                                  <motion.div
+                                    key={metric.label}
+                                    initial={{ opacity: 0, y: 10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: 0.2 + idx * 0.05 }}
+                                    className="text-center p-3 rounded-lg bg-background/50 border border-border/10 min-w-[100px]"
+                                  >
+                                    <MetricIcon className="w-4 h-4 text-accent mx-auto mb-1" />
+                                    <p className="text-lg font-medium text-accent">{metric.value}</p>
+                                    <p className="text-[8px] text-muted-foreground/50 uppercase tracking-wider">
+                                      {metric.label}
+                                    </p>
+                                  </motion.div>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </motion.div>
+                );
+              })}
+            </AnimatePresence>
+          </div>
         </div>
 
         {/* Live Explanation Panel - Above visualization */}
