@@ -183,7 +183,11 @@ const FeaturesSection = () => {
 
         {/* Feature Cards - Default 3-column, expands on click */}
         <div className="relative mb-12">
-          <div className="flex gap-4 items-stretch">
+          <motion.div 
+            className="flex gap-4 items-stretch"
+            layout
+            transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
+          >
             {features.map((feature) => {
               const isActive = activeFeature === feature.id;
               const isAnyActive = activeFeature !== "";
@@ -197,129 +201,180 @@ const FeaturesSection = () => {
                   initial={false}
                   animate={{ 
                     flex: isActive ? "1 1 auto" : isInactive ? "0 0 60px" : "1 1 0%",
-                    opacity: 1
                   }}
-                  transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
+                  transition={{ 
+                    layout: { duration: 0.6, ease: [0.4, 0, 0.2, 1] },
+                    flex: { duration: 0.6, ease: [0.4, 0, 0.2, 1] }
+                  }}
                   onClick={() => setActiveFeature(isActive ? "" : feature.id)}
-                  className={`rounded-2xl border transition-colors duration-500 overflow-hidden cursor-pointer ${
+                  className={`rounded-2xl border overflow-hidden cursor-pointer ${
                     isActive 
                       ? "bg-accent/10 border-accent/40 ring-2 ring-accent/20" 
                       : isInactive
                         ? "bg-background/20 border-border/10 hover:border-border/30"
                         : "bg-background/40 border-border/20 hover:border-border/40"
                   }`}
+                  style={{ transition: "background-color 0.5s, border-color 0.5s, box-shadow 0.5s" }}
                 >
                   {/* Card Header - Always visible */}
-                  <div className={`${isInactive ? "p-3" : "p-5"}`}>
-                    <div className={`flex items-center ${isInactive ? "flex-col gap-2" : "gap-3 mb-3"}`}>
-                      <div className={`rounded-xl flex items-center justify-center transition-all duration-500 shrink-0 ${
-                        isActive ? "bg-accent/20 w-10 h-10" : isInactive ? "bg-primary/5 w-8 h-8" : "bg-primary/10 w-10 h-10"
-                      }`}>
-                        <Icon className={`transition-all duration-500 ${
+                  <motion.div 
+                    layout="position"
+                    className={`${isInactive ? "p-3" : "p-5"}`}
+                    transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
+                  >
+                    <motion.div 
+                      layout="position"
+                      className={`flex items-center ${isInactive ? "flex-col gap-2" : "gap-3 mb-3"}`}
+                      transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
+                    >
+                      <motion.div 
+                        layout
+                        className={`rounded-xl flex items-center justify-center shrink-0 ${
+                          isActive ? "bg-accent/20" : isInactive ? "bg-primary/5" : "bg-primary/10"
+                        }`}
+                        animate={{
+                          width: isInactive ? 32 : 40,
+                          height: isInactive ? 32 : 40
+                        }}
+                        transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
+                        style={{ transition: "background-color 0.5s" }}
+                      >
+                        <Icon className={`transition-all duration-400 ${
                           isActive ? "text-accent w-5 h-5" : isInactive ? "text-primary/40 w-4 h-4" : "text-primary/60 w-5 h-5"
                         }`} />
-                      </div>
+                      </motion.div>
+                      
+                      <AnimatePresence mode="wait">
+                        {!isInactive && (
+                          <motion.h3 
+                            key="title"
+                            initial={{ opacity: 0, x: -10 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: -10 }}
+                            transition={{ duration: 0.3, ease: "easeOut" }}
+                            className={`font-medium text-base whitespace-nowrap ${
+                              isActive ? "text-accent" : "text-foreground"
+                            }`}
+                            style={{ transition: "color 0.5s" }}
+                          >
+                            {feature.title}
+                          </motion.h3>
+                        )}
+                      </AnimatePresence>
+                      
+                      <AnimatePresence>
+                        {isActive && (
+                          <motion.div 
+                            initial={{ opacity: 0, scale: 0.8 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.8 }}
+                            transition={{ duration: 0.2 }}
+                            className="ml-auto shrink-0"
+                          >
+                            <svg className="w-5 h-5 text-accent/60" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </motion.div>
+                    
+                    <AnimatePresence mode="wait">
                       {!isInactive && (
-                        <h3 className={`font-medium text-base transition-colors duration-500 whitespace-nowrap ${
-                          isActive ? "text-accent" : "text-foreground"
-                        }`}>
-                          {feature.title}
-                        </h3>
-                      )}
-                      {isActive && (
-                        <motion.div 
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          className="ml-auto shrink-0"
+                        <motion.p 
+                          key="description"
+                          initial={{ opacity: 0, y: 5 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: 5 }}
+                          transition={{ duration: 0.3, ease: "easeOut" }}
+                          className="text-sm text-muted-foreground/50 leading-relaxed"
                         >
-                          <svg className="w-5 h-5 text-accent/60" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                          </svg>
-                        </motion.div>
+                          {feature.description}
+                        </motion.p>
                       )}
-                    </div>
-                    {!isInactive && (
-                      <p className="text-sm text-muted-foreground/50 leading-relaxed">
-                        {feature.description}
-                      </p>
-                    )}
-                  </div>
+                    </AnimatePresence>
+                  </motion.div>
                   
                   {/* Expanded Content - Only when active */}
-                  <AnimatePresence>
+                  <AnimatePresence mode="wait">
                     {isActive && (
                       <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 0.3, delay: 0.2 }}
-                        className="px-5 pb-5"
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ 
+                          height: { duration: 0.5, ease: [0.4, 0, 0.2, 1] },
+                          opacity: { duration: 0.3, delay: 0.1 }
+                        }}
+                        className="overflow-hidden"
                       >
-                        <div className="grid md:grid-cols-[1fr_1fr_auto] gap-6 border-t border-accent/20 pt-4">
-                          {/* Left: Headline & Details */}
-                          <div className="space-y-4">
-                            <p className="text-base text-foreground/90 leading-relaxed font-light">
-                              {feature.content.headline}
-                            </p>
+                        <div className="px-5 pb-5">
+                          <div className="grid md:grid-cols-[1fr_1fr_auto] gap-6 border-t border-accent/20 pt-4">
+                            {/* Left: Headline & Details */}
+                            <div className="space-y-4">
+                              <p className="text-base text-foreground/90 leading-relaxed font-light">
+                                {feature.content.headline}
+                              </p>
 
-                            <div className="p-3 rounded-lg bg-accent/5 border border-accent/20">
-                              <p className="text-[10px] uppercase tracking-wider text-accent/70 mb-1">
-                                Decision Automated
-                              </p>
-                              <p className="text-foreground/80 leading-relaxed text-sm">
-                                {feature.content.decision}
-                              </p>
+                              <div className="p-3 rounded-lg bg-accent/5 border border-accent/20">
+                                <p className="text-[10px] uppercase tracking-wider text-accent/70 mb-1">
+                                  Decision Automated
+                                </p>
+                                <p className="text-foreground/80 leading-relaxed text-sm">
+                                  {feature.content.decision}
+                                </p>
+                              </div>
+
+                              <div className="p-3 rounded-lg bg-primary/5 border border-primary/20">
+                                <p className="text-[10px] uppercase tracking-wider text-primary/70 mb-1">
+                                  Constraint Optimized
+                                </p>
+                                <p className="text-foreground/70 leading-relaxed text-sm">
+                                  {feature.content.constraint}
+                                </p>
+                              </div>
                             </div>
 
-                            <div className="p-3 rounded-lg bg-primary/5 border border-primary/20">
-                              <p className="text-[10px] uppercase tracking-wider text-primary/70 mb-1">
-                                Constraint Optimized
+                            {/* Middle: What's Eliminated */}
+                            <div className="space-y-3">
+                              <p className="text-[10px] uppercase tracking-wider text-muted-foreground/50">
+                                What's Eliminated
                               </p>
-                              <p className="text-foreground/70 leading-relaxed text-sm">
-                                {feature.content.constraint}
-                              </p>
-                            </div>
-                          </div>
-
-                          {/* Middle: What's Eliminated */}
-                          <div className="space-y-3">
-                            <p className="text-[10px] uppercase tracking-wider text-muted-foreground/50">
-                              What's Eliminated
-                            </p>
-                            {Object.entries(feature.content.removal).map(([key, value], idx) => (
-                              <motion.div
-                                key={key}
-                                initial={{ opacity: 0, x: 10 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                transition={{ delay: 0.3 + idx * 0.1 }}
-                                className="flex items-start gap-2 text-sm"
-                              >
-                                <span className="w-1.5 h-1.5 rounded-full bg-accent/60 shrink-0 mt-1.5" />
-                                <span className="text-muted-foreground/70">{value}</span>
-                              </motion.div>
-                            ))}
-                          </div>
-
-                          {/* Right: Metrics */}
-                          <div className="flex flex-col gap-2">
-                            {feature.content.metrics.map((metric, idx) => {
-                              const MetricIcon = metric.icon;
-                              return (
+                              {Object.entries(feature.content.removal).map(([key, value], idx) => (
                                 <motion.div
-                                  key={metric.label}
-                                  initial={{ opacity: 0, y: 10 }}
-                                  animate={{ opacity: 1, y: 0 }}
-                                  transition={{ delay: 0.2 + idx * 0.05 }}
-                                  className="text-center p-3 rounded-lg bg-background/50 border border-border/10 min-w-[100px]"
+                                  key={key}
+                                  initial={{ opacity: 0, x: 10 }}
+                                  animate={{ opacity: 1, x: 0 }}
+                                  transition={{ delay: 0.2 + idx * 0.08 }}
+                                  className="flex items-start gap-2 text-sm"
                                 >
-                                  <MetricIcon className="w-4 h-4 text-accent mx-auto mb-1" />
-                                  <p className="text-lg font-medium text-accent">{metric.value}</p>
-                                  <p className="text-[8px] text-muted-foreground/50 uppercase tracking-wider">
-                                    {metric.label}
-                                  </p>
+                                  <span className="w-1.5 h-1.5 rounded-full bg-accent/60 shrink-0 mt-1.5" />
+                                  <span className="text-muted-foreground/70">{value}</span>
                                 </motion.div>
-                              );
-                            })}
+                              ))}
+                            </div>
+
+                            {/* Right: Metrics */}
+                            <div className="flex flex-col gap-2">
+                              {feature.content.metrics.map((metric, idx) => {
+                                const MetricIcon = metric.icon;
+                                return (
+                                  <motion.div
+                                    key={metric.label}
+                                    initial={{ opacity: 0, y: 10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: 0.15 + idx * 0.05 }}
+                                    className="text-center p-3 rounded-lg bg-background/50 border border-border/10 min-w-[100px]"
+                                  >
+                                    <MetricIcon className="w-4 h-4 text-accent mx-auto mb-1" />
+                                    <p className="text-lg font-medium text-accent">{metric.value}</p>
+                                    <p className="text-[8px] text-muted-foreground/50 uppercase tracking-wider">
+                                      {metric.label}
+                                    </p>
+                                  </motion.div>
+                                );
+                              })}
+                            </div>
                           </div>
                         </div>
                       </motion.div>
@@ -328,7 +383,7 @@ const FeaturesSection = () => {
                 </motion.div>
               );
             })}
-          </div>
+          </motion.div>
         </div>
 
         {/* Animation Interface - Only visible when a card is selected */}
