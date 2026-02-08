@@ -103,23 +103,86 @@ const competitionTable = {
   ]
 };
 
-const marketLandscape = [
+// Market Landscape Data - Separate system types with individual businesses
+const marketLandscapeSystems = [
   {
-    category: "ERP systems (SAP, Odoo)",
-    points: [
-      "Strong internal planning and accounting",
-      "Limited automation and flexibility",
-      "No cross-company intelligence",
-      "Long implementation cycles"
+    id: "erp",
+    systemType: "ERP Systems",
+    description: "Enterprise Resource Planning solutions focused on internal operations",
+    businesses: [
+      {
+        name: "SAP",
+        facts: [
+          "Market leader with 24% global ERP market share",
+          "Strong internal planning and accounting capabilities",
+          "Long implementation cycles (12-24+ months)",
+          "High total cost of ownership"
+        ],
+        arguments: [
+          "Limited automation and flexibility for SMEs",
+          "No cross-company intelligence or marketplace",
+          "Closed ecosystem with proprietary integrations"
+        ]
+      },
+      {
+        name: "Odoo",
+        facts: [
+          "Open-source ERP with modular architecture",
+          "Lower cost of entry for SMEs",
+          "Growing community and marketplace"
+        ],
+        arguments: [
+          "Limited AI-native capabilities",
+          "Requires significant customization",
+          "No autonomous execution features"
+        ]
+      }
     ]
   },
   {
-    category: "SCM-Software (Coupa, Tacto, Jaggaer)",
-    points: [
-      "Process optimization and analytics",
-      "AI-forward Platforms",
-      "Limited autonomy and closed ecosystems",
-      "Human-driven workflows"
+    id: "scm",
+    systemType: "SCM Software",
+    description: "Supply Chain Management platforms focused on procurement and logistics",
+    businesses: [
+      {
+        name: "Coupa",
+        facts: [
+          "Leader in Business Spend Management (BSM)",
+          "Strong procurement and invoice automation",
+          "AI-forward platform with analytics"
+        ],
+        arguments: [
+          "Limited autonomy and closed ecosystem",
+          "Human-driven approval workflows",
+          "Focus on spend management over full SCM"
+        ]
+      },
+      {
+        name: "Tacto",
+        facts: [
+          "German-based SME-focused platform",
+          "Strong supplier management features",
+          "Growing AI capabilities"
+        ],
+        arguments: [
+          "Limited marketplace liquidity",
+          "Regional focus limits supplier network",
+          "Partial end-to-end coverage"
+        ]
+      },
+      {
+        name: "Jaggaer",
+        facts: [
+          "Enterprise procurement platform",
+          "Process optimization and analytics",
+          "Established supplier network"
+        ],
+        arguments: [
+          "Complex implementation requirements",
+          "Limited SME focus",
+          "Traditional human-driven workflows"
+        ]
+      }
     ]
   }
 ];
@@ -357,12 +420,14 @@ const OpportunitySection = () => {
   const [marketVisible, setMarketVisible] = useState(false);
   const [whyNowVisible, setWhyNowVisible] = useState(false);
   const [competitionVisible, setCompetitionVisible] = useState(false);
+  const [landscapeVisible, setLandscapeVisible] = useState(false);
   const [businessVisible, setBusinessVisible] = useState(false);
   
   const headerRef = useRef<HTMLDivElement>(null);
   const marketRef = useRef<HTMLDivElement>(null);
   const whyNowRef = useRef<HTMLDivElement>(null);
   const competitionRef = useRef<HTMLDivElement>(null);
+  const landscapeRef = useRef<HTMLDivElement>(null);
   const businessRef = useRef<HTMLDivElement>(null);
 
   // Observers
@@ -381,6 +446,7 @@ const OpportunitySection = () => {
       createObserver(marketRef, setMarketVisible),
       createObserver(whyNowRef, setWhyNowVisible),
       createObserver(competitionRef, setCompetitionVisible),
+      createObserver(landscapeRef, setLandscapeVisible),
       createObserver(businessRef, setBusinessVisible)
     ];
     
@@ -668,33 +734,75 @@ const OpportunitySection = () => {
               </motion.p>
             </motion.div>
             
-            {/* Market Landscape */}
-            <motion.div
-              className="space-y-8"
-              initial={{ opacity: 0, x: 20 }}
-              animate={competitionVisible ? { opacity: 1, x: 0 } : {}}
-              transition={{ delay: 0.4 }}
-            >
-              <h3 className="text-xl text-primary/80 mb-6">Market landscape:</h3>
-              {marketLandscape.map((segment, i) => (
-                <motion.div
-                  key={segment.category}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={competitionVisible ? { opacity: 1, y: 0 } : {}}
-                  transition={{ delay: 0.5 + i * 0.2 }}
-                >
-                  <h4 className="text-primary text-sm mb-3">{segment.category}:</h4>
-                  <ul className="space-y-2">
-                    {segment.points.map((point, j) => (
-                      <li key={j} className="text-sm text-muted-foreground/60 flex items-start gap-3">
-                        <span className="text-muted-foreground/40 mt-1">-</span>
-                        {point}
-                      </li>
-                    ))}
-                  </ul>
-                </motion.div>
-              ))}
-            </motion.div>
+          </div>
+        </div>
+        
+        {/* === MARKET LANDSCAPE (new subsection) === */}
+        <div ref={landscapeRef} className="mb-40 md:mb-56">
+          <p className="text-xs tracking-[0.25em] uppercase text-muted-foreground/35 mb-16">
+            Market Landscape
+          </p>
+          
+          <div className={`space-y-16 transition-all duration-1000 ${landscapeVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
+            {marketLandscapeSystems.map((system, sysIndex) => (
+              <motion.div
+                key={system.id}
+                initial={{ opacity: 0, y: 30 }}
+                animate={landscapeVisible ? { opacity: 1, y: 0 } : {}}
+                transition={{ delay: 0.2 + sysIndex * 0.2 }}
+              >
+                {/* System Type Header */}
+                <div className="mb-8">
+                  <h3 className="text-2xl font-light text-foreground mb-2">{system.systemType}</h3>
+                  <p className="text-sm text-muted-foreground/50">{system.description}</p>
+                </div>
+                
+                {/* Business Cards Grid */}
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {system.businesses.map((business, bizIndex) => (
+                    <motion.div
+                      key={business.name}
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={landscapeVisible ? { opacity: 1, scale: 1 } : {}}
+                      transition={{ delay: 0.4 + sysIndex * 0.2 + bizIndex * 0.1 }}
+                    >
+                      <FloatingSurface elevation="low" className="rounded-xl h-full">
+                        <GlassPanel intensity="subtle" bordered className="rounded-xl p-6 h-full">
+                          {/* Business Name */}
+                          <h4 className="text-lg font-medium text-primary mb-4">{business.name}</h4>
+                          
+                          {/* Facts */}
+                          <div className="mb-4">
+                            <p className="text-xs uppercase tracking-wider text-muted-foreground/40 mb-2">Facts</p>
+                            <ul className="space-y-1.5">
+                              {business.facts.map((fact, i) => (
+                                <li key={i} className="text-xs text-muted-foreground/60 flex items-start gap-2">
+                                  <span className="text-primary/60 mt-0.5">•</span>
+                                  {fact}
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                          
+                          {/* Arguments */}
+                          <div>
+                            <p className="text-xs uppercase tracking-wider text-muted-foreground/40 mb-2">Arguments</p>
+                            <ul className="space-y-1.5">
+                              {business.arguments.map((arg, i) => (
+                                <li key={i} className="text-xs text-muted-foreground/60 flex items-start gap-2">
+                                  <span className="text-destructive/60 mt-0.5">-</span>
+                                  {arg}
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        </GlassPanel>
+                      </FloatingSurface>
+                    </motion.div>
+                  ))}
+                </div>
+              </motion.div>
+            ))}
           </div>
         </div>
         
