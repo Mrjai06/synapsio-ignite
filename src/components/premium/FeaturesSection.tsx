@@ -331,65 +331,78 @@ const FeaturesSection = () => {
           </div>
         </div>
 
-        {/* Live Explanation Panel - Above visualization */}
-        <div className="mb-4">
-          <LiveExplanationPanel 
-            semantics={activeData.semantics} 
-            state={systemState} 
-          />
-        </div>
-
-        {/* VISUALIZATION - Full width below cards */}
-        <div className="relative w-full aspect-[16/9] max-h-[600px] rounded-3xl border border-border/20 bg-background/40 backdrop-blur-sm overflow-hidden">
-          {/* System State Indicator - Top Right */}
-          <SystemStateIndicator state={systemState} onStateClick={handleStateClick} isPaused={isLoopPaused} />
-          
-          <AnimatePresence mode="wait">
+        {/* Animation Interface - Only visible when a card is selected */}
+        <AnimatePresence>
+          {activeFeature !== "" && (
             <motion.div
-              key={activeFeature}
-              initial={{ opacity: 0, scale: 0.98 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.98 }}
-              transition={{ duration: 0.5 }}
-              className="absolute inset-0"
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
+              className="overflow-hidden"
             >
-              {activeFeature === "marketplace" && <MarketplaceVisualization state={systemState} />}
-              {activeFeature === "operations" && <OperationsVisualization state={systemState} />}
-              {activeFeature === "communication" && <CommunicationVisualization state={systemState} />}
-            </motion.div>
-          </AnimatePresence>
-          
-          {/* What's eliminated - overlay at bottom */}
-          <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-background/90 via-background/60 to-transparent">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={activeFeature}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 10 }}
-                className="max-w-2xl mx-auto"
-              >
-                <p className="text-xs uppercase tracking-wider text-muted-foreground/50 mb-3 text-center">
-                  What's Eliminated
-                </p>
-                <div className="flex flex-wrap justify-center gap-4">
-                  {Object.entries(activeData.content.removal).map(([key, value], idx) => (
+              {/* Live Explanation Panel - Above visualization */}
+              <div className="mb-4">
+                <LiveExplanationPanel 
+                  semantics={activeData.semantics} 
+                  state={systemState} 
+                />
+              </div>
+
+              {/* VISUALIZATION - Full width below cards */}
+              <div className="relative w-full aspect-[16/9] max-h-[600px] rounded-3xl border border-border/20 bg-background/40 backdrop-blur-sm overflow-hidden">
+                {/* System State Indicator - Top Right */}
+                <SystemStateIndicator state={systemState} onStateClick={handleStateClick} isPaused={isLoopPaused} />
+                
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={activeFeature}
+                    initial={{ opacity: 0, scale: 0.98 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.98 }}
+                    transition={{ duration: 0.5 }}
+                    className="absolute inset-0"
+                  >
+                    {activeFeature === "marketplace" && <MarketplaceVisualization state={systemState} />}
+                    {activeFeature === "operations" && <OperationsVisualization state={systemState} />}
+                    {activeFeature === "communication" && <CommunicationVisualization state={systemState} />}
+                  </motion.div>
+                </AnimatePresence>
+                
+                {/* What's eliminated - overlay at bottom */}
+                <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-background/90 via-background/60 to-transparent">
+                  <AnimatePresence mode="wait">
                     <motion.div
-                      key={key}
-                      initial={{ opacity: 0, x: 10 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: idx * 0.1 }}
-                      className="flex items-center gap-2 text-sm bg-background/60 px-3 py-1.5 rounded-full border border-border/20"
+                      key={activeFeature}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 10 }}
+                      className="max-w-2xl mx-auto"
                     >
-                      <span className="w-1.5 h-1.5 rounded-full bg-accent/60 shrink-0" />
-                      <span className="text-muted-foreground/70">{value}</span>
+                      <p className="text-xs uppercase tracking-wider text-muted-foreground/50 mb-3 text-center">
+                        What's Eliminated
+                      </p>
+                      <div className="flex flex-wrap justify-center gap-4">
+                        {Object.entries(activeData.content.removal).map(([key, value], idx) => (
+                          <motion.div
+                            key={key}
+                            initial={{ opacity: 0, x: 10 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: idx * 0.1 }}
+                            className="flex items-center gap-2 text-sm bg-background/60 px-3 py-1.5 rounded-full border border-border/20"
+                          >
+                            <span className="w-1.5 h-1.5 rounded-full bg-accent/60 shrink-0" />
+                            <span className="text-muted-foreground/70">{value}</span>
+                          </motion.div>
+                        ))}
+                      </div>
                     </motion.div>
-                  ))}
+                  </AnimatePresence>
                 </div>
-              </motion.div>
-            </AnimatePresence>
-          </div>
-        </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </section>
   );
