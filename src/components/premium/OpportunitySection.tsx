@@ -379,88 +379,65 @@ const MarketPyramid = ({ activeLayer, onLayerClick }: { activeLayer: string; onL
   );
 };
 
-// Circle Visualization for Why Now
+// Circle Visualization for Why Now - concentric circles with label lines
 const GrowthCircles = ({ year, values }: { year: string; values: number[] }) => {
-  const maxRadius = 100;
-  const total = values.reduce((a, b) => a + b, 0);
+  // values order: [AI-SCM Germany, SCM Germany, AI-SCM Global, SCM Global]
+  // Colors match legend: foreground, muted/60, primary/40, muted-foreground/20
+  const maxR = 90;
+  const cx = 120;
+  const cy = 120;
   
+  // Sort by value descending to draw largest first
+  const circles = [
+    { r: Math.max((values[3] / 100) * maxR * 2, 12), color: "hsl(var(--muted-foreground) / 0.2)", val: values[3], label: `${values[3].toFixed(2)} %`, idx: 3 },
+    { r: Math.max((values[2] / 100) * maxR * 2, 12), color: "hsl(var(--primary) / 0.4)", val: values[2], label: values[2] === 48.51 ? `${values[2].toFixed(2)} %, ~ +35 % CAGR` : `${values[2].toFixed(2)} %`, idx: 2 },
+    { r: Math.max((values[1] / 100) * maxR * 2, 12), color: "hsl(var(--muted) / 0.6)", val: values[1], label: `${values[1].toFixed(2)} %`, idx: 1 },
+    { r: Math.max((values[0] / 100) * maxR * 2, 10), color: "hsl(var(--foreground))", val: values[0], label: `${values[0].toFixed(2)} %`, idx: 0 },
+  ].sort((a, b) => b.r - a.r);
+
+  const labelX = 250;
+
   return (
     <div className="relative">
-      <p className="text-2xl font-light text-foreground mb-6 text-center">{year}</p>
-      <div className="relative w-48 h-48 mx-auto">
-        {/* Background circle */}
-        <motion.div
-          className="absolute rounded-full bg-muted-foreground/20"
-          style={{
-            width: `${(values[3] / 100) * 200}px`,
-            height: `${(values[3] / 100) * 200}px`,
-            left: '50%',
-            top: '50%',
-            transform: 'translate(-50%, -50%)'
-          }}
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{ delay: 0.2, duration: 0.8, ease: "easeOut" }}
-        />
-        {/* Primary circle (AI spend) */}
-        <motion.div
-          className="absolute rounded-full bg-primary/40"
-          style={{
-            width: `${(values[2] / 100) * 200}px`,
-            height: `${(values[2] / 100) * 200}px`,
-            left: '50%',
-            top: '50%',
-            transform: 'translate(-50%, -50%)'
-          }}
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{ delay: 0.4, duration: 0.8, ease: "easeOut" }}
-        />
-        {/* Germany circle */}
-        <motion.div
-          className="absolute rounded-full bg-muted/60"
-          style={{
-            width: `${(values[1] / 100) * 200}px`,
-            height: `${(values[1] / 100) * 200}px`,
-            left: '50%',
-            top: '50%',
-            transform: 'translate(-50%, -50%)'
-          }}
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{ delay: 0.6, duration: 0.8, ease: "easeOut" }}
-        />
-        {/* Inner circle */}
-        <motion.div
-          className="absolute rounded-full bg-foreground"
-          style={{
-            width: `${Math.max((values[0] / 100) * 200, 16)}px`,
-            height: `${Math.max((values[0] / 100) * 200, 16)}px`,
-            left: '50%',
-            top: '50%',
-            transform: 'translate(-50%, -50%)'
-          }}
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{ delay: 0.8, duration: 0.8, ease: "easeOut" }}
-        />
-      </div>
-      {/* Labels */}
-      <div className="mt-6 space-y-1">
-        {values.map((val, i) => (
-          <motion.div 
-            key={i}
-            className="flex items-center justify-between text-xs"
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.5 + i * 0.1 }}
-          >
-            <span className="text-muted-foreground/50">
-              {i === 2 ? `${val.toFixed(2)} %, ~ +35 % CAGR` : `${val.toFixed(2)} %`}
-            </span>
-          </motion.div>
+      <p className="text-2xl font-light text-foreground mb-4 text-center">{year}</p>
+      <svg viewBox="0 0 340 240" className="w-full max-w-sm mx-auto">
+        {circles.map((c, i) => (
+          <motion.g key={c.idx}>
+            <motion.circle
+              cx={cx}
+              cy={cy}
+              r={c.r / 2}
+              fill={c.color}
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ delay: 0.2 + i * 0.15, duration: 0.6, ease: "easeOut" }}
+              style={{ transformOrigin: `${cx}px ${cy}px` }}
+            />
+            {/* Label line from circle edge to text */}
+            <motion.line
+              x1={cx + c.r / 2}
+              y1={cy - (circles.length - 1 - i) * 4}
+              x2={labelX - 6}
+              y2={cy - (circles.length - 1 - i) * 4}
+              stroke="hsl(var(--primary) / 0.3)"
+              strokeWidth={1}
+              initial={{ pathLength: 0, opacity: 0 }}
+              animate={{ pathLength: 1, opacity: 1 }}
+              transition={{ delay: 0.5 + i * 0.15, duration: 0.4 }}
+            />
+            <motion.text
+              x={labelX}
+              y={cy - (circles.length - 1 - i) * 4 + 4}
+              className="text-[10px] fill-muted-foreground/60"
+              initial={{ opacity: 0, x: 10 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.6 + i * 0.15 }}
+            >
+              {c.label}
+            </motion.text>
+          </motion.g>
         ))}
-      </div>
+      </svg>
     </div>
   );
 };
