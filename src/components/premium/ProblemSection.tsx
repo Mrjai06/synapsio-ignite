@@ -419,24 +419,6 @@ const ProblemSection = () => {
           </motion.div>
         </div>
 
-        {/* Transition element */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8, delay: 1.4 }}
-          className="mt-32 md:mt-48 text-center"
-        >
-          <p className="text-base md:text-lg text-muted-foreground/30 font-light italic">
-            "What if the system could manage itself?"
-          </p>
-          <motion.div
-            className="mt-8 flex justify-center"
-            animate={{ y: [0, 8, 0] }}
-            transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
-          >
-            <div className="w-px h-16 bg-gradient-to-b from-primary/30 to-transparent" />
-          </motion.div>
-        </motion.div>
       </div>
     </section>
   );
