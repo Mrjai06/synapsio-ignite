@@ -100,23 +100,20 @@ const CosmicSynapseCanvas = ({ className }: { className?: string }) => {
                 this.draw();
             }
             
-            fire() {
-                if (this.activation > 0.5) return;
-                this.activation = 1;
-                // Fire to all direct neighbors
-                this.neighbors.forEach(neighbor => {
+            fire(depth: number = 0, visited: Set<Neuron> = new Set()) {
+                if (this.activation > 0.5 || depth > 5 || visited.has(this)) return;
+                visited.add(this);
+                this.activation = 1 - depth * 0.1;
+                
+                // Propagate like an electric signal — wide at origin, narrows with distance
+                const maxPropagations = Math.max(2, 6 - depth);
+                const neighborsToFire = this.neighbors.slice(0, maxPropagations);
+                
+                neighborsToFire.forEach((neighbor, idx) => {
                     pulses.push(new Pulse(this, neighbor));
-                    // Chain reaction: also fire to neighbor's neighbors with delay
                     setTimeout(() => {
-                        if (neighbor.activation < 0.5) {
-                            neighbor.activation = 0.8;
-                            neighbor.neighbors.slice(0, 3).forEach(secondDegree => {
-                                if (secondDegree !== this) {
-                                    pulses.push(new Pulse(neighbor, secondDegree));
-                                }
-                            });
-                        }
-                    }, 300);
+                        neighbor.fire(depth + 1, visited);
+                    }, 180 + idx * 60 + depth * 120);
                 });
             }
         }
@@ -188,18 +185,12 @@ const CosmicSynapseCanvas = ({ className }: { className?: string }) => {
         };
 
         const animate = () => {
-            // Clear canvas completely to prevent color accumulation
             ctx!.clearRect(0, 0, canvas.width, canvas.height);
             
-            // Less frequent firing for calmer effect
-            // Fire more frequently and sometimes multiple neurons at once
-            if (Math.random() > 0.97) {
+            // Rare but dramatic cascading signal — like neural electricity
+            if (Math.random() > 0.997) {
                 const neuron = neurons[Math.floor(Math.random() * neurons.length)];
-                neuron.fire();
-                // Occasionally fire a second neuron simultaneously
-                if (Math.random() > 0.5) {
-                    neurons[Math.floor(Math.random() * neurons.length)].fire();
-                }
+                neuron.fire(0, new Set());
             }
 
             neurons.forEach(neuron => neuron.update());
