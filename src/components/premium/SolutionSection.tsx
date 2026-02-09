@@ -51,9 +51,9 @@ const slides = [
 
 // Simple connection diagram
 const ConnectionDiagram = ({ elements, center }: { elements: string[]; center: string }) => {
-  const centerX = 150;
-  const centerY = 128;
-  const radius = 100;
+  const centerX = 200;
+  const centerY = 180;
+  const radius = 140;
 
   const positions = elements.map((_, i) => {
     const angle = (i * 90 - 45) * (Math.PI / 180);
@@ -64,7 +64,7 @@ const ConnectionDiagram = ({ elements, center }: { elements: string[]; center: s
   });
 
   return (
-    <div className="relative w-[300px] h-64 mx-auto">
+    <div className="relative w-full h-[360px] mx-auto" style={{ maxWidth: 420 }}>
       {/* Connection lines */}
       <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 0 }}>
         {positions.map((pos, i) => (
@@ -86,8 +86,8 @@ const ConnectionDiagram = ({ elements, center }: { elements: string[]; center: s
 
       {/* Center node */}
       <motion.div
-        className="absolute z-10 w-24 h-24 rounded-2xl bg-primary/10 border border-primary/30 flex items-center justify-center"
-        style={{ left: centerX - 48, top: centerY - 48 }}
+        className="absolute z-10 w-32 h-32 rounded-2xl bg-primary/10 border border-primary/30 flex items-center justify-center"
+        style={{ left: centerX - 64, top: centerY - 64 }}
         initial={{ scale: 0, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ duration: 0.5, delay: 0.2 }}
@@ -99,8 +99,8 @@ const ConnectionDiagram = ({ elements, center }: { elements: string[]; center: s
       {elements.map((el, i) => (
         <motion.div
           key={el}
-          className="absolute w-16 h-16 rounded-xl bg-muted/30 border border-border/50 flex items-center justify-center"
-          style={{ left: positions[i].x - 32, top: positions[i].y - 32 }}
+          className="absolute w-22 h-22 rounded-xl bg-muted/30 border border-border/50 flex items-center justify-center"
+          style={{ left: positions[i].x - 44, top: positions[i].y - 44, width: 88, height: 88 }}
           initial={{ scale: 0, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 0.4, delay: 0.3 + i * 0.1 }}
