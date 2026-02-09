@@ -100,8 +100,9 @@ const CosmicSynapseCanvas = ({ className }: { className?: string }) => {
                 this.draw();
             }
             
-            fire(depth: number = 0, visited: Set<Neuron> = new Set()) {
-                if (this.activation > 0.5 || depth > 5 || visited.has(this)) return;
+            fire(depth: number = 0, visited: Set<Neuron> = new Set(), maxDepth: number = -1) {
+                if (maxDepth === -1) maxDepth = Math.floor(Math.random() * 9) + 1; // 1 to 9 layers deep
+                if (this.activation > 0.5 || depth > maxDepth || visited.has(this)) return;
                 visited.add(this);
                 this.activation = 1 - depth * 0.1;
                 
@@ -115,7 +116,7 @@ const CosmicSynapseCanvas = ({ className }: { className?: string }) => {
                     const randomDelay = 120 + Math.random() * 200 + depth * (80 + Math.random() * 100);
                     pulses.push(new Pulse(this, neighbor));
                     setTimeout(() => {
-                        neighbor.fire(depth + 1, visited);
+                        neighbor.fire(depth + 1, visited, maxDepth);
                     }, randomDelay);
                 });
             }
