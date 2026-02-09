@@ -284,7 +284,8 @@ const SolutionSection = () => {
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
                 transition={{ duration: 0.4 }}
-                className="relative bg-muted/5 border border-border/30 rounded-2xl p-8"
+                className="relative bg-card/30 backdrop-blur-xl border border-border/20 rounded-3xl p-8 md:p-10"
+                style={{ boxShadow: '0 8px 32px hsl(var(--background) / 0.5)' }}
               >
                 {slide.diagram.type === "connect" && (
                   <ConnectionDiagram 
