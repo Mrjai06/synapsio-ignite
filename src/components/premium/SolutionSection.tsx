@@ -50,56 +50,30 @@ const slides = [
 ];
 
 // Simple connection diagram
-const ConnectionDiagram = ({ elements, center }: { elements: string[]; center: string }) => (
-  <div className="relative w-full h-64 flex items-center justify-center">
-    {/* Center node */}
-    <motion.div 
-      className="absolute z-10 w-24 h-24 rounded-2xl bg-primary/10 border border-primary/30 flex items-center justify-center"
-      initial={{ scale: 0, opacity: 0 }}
-      animate={{ scale: 1, opacity: 1 }}
-      transition={{ duration: 0.5, delay: 0.2 }}
-    >
-      <span className="text-sm font-medium text-primary">{center}</span>
-    </motion.div>
-    
-    {/* Surrounding nodes */}
-    {elements.map((el, i) => {
-      const angle = (i * 90 - 45) * (Math.PI / 180);
-      const radius = 100;
-      const x = Math.cos(angle) * radius;
-      const y = Math.sin(angle) * radius;
-      
-      return (
-        <motion.div
-          key={el}
-          className="absolute w-16 h-16 rounded-xl bg-muted/30 border border-border/50 flex items-center justify-center"
-          style={{ transform: `translate(${x}px, ${y}px)` }}
-          initial={{ scale: 0, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 0.4, delay: 0.3 + i * 0.1 }}
-        >
-          <span className="text-xs text-muted-foreground">{el}</span>
-        </motion.div>
-      );
-    })}
-    
-    {/* Connection lines */}
-    <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 0 }}>
-      {elements.map((_, i) => {
-        const angle = (i * 90 - 45) * (Math.PI / 180);
-        const radius = 100;
-        const x = Math.cos(angle) * radius;
-        const y = Math.sin(angle) * radius;
-        const centerX = 0;
-        const centerY = 0;
-        
-        return (
+const ConnectionDiagram = ({ elements, center }: { elements: string[]; center: string }) => {
+  const centerX = 150;
+  const centerY = 128;
+  const radius = 100;
+
+  const positions = elements.map((_, i) => {
+    const angle = (i * 90 - 45) * (Math.PI / 180);
+    return {
+      x: centerX + Math.cos(angle) * radius,
+      y: centerY + Math.sin(angle) * radius,
+    };
+  });
+
+  return (
+    <div className="relative w-[300px] h-64 mx-auto">
+      {/* Connection lines */}
+      <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 0 }}>
+        {positions.map((pos, i) => (
           <motion.line
             key={i}
-            x1="50%"
-            y1="50%"
-            x2={`calc(50% + ${x}px)`}
-            y2={`calc(50% + ${y}px)`}
+            x1={centerX}
+            y1={centerY}
+            x2={pos.x}
+            y2={pos.y}
             stroke="hsl(var(--primary) / 0.2)"
             strokeWidth={1}
             strokeDasharray="4 4"
@@ -107,11 +81,36 @@ const ConnectionDiagram = ({ elements, center }: { elements: string[]; center: s
             animate={{ pathLength: 1, opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.4 + i * 0.1 }}
           />
-        );
-      })}
-    </svg>
-  </div>
-);
+        ))}
+      </svg>
+
+      {/* Center node */}
+      <motion.div
+        className="absolute z-10 w-24 h-24 rounded-2xl bg-primary/10 border border-primary/30 flex items-center justify-center"
+        style={{ left: centerX - 48, top: centerY - 48 }}
+        initial={{ scale: 0, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+      >
+        <span className="text-sm font-medium text-primary">{center}</span>
+      </motion.div>
+
+      {/* Surrounding nodes */}
+      {elements.map((el, i) => (
+        <motion.div
+          key={el}
+          className="absolute w-16 h-16 rounded-xl bg-muted/30 border border-border/50 flex items-center justify-center"
+          style={{ left: positions[i].x - 32, top: positions[i].y - 32 }}
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.4, delay: 0.3 + i * 0.1 }}
+        >
+          <span className="text-xs text-muted-foreground">{el}</span>
+        </motion.div>
+      ))}
+    </div>
+  );
+};
 
 // Flow diagram
 const FlowDiagram = ({ steps }: { steps: string[] }) => (
