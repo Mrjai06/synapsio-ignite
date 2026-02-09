@@ -107,13 +107,16 @@ const CosmicSynapseCanvas = ({ className }: { className?: string }) => {
                 
                 // Propagate like an electric signal — wide at origin, narrows with distance
                 const maxPropagations = Math.max(2, 6 - depth);
-                const neighborsToFire = this.neighbors.slice(0, maxPropagations);
+                // Shuffle neighbors randomly so each cascade takes a unique path
+                const shuffled = [...this.neighbors].sort(() => Math.random() - 0.5);
+                const neighborsToFire = shuffled.slice(0, maxPropagations);
                 
                 neighborsToFire.forEach((neighbor, idx) => {
+                    const randomDelay = 120 + Math.random() * 200 + depth * (80 + Math.random() * 100);
                     pulses.push(new Pulse(this, neighbor));
                     setTimeout(() => {
                         neighbor.fire(depth + 1, visited);
-                    }, 180 + idx * 60 + depth * 120);
+                    }, randomDelay);
                 });
             }
         }
