@@ -84,30 +84,42 @@ const ConnectionDiagram = ({ elements, center }: { elements: string[]; center: s
         ))}
       </svg>
 
-      {/* Center node */}
+      {/* Center node - glass card style matching Problem section */}
       <motion.div
-        className="absolute z-10 w-32 h-32 rounded-2xl bg-primary/10 border border-primary/30 flex items-center justify-center"
-        style={{ left: centerX - 64, top: centerY - 64 }}
+        className="absolute z-10 rounded-3xl bg-card/40 backdrop-blur-xl border border-primary/30 flex flex-col items-center justify-center gap-2"
+        style={{ left: centerX - 72, top: centerY - 72, width: 144, height: 144, 
+          boxShadow: '0 0 40px hsl(var(--primary) / 0.15), 0 8px 32px hsl(var(--background) / 0.5)'
+        }}
         initial={{ scale: 0, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ duration: 0.5, delay: 0.2 }}
       >
+        <Database className="w-7 h-7 text-primary" />
         <span className="text-sm font-medium text-primary">{center}</span>
       </motion.div>
 
-      {/* Surrounding nodes */}
-      {elements.map((el, i) => (
-        <motion.div
-          key={el}
-          className="absolute w-22 h-22 rounded-xl bg-muted/30 border border-border/50 flex items-center justify-center"
-          style={{ left: positions[i].x - 44, top: positions[i].y - 44, width: 88, height: 88 }}
-          initial={{ scale: 0, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 0.4, delay: 0.3 + i * 0.1 }}
-        >
-          <span className="text-xs text-muted-foreground">{el}</span>
-        </motion.div>
-      ))}
+      {/* Surrounding nodes - glass card style matching Problem section */}
+      {elements.map((el, i) => {
+        const nodeIcons = [Database, Brain, Zap, TrendingUp];
+        const Icon = nodeIcons[i % nodeIcons.length];
+        return (
+          <motion.div
+            key={el}
+            className="absolute rounded-2xl bg-card/30 backdrop-blur-xl border border-border/20 flex flex-col items-center justify-center gap-2 cursor-pointer hover:border-primary/40 transition-colors duration-300 group"
+            style={{ 
+              left: positions[i].x - 52, top: positions[i].y - 52, width: 104, height: 104,
+              boxShadow: '0 8px 24px hsl(var(--background) / 0.6)'
+            }}
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 0.4, delay: 0.3 + i * 0.1 }}
+            whileHover={{ scale: 1.06, y: -4 }}
+          >
+            <Icon className="w-5 h-5 text-muted-foreground/60 group-hover:text-primary transition-colors duration-300" />
+            <span className="text-xs font-medium text-muted-foreground/70 group-hover:text-foreground transition-colors duration-300">{el}</span>
+          </motion.div>
+        );
+      })}
     </div>
   );
 };
@@ -124,8 +136,9 @@ const FlowDiagram = ({ steps }: { steps: string[] }) => (
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.4, delay: 0.2 + i * 0.15 }}
         >
-          <div className="w-20 h-20 rounded-xl bg-muted/30 border border-border/50 flex items-center justify-center">
-            <span className="text-xs text-muted-foreground text-center px-1">{step}</span>
+          <div className="w-24 h-24 rounded-2xl bg-card/30 backdrop-blur-xl border border-border/20 flex items-center justify-center"
+            style={{ boxShadow: '0 8px 24px hsl(var(--background) / 0.6)' }}>
+            <span className="text-xs font-medium text-muted-foreground/70 text-center px-2">{step}</span>
           </div>
           {i < steps.length - 1 && (
             <motion.div
@@ -150,10 +163,12 @@ const ImpactDiagram = ({ metrics }: { metrics: { value: string; label: string }[
       {metrics.map((metric, i) => (
         <motion.div
           key={metric.label}
-          className="text-center"
+          className="text-center rounded-2xl bg-card/30 backdrop-blur-xl border border-border/20 px-8 py-6"
+          style={{ boxShadow: '0 8px 24px hsl(var(--background) / 0.6)' }}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2 + i * 0.15 }}
+          whileHover={{ scale: 1.05, y: -4 }}
         >
           <div className="text-3xl md:text-4xl font-light text-primary mb-2">
             {metric.value}
