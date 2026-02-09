@@ -379,65 +379,131 @@ const MarketPyramid = ({ activeLayer, onLayerClick }: { activeLayer: string; onL
   );
 };
 
-// Circle Visualization for Why Now - concentric circles with label lines
-const GrowthCircles = ({ year, values }: { year: string; values: number[] }) => {
-  // values order: [AI-SCM Germany, SCM Germany, AI-SCM Global, SCM Global]
-  // Colors match legend: foreground, muted/60, primary/40, muted-foreground/20
-  const maxR = 90;
-  const cx = 120;
-  const cy = 120;
-  
-  // Sort by value descending to draw largest first
+// Segment labels for the concentric circles
+const segmentLabels = [
+  "AI-SCM-solution spend | Germany",
+  "SCM-solution spend | Germany", 
+  "AI-SCM-solution spend | Global",
+  "SCM-solution spend | Global"
+];
+
+const segmentColors = [
+  "hsl(var(--foreground))",
+  "hsl(var(--muted) / 0.6)",
+  "hsl(var(--primary) / 0.4)",
+  "hsl(var(--muted-foreground) / 0.2)",
+];
+
+// Interactive concentric circle for a single year
+const GrowthCircle = ({ year, values, activeSegment, onSegmentClick }: { 
+  year: string; 
+  values: number[]; 
+  activeSegment: number | null;
+  onSegmentClick: (idx: number | null) => void;
+}) => {
+  const maxR = 140;
+  const cx = 160;
+  const cy = 160;
+
   const circles = [
-    { r: Math.max((values[3] / 100) * maxR * 2, 12), color: "hsl(var(--muted-foreground) / 0.2)", val: values[3], label: `${values[3].toFixed(2)} %`, idx: 3 },
-    { r: Math.max((values[2] / 100) * maxR * 2, 12), color: "hsl(var(--primary) / 0.4)", val: values[2], label: values[2] === 48.51 ? `${values[2].toFixed(2)} %, ~ +35 % CAGR` : `${values[2].toFixed(2)} %`, idx: 2 },
-    { r: Math.max((values[1] / 100) * maxR * 2, 12), color: "hsl(var(--muted) / 0.6)", val: values[1], label: `${values[1].toFixed(2)} %`, idx: 1 },
-    { r: Math.max((values[0] / 100) * maxR * 2, 10), color: "hsl(var(--foreground))", val: values[0], label: `${values[0].toFixed(2)} %`, idx: 0 },
+    { r: Math.max((values[3] / 100) * maxR * 2, 16), color: segmentColors[3], val: values[3], idx: 3 },
+    { r: Math.max((values[2] / 100) * maxR * 2, 16), color: segmentColors[2], val: values[2], idx: 2 },
+    { r: Math.max((values[1] / 100) * maxR * 2, 16), color: segmentColors[1], val: values[1], idx: 1 },
+    { r: Math.max((values[0] / 100) * maxR * 2, 12), color: segmentColors[0], val: values[0], idx: 0 },
   ].sort((a, b) => b.r - a.r);
 
-  const labelX = 250;
+  return (
+    <div className="flex flex-col items-center">
+      <p className="text-2xl font-light text-foreground mb-6">{year}</p>
+      <svg viewBox="0 0 320 320" className="w-full max-w-[280px]">
+        {circles.map((c, i) => {
+          const isActive = activeSegment === c.idx;
+          const isOther = activeSegment !== null && activeSegment !== c.idx;
+          return (
+            <motion.g key={c.idx}>
+              <motion.circle
+                cx={cx}
+                cy={cy}
+                r={c.r / 2}
+                fill={c.color}
+                stroke={isActive ? "hsl(var(--primary))" : "transparent"}
+                strokeWidth={isActive ? 2 : 0}
+                className="cursor-pointer"
+                style={{ transformOrigin: `${cx}px ${cy}px` }}
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: 1, opacity: isOther ? 0.35 : 1 }}
+                transition={{ delay: 0.2 + i * 0.12, duration: 0.6, ease: "easeOut" }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onSegmentClick(isActive ? null : c.idx);
+                }}
+                whileHover={{ scale: 1.04 }}
+              />
+            </motion.g>
+          );
+        })}
+      </svg>
+      {/* Active segment tooltip below circle */}
+      <div className="h-16 flex items-start justify-center mt-2">
+        <AnimatePresence mode="wait">
+          {activeSegment !== null && (
+            <motion.div
+              key={activeSegment}
+              className="text-center"
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -4 }}
+              transition={{ duration: 0.2 }}
+            >
+              <p className="text-xl font-light text-primary">
+                {values[activeSegment] === 48.51 
+                  ? `${values[activeSegment].toFixed(2)}%, ~+35% CAGR` 
+                  : `${values[activeSegment].toFixed(2)}%`}
+              </p>
+              <p className="text-xs text-muted-foreground/50 mt-1">{segmentLabels[activeSegment]}</p>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    </div>
+  );
+};
+
+// Wrapper component that holds shared state
+const MarketGrowthComparison = ({ whyNowVisible }: { whyNowVisible: boolean }) => {
+  const [activeSegment, setActiveSegment] = useState<number | null>(null);
 
   return (
-    <div className="relative">
-      <p className="text-2xl font-light text-foreground mb-4 text-center">{year}</p>
-      <svg viewBox="0 0 340 240" className="w-full max-w-sm mx-auto">
-        {circles.map((c, i) => (
-          <motion.g key={c.idx}>
-            <motion.circle
-              cx={cx}
-              cy={cy}
-              r={c.r / 2}
-              fill={c.color}
-              initial={{ scale: 0, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ delay: 0.2 + i * 0.15, duration: 0.6, ease: "easeOut" }}
-              style={{ transformOrigin: `${cx}px ${cy}px` }}
-            />
-            {/* Label line from circle edge to text */}
-            <motion.line
-              x1={cx + c.r / 2}
-              y1={cy - (circles.length - 1 - i) * 4}
-              x2={labelX - 6}
-              y2={cy - (circles.length - 1 - i) * 4}
-              stroke="hsl(var(--primary) / 0.3)"
-              strokeWidth={1}
-              initial={{ pathLength: 0, opacity: 0 }}
-              animate={{ pathLength: 1, opacity: 1 }}
-              transition={{ delay: 0.5 + i * 0.15, duration: 0.4 }}
-            />
-            <motion.text
-              x={labelX}
-              y={cy - (circles.length - 1 - i) * 4 + 4}
-              className="text-[10px] fill-muted-foreground/60"
-              initial={{ opacity: 0, x: 10 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.6 + i * 0.15 }}
-            >
-              {c.label}
-            </motion.text>
-          </motion.g>
+    <div>
+      <div className="grid grid-cols-2 gap-8 md:gap-12">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={whyNowVisible ? { opacity: 1, scale: 1 } : {}}
+          transition={{ delay: 0.4 }}
+        >
+          <GrowthCircle year="2023/24" values={[0.67, 6.42, 15.27, 77.64]} activeSegment={activeSegment} onSegmentClick={setActiveSegment} />
+        </motion.div>
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={whyNowVisible ? { opacity: 1, scale: 1 } : {}}
+          transition={{ delay: 0.6 }}
+        >
+          <GrowthCircle year="2029/2030" values={[1.94, 3.45, 48.51, 46.11]} activeSegment={activeSegment} onSegmentClick={setActiveSegment} />
+        </motion.div>
+      </div>
+      {/* Legend */}
+      <div className="flex flex-wrap gap-5 justify-center mt-8 pt-6 border-t border-border/20">
+        {segmentLabels.map((label, i) => (
+          <button
+            key={i}
+            className={`flex items-center gap-2 transition-opacity duration-200 ${activeSegment !== null && activeSegment !== i ? "opacity-40" : "opacity-100"}`}
+            onClick={() => setActiveSegment(activeSegment === i ? null : i)}
+          >
+            <div className="w-3 h-3 rounded-full" style={{ background: segmentColors[i] }} />
+            <span className="text-xs text-muted-foreground/60">{label}</span>
+          </button>
         ))}
-      </svg>
+      </div>
     </div>
   );
 };
@@ -648,53 +714,13 @@ const OpportunitySection = () => {
               </motion.p>
             </div>
             
-            {/* Right: Circle visualizations */}
-            <div className="grid grid-cols-2 gap-8">
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={whyNowVisible ? { opacity: 1, scale: 1 } : {}}
-                transition={{ delay: 0.4 }}
-              >
-                <GlassPanel intensity="subtle" bordered className="p-6 rounded-xl h-full">
-                  <GrowthCircles year="2023/24" values={[0.67, 6.42, 15.27, 77.64]} />
-                </GlassPanel>
-              </motion.div>
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={whyNowVisible ? { opacity: 1, scale: 1 } : {}}
-                transition={{ delay: 0.6 }}
-              >
-                <GlassPanel intensity="subtle" bordered className="p-6 rounded-xl h-full">
-                  <GrowthCircles year="2029/2030" values={[1.94, 3.45, 48.51, 46.11]} />
-                </GlassPanel>
-              </motion.div>
+            {/* Right: Circle visualizations - unified card */}
+            <div>
+              <GlassPanel intensity="subtle" bordered className="p-8 md:p-10 rounded-xl">
+                <MarketGrowthComparison whyNowVisible={whyNowVisible} />
+              </GlassPanel>
             </div>
           </div>
-          
-          {/* Legend */}
-          <motion.div 
-            className="flex flex-wrap gap-6 justify-center mt-10"
-            initial={{ opacity: 0 }}
-            animate={whyNowVisible ? { opacity: 1 } : {}}
-            transition={{ delay: 1 }}
-          >
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full bg-foreground" />
-              <span className="text-xs text-muted-foreground/50">AI-SCM-solution spend | Germany</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full bg-primary/40" />
-              <span className="text-xs text-muted-foreground/50">AI-SCM-solution spend | Global</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full bg-muted/60" />
-              <span className="text-xs text-muted-foreground/50">SCM-solution spend | Germany</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full bg-muted-foreground/20" />
-              <span className="text-xs text-muted-foreground/50">SCM-solution spend | Global</span>
-            </div>
-          </motion.div>
         </div>
         
         {/* === COMPETITION === */}
