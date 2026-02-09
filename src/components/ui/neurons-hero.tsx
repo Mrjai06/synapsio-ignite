@@ -103,8 +103,20 @@ const CosmicSynapseCanvas = ({ className }: { className?: string }) => {
             fire() {
                 if (this.activation > 0.5) return;
                 this.activation = 1;
+                // Fire to all direct neighbors
                 this.neighbors.forEach(neighbor => {
                     pulses.push(new Pulse(this, neighbor));
+                    // Chain reaction: also fire to neighbor's neighbors with delay
+                    setTimeout(() => {
+                        if (neighbor.activation < 0.5) {
+                            neighbor.activation = 0.8;
+                            neighbor.neighbors.slice(0, 3).forEach(secondDegree => {
+                                if (secondDegree !== this) {
+                                    pulses.push(new Pulse(neighbor, secondDegree));
+                                }
+                            });
+                        }
+                    }, 300);
                 });
             }
         }
@@ -180,8 +192,14 @@ const CosmicSynapseCanvas = ({ className }: { className?: string }) => {
             ctx!.clearRect(0, 0, canvas.width, canvas.height);
             
             // Less frequent firing for calmer effect
-            if (Math.random() > 0.995) {
-                neurons[Math.floor(Math.random() * neurons.length)].fire();
+            // Fire more frequently and sometimes multiple neurons at once
+            if (Math.random() > 0.97) {
+                const neuron = neurons[Math.floor(Math.random() * neurons.length)];
+                neuron.fire();
+                // Occasionally fire a second neuron simultaneously
+                if (Math.random() > 0.5) {
+                    neurons[Math.floor(Math.random() * neurons.length)].fire();
+                }
             }
 
             neurons.forEach(neuron => neuron.update());
