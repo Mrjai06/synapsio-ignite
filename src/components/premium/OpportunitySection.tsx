@@ -215,166 +215,59 @@ const tiers = [
   }
 ];
 
-// Market Pyramid Component
+// Traditional Pyramid Component
 const MarketPyramid = ({ activeLayer, onLayerClick }: { activeLayer: string; onLayerClick: (id: string) => void }) => {
-  // Calculate centroid of each trapezoid/triangle layer
-  // TAM band: between full pyramid and SAM line (y: 220-280)
-  // SAM band: between SAM line and SOM line (y: 160-220)
-  // SOM: the top triangle (y: 100-160)
-  
+  const layers = [
+    { id: "som", y: 0, points: "200,20 260,100 140,100", label: { x: 200, y: 68 } },
+    { id: "sam", y: 0, points: "140,108 260,108 310,200 90,200", label: { x: 200, y: 158 } },
+    { id: "tam", y: 0, points: "90,208 310,208 380,320 20,320", label: { x: 200, y: 270 } },
+  ];
+
   return (
-    <svg viewBox="0 0 400 320" className="w-full max-w-xl mx-auto">
+    <svg viewBox="0 0 400 340" className="w-full max-w-xl mx-auto">
       <defs>
-        {/* Gradient for depth effect */}
-        <linearGradient id="pyramidGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity="0.3" />
-          <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity="0.05" />
+        <linearGradient id="pyramidFill" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity="0.45" />
+          <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity="0.08" />
         </linearGradient>
-        <linearGradient id="pyramidGradientActive" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity="0.5" />
-          <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity="0.15" />
+        <linearGradient id="pyramidFillActive" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity="0.7" />
+          <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity="0.25" />
         </linearGradient>
       </defs>
-      
-      {/* TAM - Bottom band (trapezoid between outer and SAM) */}
-      <motion.g
-        onClick={() => onLayerClick("tam")}
-        className="cursor-pointer"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
-        whileHover={{ scale: 1.01 }}
-      >
-        {/* TAM trapezoid shape */}
-        <motion.path
-          d="M20 290 L200 50 L380 290 L20 290 M70 230 L200 95 L330 230 Z"
-          fillRule="evenodd"
-          fill={activeLayer === "tam" ? "url(#pyramidGradientActive)" : "hsl(var(--secondary) / 0.2)"}
-          className="transition-all duration-500"
-        />
-        <motion.path
-          d="M20 290 L200 50 L380 290 Z"
-          fill="none"
-          stroke={activeLayer === "tam" ? "hsl(var(--primary))" : "hsl(var(--border) / 0.5)"}
-          strokeWidth={activeLayer === "tam" ? 2 : 1}
-          className="transition-all duration-500"
-        />
-        {/* TAM label - centered in the band */}
-        <text 
-          x="200" 
-          y="268" 
-          textAnchor="middle" 
-          className={`text-base font-medium transition-all duration-500 ${activeLayer === "tam" ? "fill-primary" : "fill-muted-foreground/60"}`}
-        >
-          TAM
-        </text>
-      </motion.g>
-      
-      {/* SAM - Middle band (trapezoid between SAM and SOM) */}
-      <motion.g
-        onClick={() => onLayerClick("sam")}
-        className="cursor-pointer"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.4 }}
-        whileHover={{ scale: 1.01 }}
-      >
-        {/* SAM trapezoid shape */}
-        <motion.path
-          d="M70 230 L200 95 L330 230 L70 230 M130 170 L200 120 L270 170 Z"
-          fillRule="evenodd"
-          fill={activeLayer === "sam" ? "url(#pyramidGradientActive)" : "hsl(var(--secondary) / 0.35)"}
-          className="transition-all duration-500"
-        />
-        <motion.path
-          d="M70 230 L200 95 L330 230 Z"
-          fill="none"
-          stroke={activeLayer === "sam" ? "hsl(var(--primary))" : "hsl(var(--border) / 0.5)"}
-          strokeWidth={activeLayer === "sam" ? 2 : 1}
-          className="transition-all duration-500"
-        />
-        {/* SAM label - centered in the band */}
-        <text 
-          x="200" 
-          y="205" 
-          textAnchor="middle" 
-          className={`text-base font-medium transition-all duration-500 ${activeLayer === "sam" ? "fill-primary" : "fill-muted-foreground/60"}`}
-        >
-          SAM
-        </text>
-      </motion.g>
-      
-      {/* SOM - Top triangle */}
-      <motion.g
-        onClick={() => onLayerClick("som")}
-        className="cursor-pointer"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.6 }}
-        whileHover={{ scale: 1.02 }}
-      >
-        <motion.path
-          d="M130 170 L200 120 L270 170 Z"
-          fill={activeLayer === "som" ? "url(#pyramidGradientActive)" : "hsl(var(--secondary) / 0.5)"}
-          className="transition-all duration-500"
-        />
-        <motion.path
-          d="M130 170 L200 120 L270 170 Z"
-          fill="none"
-          stroke={activeLayer === "som" ? "hsl(var(--primary))" : "hsl(var(--border) / 0.5)"}
-          strokeWidth={activeLayer === "som" ? 2 : 1}
-          className="transition-all duration-500"
-        />
-        {/* SOM label - centered in triangle */}
-        <text 
-          x="200" 
-          y="155" 
-          textAnchor="middle" 
-          className={`text-sm font-medium transition-all duration-500 ${activeLayer === "som" ? "fill-primary" : "fill-muted-foreground/60"}`}
-        >
-          SOM
-        </text>
-      </motion.g>
-      
-      {/* Callout lines to the right */}
-      <AnimatePresence mode="wait">
-        {activeLayer === "tam" && (
+
+      {layers.map((layer, i) => {
+        const isActive = activeLayer === layer.id;
+        return (
           <motion.g
-            key="tam-callout"
-            initial={{ opacity: 0, x: 10 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -10 }}
-            transition={{ duration: 0.3 }}
+            key={layer.id}
+            onClick={() => onLayerClick(layer.id)}
+            className="cursor-pointer"
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.15 + i * 0.15 }}
+            whileHover={{ scale: 1.015 }}
+            style={{ transformOrigin: "200px 170px" }}
           >
-            <line x1="320" y1="260" x2="380" y2="260" stroke="hsl(var(--primary))" strokeWidth="1" strokeDasharray="4 2" />
-            <circle cx="385" cy="260" r="3" fill="hsl(var(--primary))" />
+            <motion.polygon
+              points={layer.points}
+              fill={isActive ? "url(#pyramidFillActive)" : `hsl(var(--secondary) / ${0.15 + i * 0.12})`}
+              stroke={isActive ? "hsl(var(--primary))" : "hsl(var(--border) / 0.4)"}
+              strokeWidth={isActive ? 1.5 : 0.8}
+              className="transition-all duration-400"
+            />
+            <text
+              x={layer.label.x}
+              y={layer.label.y}
+              textAnchor="middle"
+              dominantBaseline="central"
+              className={`text-sm font-medium transition-all duration-400 ${isActive ? "fill-primary" : "fill-muted-foreground/50"}`}
+            >
+              {layer.id.toUpperCase()}
+            </text>
           </motion.g>
-        )}
-        {activeLayer === "sam" && (
-          <motion.g
-            key="sam-callout"
-            initial={{ opacity: 0, x: 10 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -10 }}
-            transition={{ duration: 0.3 }}
-          >
-            <line x1="290" y1="200" x2="380" y2="200" stroke="hsl(var(--primary))" strokeWidth="1" strokeDasharray="4 2" />
-            <circle cx="385" cy="200" r="3" fill="hsl(var(--primary))" />
-          </motion.g>
-        )}
-        {activeLayer === "som" && (
-          <motion.g
-            key="som-callout"
-            initial={{ opacity: 0, x: 10 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -10 }}
-            transition={{ duration: 0.3 }}
-          >
-            <line x1="260" y1="145" x2="380" y2="145" stroke="hsl(var(--primary))" strokeWidth="1" strokeDasharray="4 2" />
-            <circle cx="385" cy="145" r="3" fill="hsl(var(--primary))" />
-          </motion.g>
-        )}
-      </AnimatePresence>
+        );
+      })}
     </svg>
   );
 };
