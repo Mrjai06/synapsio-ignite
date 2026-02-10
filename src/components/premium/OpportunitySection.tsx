@@ -217,51 +217,69 @@ const tiers = [
 
 // Traditional Pyramid Component
 const MarketPyramid = ({ activeLayer, onLayerClick }: { activeLayer: string; onLayerClick: (id: string) => void }) => {
+  // Mathematically aligned pyramid: single apex, consistent slope, uniform gaps
+  // Apex at (200, 30), base corners at (40, 310) and (360, 310)
+  // Slope: dx/dy = (200-40)/(310-30) = 160/280
+  const xAt = (y: number) => {
+    const t = (y - 30) / 280;
+    const halfW = t * 160;
+    return { left: 200 - halfW, right: 200 + halfW };
+  };
+
+  const gap = 6; // vertical gap between layers
   const layers = [
-    { id: "som", y: 0, points: "200,20 260,100 140,100", label: { x: 200, y: 68 } },
-    { id: "sam", y: 0, points: "140,108 260,108 310,200 90,200", label: { x: 200, y: 158 } },
-    { id: "tam", y: 0, points: "90,208 310,208 380,320 20,320", label: { x: 200, y: 270 } },
+    { id: "som", y1: 30, y2: 120 },   // top ~32%
+    { id: "sam", y1: 120 + gap, y2: 210 }, // mid ~32%
+    { id: "tam", y1: 210 + gap, y2: 310 }, // base ~36%
   ];
+
+  const buildPoints = (y1: number, y2: number, isTop: boolean) => {
+    const top = xAt(y1);
+    const bot = xAt(y2);
+    if (isTop) return `${200},${y1} ${bot.right},${y2} ${bot.left},${y2}`;
+    return `${top.left},${y1} ${top.right},${y1} ${bot.right},${y2} ${bot.left},${y2}`;
+  };
 
   return (
     <svg viewBox="0 0 400 340" className="w-full max-w-xl mx-auto">
       <defs>
-        <linearGradient id="pyramidFill" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity="0.45" />
-          <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity="0.08" />
-        </linearGradient>
         <linearGradient id="pyramidFillActive" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity="0.7" />
-          <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity="0.25" />
+          <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity="0.6" />
+          <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity="0.15" />
         </linearGradient>
       </defs>
 
       {layers.map((layer, i) => {
         const isActive = activeLayer === layer.id;
+        const isTop = i === 0;
+        const points = buildPoints(layer.y1, layer.y2, isTop);
+        const labelY = (layer.y1 + layer.y2) / 2 + (isTop ? 4 : 0);
+
         return (
           <motion.g
             key={layer.id}
             onClick={() => onLayerClick(layer.id)}
             className="cursor-pointer"
-            initial={{ opacity: 0, y: 15 }}
+            initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.15 + i * 0.15 }}
-            whileHover={{ scale: 1.015 }}
+            transition={{ delay: 0.1 + i * 0.12 }}
+            whileHover={{ scale: 1.012 }}
             style={{ transformOrigin: "200px 170px" }}
           >
             <motion.polygon
-              points={layer.points}
-              fill={isActive ? "url(#pyramidFillActive)" : `hsl(var(--secondary) / ${0.15 + i * 0.12})`}
-              stroke={isActive ? "hsl(var(--primary))" : "hsl(var(--border) / 0.4)"}
-              strokeWidth={isActive ? 1.5 : 0.8}
-              className="transition-all duration-400"
+              points={points}
+              fill={isActive ? "url(#pyramidFillActive)" : `hsl(var(--secondary) / ${0.12 + i * 0.1})`}
+              stroke={isActive ? "hsl(var(--primary))" : "hsl(var(--border) / 0.35)"}
+              strokeWidth={isActive ? 1.5 : 0.7}
+              strokeLinejoin="round"
+              className="transition-all duration-300"
             />
             <text
-              x={layer.label.x}
-              y={layer.label.y}
+              x={200}
+              y={labelY}
               textAnchor="middle"
               dominantBaseline="central"
-              className={`text-sm font-medium transition-all duration-400 ${isActive ? "fill-primary" : "fill-muted-foreground/50"}`}
+              className={`text-sm font-medium transition-all duration-300 ${isActive ? "fill-primary" : "fill-muted-foreground/45"}`}
             >
               {layer.id.toUpperCase()}
             </text>
