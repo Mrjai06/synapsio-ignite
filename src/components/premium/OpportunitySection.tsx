@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Building2, Layers, Zap, Check, X } from "lucide-react";
+import { AnimatedTabs } from "@/components/ui/animated-tabs";
 import { FloatingSurface, GlassPanel, AmbientGlow } from "./DepthSystem";
 
 // Market Opportunity Data (Pyramid)
@@ -758,38 +759,34 @@ const OpportunitySection = () => {
             Market Landscape
           </p>
           
-          <div className={`space-y-16 transition-all duration-1000 ${landscapeVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
-            {marketLandscapeSystems.map((system, sysIndex) => (
-              <motion.div
-                key={system.id}
-                initial={{ opacity: 0, y: 30 }}
-                animate={landscapeVisible ? { opacity: 1, y: 0 } : {}}
-                transition={{ delay: 0.2 + sysIndex * 0.2 }}
-              >
-                {/* System Type Header */}
-                <div className="mb-8">
-                  <h3 className="text-2xl font-light text-foreground mb-2">{system.systemType}</h3>
-                  <p className="text-sm text-muted-foreground/50">{system.description}</p>
-                </div>
-                
-                {/* Business Cards Grid */}
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {system.businesses.map((business, bizIndex) => (
-                    <motion.div
-                      key={business.name}
-                      initial={{ opacity: 0, scale: 0.95 }}
-                      animate={landscapeVisible ? { opacity: 1, scale: 1 } : {}}
-                      transition={{ delay: 0.4 + sysIndex * 0.2 + bizIndex * 0.1 }}
-                    >
-                      <FloatingSurface elevation="low" className="rounded-xl h-full">
-                        <GlassPanel intensity="subtle" bordered className="rounded-xl p-6 h-full">
-                          {/* Business Name */}
-                          <h4 className="text-lg font-medium text-primary mb-4">{business.name}</h4>
-                          
+          <div className={`max-w-3xl mx-auto transition-all duration-1000 ${landscapeVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={landscapeVisible ? { opacity: 1, y: 0 } : {}}
+              transition={{ delay: 0.2 }}
+            >
+              <AnimatedTabs
+                tabs={marketLandscapeSystems.flatMap((system) =>
+                  system.businesses.map((business) => ({
+                    id: `${system.id}-${business.name.toLowerCase()}`,
+                    label: business.name,
+                    content: (
+                      <GlassPanel intensity="subtle" bordered className="rounded-xl p-6 md:p-8">
+                        {/* Company type badge */}
+                        <div className="flex items-center gap-3 mb-6">
+                          <span className="text-[10px] tracking-[0.2em] uppercase text-muted-foreground/40 px-3 py-1 rounded-full border border-border/20 bg-secondary/20">
+                            {system.systemType}
+                          </span>
+                        </div>
+                        
+                        <h4 className="text-xl font-medium text-primary mb-1">{business.name}</h4>
+                        <p className="text-xs text-muted-foreground/40 mb-6">{system.description}</p>
+                        
+                        <div className="grid md:grid-cols-2 gap-6">
                           {/* Facts */}
-                          <div className="mb-4">
-                            <p className="text-xs uppercase tracking-wider text-muted-foreground/40 mb-2">Facts</p>
-                            <ul className="space-y-1.5">
+                          <div>
+                            <p className="text-xs uppercase tracking-wider text-muted-foreground/40 mb-3">Facts</p>
+                            <ul className="space-y-2">
                               {business.facts.map((fact, i) => (
                                 <li key={i} className="text-xs text-muted-foreground/60 flex items-start gap-2">
                                   <span className="text-primary/60 mt-0.5">•</span>
@@ -801,8 +798,8 @@ const OpportunitySection = () => {
                           
                           {/* Arguments */}
                           <div>
-                            <p className="text-xs uppercase tracking-wider text-muted-foreground/40 mb-2">Arguments</p>
-                            <ul className="space-y-1.5">
+                            <p className="text-xs uppercase tracking-wider text-muted-foreground/40 mb-3">Arguments</p>
+                            <ul className="space-y-2">
                               {business.arguments.map((arg, i) => (
                                 <li key={i} className="text-xs text-muted-foreground/60 flex items-start gap-2">
                                   <span className="text-destructive/60 mt-0.5">-</span>
@@ -811,13 +808,14 @@ const OpportunitySection = () => {
                               ))}
                             </ul>
                           </div>
-                        </GlassPanel>
-                      </FloatingSurface>
-                    </motion.div>
-                  ))}
-                </div>
-              </motion.div>
-            ))}
+                        </div>
+                      </GlassPanel>
+                    ),
+                  }))
+                )}
+                defaultTab="erp-sap"
+              />
+            </motion.div>
           </div>
         </div>
         
