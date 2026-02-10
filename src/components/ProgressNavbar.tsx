@@ -118,13 +118,12 @@ const ProgressNavbar = () => {
               <button
                 key={section.id}
                 onClick={() => scrollToSection(section.id, index)}
-                className="group flex items-center gap-3 relative"
+                className="group flex items-center justify-end gap-3 relative"
               >
-                {/* Label - active always visible, adjacent subtly visible, others on hover */}
+                {/* Label */}
                 <span 
                   className={`
                     text-[10px] tracking-wide uppercase transition-all duration-300 whitespace-nowrap
-                    absolute right-full mr-3
                     ${isActive 
                       ? "opacity-50 text-foreground" 
                       : isAdjacent
@@ -136,20 +135,22 @@ const ProgressNavbar = () => {
                   {section.label}
                 </span>
                 
-                {/* Dot indicator */}
-                <div 
-                  className={`
-                    dot-indicator rounded-full transition-all duration-500 relative z-10
-                    ${isEndpoint
-                      ? "w-3 h-3 bg-foreground"
-                      : isActive 
-                        ? "w-2 h-2 bg-primary scale-125" 
-                        : isPast 
-                          ? "w-2 h-2 bg-primary/50" 
-                          : "w-2 h-2 bg-border/30 group-hover:bg-muted-foreground/30"
-                    }
-                  `}
-                />
+                {/* Dot wrapper - fixed size keeps all dots centered on the track axis */}
+                <div className="w-3 flex items-center justify-center flex-shrink-0">
+                  <div 
+                    className={`
+                      dot-indicator rounded-full transition-all duration-500 relative z-10
+                      ${isEndpoint
+                        ? "w-3 h-3 bg-foreground"
+                        : isActive 
+                          ? "w-2.5 h-2.5 bg-primary" 
+                          : isPast 
+                            ? "w-2 h-2 bg-primary/50" 
+                            : "w-2 h-2 bg-border/30 group-hover:bg-muted-foreground/30"
+                      }
+                    `}
+                  />
+                </div>
               </button>
             );
           })}
