@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Building2, Layers, Zap, Check, X } from "lucide-react";
+import { Building2, Layers, Zap, Check, X, ArrowLeft, ArrowRight } from "lucide-react";
 import { AnimatedTabs } from "@/components/ui/animated-tabs";
 import { FloatingSurface, GlassPanel, AmbientGlow } from "./DepthSystem";
 
@@ -471,6 +471,81 @@ const MarketGrowthComparison = ({ whyNowVisible }: { whyNowVisible: boolean }) =
   );
 };
 
+// Why Now Carousel Component
+const whyNowCards = [
+  { key: "technology", title: "Technology", dataKey: "technology" as const, highlightKey: "technologyHighlight" as const, sourceKey: "technologySource" as const },
+  { key: "shift", title: "Shift / Future", dataKey: "shift" as const, highlightKey: "shiftHighlight" as const, sourceKey: "shiftSource" as const },
+  { key: "pressure", title: "Market Pressure", dataKey: "pressure" as const, highlightKey: "pressureHighlight" as const, sourceKey: "pressureSource" as const },
+];
+
+const WhyNowCarousel = ({ whyNowData: data, whyNowVisible }: { whyNowData: typeof whyNowData; whyNowVisible: boolean }) => {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [direction, setDirection] = useState(0);
+
+  const next = () => { setDirection(1); setCurrentIndex((p) => (p + 1) % whyNowCards.length); };
+  const prev = () => { setDirection(-1); setCurrentIndex((p) => (p - 1 + whyNowCards.length) % whyNowCards.length); };
+
+  const card = whyNowCards[currentIndex];
+  const points = data[card.dataKey] as string[];
+  const highlight = data[card.highlightKey] as string;
+  const source = data[card.sourceKey] as string;
+
+  const variants = {
+    enter: (dir: number) => ({ x: dir > 0 ? 300 : -300, opacity: 0, scale: 0.95 }),
+    center: { x: 0, opacity: 1, scale: 1 },
+    exit: (dir: number) => ({ x: dir < 0 ? 300 : -300, opacity: 0, scale: 0.95 }),
+  };
+
+  return (
+    <motion.div initial={{ opacity: 0, y: 20 }} animate={whyNowVisible ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.3 }}>
+      <div className="max-w-2xl mx-auto">
+        <div className="relative overflow-hidden">
+          <AnimatePresence initial={false} custom={direction} mode="wait">
+            <motion.div key={card.key} custom={direction} variants={variants} initial="enter" animate="center" exit="exit" transition={{ duration: 0.4, ease: [0.23, 0.86, 0.39, 0.96] }}>
+              <GlassPanel intensity="subtle" bordered className="p-8 md:p-10 rounded-xl">
+                <h4 className="text-foreground text-base font-medium mb-6">{card.title}</h4>
+                <ul className="space-y-3 mb-6">
+                  {points.map((point, i) => (
+                    <li key={i} className="text-sm text-muted-foreground/70 flex items-start gap-3">
+                      <span className="text-muted-foreground/40 mt-0.5">–</span>
+                      {point}
+                    </li>
+                  ))}
+                </ul>
+                <p className="text-xs">
+                  <span className="text-primary">{highlight}</span>
+                  <span className="text-muted-foreground/40 ml-2">({source})</span>
+                </p>
+              </GlassPanel>
+            </motion.div>
+          </AnimatePresence>
+        </div>
+
+        {/* Navigation */}
+        <div className="flex items-center justify-center gap-6 mt-8">
+          <button onClick={prev} aria-label="Previous" className="p-2.5 rounded-full border border-border/20 text-muted-foreground/50 hover:text-foreground hover:border-border/40 hover:bg-card/30 transition-all duration-300">
+            <ArrowLeft className="w-4 h-4" />
+          </button>
+          <div className="flex items-center gap-2">
+            {whyNowCards.map((_, i) => (
+              <button key={i} onClick={() => { setDirection(i > currentIndex ? 1 : -1); setCurrentIndex(i); }}
+                className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${i === currentIndex ? "bg-primary w-6" : "bg-muted-foreground/30 hover:bg-muted-foreground/50 w-2"}`}
+                aria-label={`Go to ${whyNowCards[i].title}`} />
+            ))}
+          </div>
+          <button onClick={next} aria-label="Next" className="p-2.5 rounded-full border border-border/20 text-muted-foreground/50 hover:text-foreground hover:border-border/40 hover:bg-card/30 transition-all duration-300">
+            <ArrowRight className="w-4 h-4" />
+          </button>
+        </div>
+
+        <motion.p className="text-sm text-muted-foreground/70 text-center mt-8" initial={{ opacity: 0 }} animate={whyNowVisible ? { opacity: 1 } : {}} transition={{ delay: 0.8 }}>
+          AI is becoming the dominating operating system of supply chains by 2030 – <span className="text-primary">Now is the time to act!</span>
+        </motion.p>
+      </div>
+    </motion.div>
+  );
+};
+
 const OpportunitySection = () => {
   const [activeLayer, setActiveLayer] = useState("som");
   const [headerVisible, setHeaderVisible] = useState(false);
@@ -602,87 +677,8 @@ const OpportunitySection = () => {
               </GlassPanel>
             </div>
             
-            {/* Three text cards below */}
-            <div className="grid md:grid-cols-3 gap-6">
-              {/* Technology */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={whyNowVisible ? { opacity: 1, y: 0 } : {}}
-                transition={{ delay: 0.2 }}
-              >
-                <GlassPanel intensity="subtle" bordered className="p-6 rounded-xl h-full">
-                  <h4 className="text-foreground text-sm mb-4">Technology:</h4>
-                  <ul className="space-y-2 mb-4">
-                    {whyNowData.technology.map((point, i) => (
-                      <li key={i} className="text-xs text-muted-foreground/60 flex items-start gap-3">
-                        <span className="text-muted-foreground/40 mt-0.5">-</span>
-                        {point}
-                      </li>
-                    ))}
-                  </ul>
-                  <p className="text-xs">
-                    <span className="text-primary">{whyNowData.technologyHighlight}</span>
-                    <span className="text-muted-foreground/40 ml-2">({whyNowData.technologySource})</span>
-                  </p>
-                </GlassPanel>
-              </motion.div>
-              
-              {/* Shift/Future */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={whyNowVisible ? { opacity: 1, y: 0 } : {}}
-                transition={{ delay: 0.4 }}
-              >
-                <GlassPanel intensity="subtle" bordered className="p-6 rounded-xl h-full">
-                  <h4 className="text-foreground text-sm mb-4">Shift/Future:</h4>
-                  <ul className="space-y-2 mb-4">
-                    {whyNowData.shift.map((point, i) => (
-                      <li key={i} className="text-xs text-muted-foreground/60 flex items-start gap-3">
-                        <span className="text-muted-foreground/40 mt-0.5">-</span>
-                        {point}
-                      </li>
-                    ))}
-                  </ul>
-                  <p className="text-xs">
-                    <span className="text-primary">{whyNowData.shiftHighlight}</span>
-                    <span className="text-muted-foreground/40 ml-2">({whyNowData.shiftSource})</span>
-                  </p>
-                </GlassPanel>
-              </motion.div>
-              
-              {/* Market Pressure */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={whyNowVisible ? { opacity: 1, y: 0 } : {}}
-                transition={{ delay: 0.6 }}
-              >
-                <GlassPanel intensity="subtle" bordered className="p-6 rounded-xl h-full">
-                  <h4 className="text-foreground text-sm mb-4">Market Pressure:</h4>
-                  <ul className="space-y-2 mb-4">
-                    {whyNowData.pressure.map((point, i) => (
-                      <li key={i} className="text-xs text-muted-foreground/60 flex items-start gap-3">
-                        <span className="text-muted-foreground/40 mt-0.5">-</span>
-                        {point}
-                      </li>
-                    ))}
-                  </ul>
-                  <p className="text-xs">
-                    <span className="text-primary">{whyNowData.pressureHighlight}</span>
-                    <span className="text-muted-foreground/40 ml-2">({whyNowData.pressureSource})</span>
-                  </p>
-                </GlassPanel>
-              </motion.div>
-            </div>
-            
-            {/* Conclusion */}
-            <motion.p
-              className="text-sm text-muted-foreground/70 text-center mt-10"
-              initial={{ opacity: 0 }}
-              animate={whyNowVisible ? { opacity: 1 } : {}}
-              transition={{ delay: 0.8 }}
-            >
-              AI is becoming the dominating operating system of supply chains by 2030 – <span className="text-primary">Now is the time to act!</span>
-            </motion.p>
+            {/* Carousel cards */}
+            <WhyNowCarousel whyNowData={whyNowData} whyNowVisible={whyNowVisible} />
           </div>
         </div>
         
