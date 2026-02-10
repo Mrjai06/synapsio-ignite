@@ -394,59 +394,107 @@ const segmentColors = [
   "hsl(var(--secondary) / 0.5)",      // SCM Global - copper/bronze
 ];
 
-// Interactive concentric circle for a single year
-// Uses sqrt scale so small segments remain visible
-const GrowthCircle = ({ year, values, activeSegment, onSegmentClick }: { 
+// Pie chart slice path generator
+const describeArc = (cx: number, cy: number, r: number, startAngle: number, endAngle: number) => {
+  const start = {
+    x: cx + r * Math.cos(startAngle),
+    y: cy + r * Math.sin(startAngle),
+  };
+  const end = {
+    x: cx + r * Math.cos(endAngle),
+    y: cy + r * Math.sin(endAngle),
+  };
+  const largeArc = endAngle - startAngle > Math.PI ? 1 : 0;
+  return `M ${cx} ${cy} L ${start.x} ${start.y} A ${r} ${r} 0 ${largeArc} 1 ${end.x} ${end.y} Z`;
+};
+
+// Interactive pie chart for a single year
+const GrowthPieChart = ({ year, values, activeSegment, onSegmentClick }: { 
   year: string; 
   values: number[]; 
   activeSegment: number | null;
   onSegmentClick: (idx: number | null) => void;
 }) => {
-  const maxR = 200;
-  const cx = 220;
-  const cy = 220;
+  const cx = 200;
+  const cy = 200;
+  const r = 160;
+  const total = values.reduce((sum, v) => sum + v, 0);
 
-  // sqrt scale: maps value range to radius range with minimum floor
-  const maxVal = Math.max(...values);
-  const circles = values.map((val, idx) => ({
-    r: Math.max(Math.sqrt(val / maxVal) * maxR, 28),
-    color: segmentColors[idx],
-    val,
-    idx,
-  })).sort((a, b) => b.r - a.r);
+  // Build slices
+  let currentAngle = -Math.PI / 2; // start from top
+  const slices = values.map((val, idx) => {
+    const sliceAngle = (val / total) * 2 * Math.PI;
+    const startAngle = currentAngle;
+    const endAngle = currentAngle + sliceAngle;
+    currentAngle = endAngle;
+    
+    // Label position at midpoint of arc
+    const midAngle = startAngle + sliceAngle / 2;
+    const labelR = r * 0.6;
+    const labelX = cx + labelR * Math.cos(midAngle);
+    const labelY = cy + labelR * Math.sin(midAngle);
+
+    return { val, idx, startAngle, endAngle, color: segmentColors[idx], labelX, labelY, midAngle };
+  });
 
   return (
     <div className="flex flex-col items-center">
       <p className="text-2xl font-light text-foreground mb-6">{year}</p>
-      <svg viewBox="0 0 440 440" className="w-full">
-        {circles.map((c, i) => {
-          const isActive = activeSegment === c.idx;
-          const isOther = activeSegment !== null && activeSegment !== c.idx;
+      <svg viewBox="0 0 400 400" className="w-full max-w-[280px] md:max-w-[320px]">
+        {slices.map((slice, i) => {
+          const isActive = activeSegment === slice.idx;
+          const isOther = activeSegment !== null && activeSegment !== slice.idx;
+          // Explode active slice outward
+          const explode = isActive ? 8 : 0;
+          const midAngle = slice.startAngle + (slice.endAngle - slice.startAngle) / 2;
+          const dx = explode * Math.cos(midAngle);
+          const dy = explode * Math.sin(midAngle);
+
           return (
-            <motion.g key={c.idx}>
-              <motion.circle
-                cx={cx}
-                cy={cy}
-                r={c.r}
-                fill={c.color}
-                stroke={isActive ? "hsl(var(--primary))" : "hsl(var(--border) / 0.4)"}
-                strokeWidth={isActive ? 2.5 : 1.5}
+            <motion.g key={slice.idx}>
+              <motion.path
+                d={describeArc(cx + dx, cy + dy, r, slice.startAngle, slice.endAngle)}
+                fill={slice.color}
+                stroke="hsl(var(--background))"
+                strokeWidth={2}
                 className="cursor-pointer"
-                style={{ transformOrigin: `${cx}px ${cy}px` }}
                 initial={{ scale: 0, opacity: 0 }}
-                animate={{ scale: 1, opacity: isOther ? 0.3 : 1 }}
-                transition={{ delay: 0.2 + i * 0.12, duration: 0.6, ease: "easeOut" }}
+                animate={{ 
+                  scale: 1, 
+                  opacity: isOther ? 0.3 : 1,
+                }}
+                transition={{ delay: 0.15 + i * 0.1, duration: 0.5, ease: "easeOut" }}
+                style={{ transformOrigin: `${cx}px ${cy}px` }}
                 onClick={(e) => {
                   e.stopPropagation();
-                  onSegmentClick(isActive ? null : c.idx);
+                  onSegmentClick(isActive ? null : slice.idx);
                 }}
                 whileHover={{ scale: 1.03 }}
               />
+              {/* Percentage label inside slice if large enough */}
+              {slice.val / total > 0.08 && (
+                <motion.text
+                  x={slice.labelX + dx}
+                  y={slice.labelY + dy}
+                  textAnchor="middle"
+                  dominantBaseline="central"
+                  className="fill-foreground text-xs font-medium pointer-events-none"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: isOther ? 0.2 : 0.9 }}
+                  transition={{ delay: 0.4 + i * 0.1 }}
+                >
+                  {slice.val.toFixed(1)}%
+                </motion.text>
+              )}
             </motion.g>
           );
         })}
+        {/* Center label */}
+        <text x={cx} y={cx} textAnchor="middle" dominantBaseline="central" className="fill-muted-foreground/40 text-xs font-light pointer-events-none">
+          {total.toFixed(0)}%
+        </text>
       </svg>
-      {/* Active segment tooltip below circle */}
+      {/* Active segment tooltip below */}
       <div className="h-16 flex items-start justify-center mt-2">
         <AnimatePresence mode="wait">
           {activeSegment !== null && (
@@ -484,14 +532,14 @@ const MarketGrowthComparison = ({ whyNowVisible }: { whyNowVisible: boolean }) =
           animate={whyNowVisible ? { opacity: 1, scale: 1 } : {}}
           transition={{ delay: 0.4 }}
         >
-          <GrowthCircle year="2023/24" values={[0.67, 6.42, 15.27, 77.64]} activeSegment={activeSegment} onSegmentClick={setActiveSegment} />
+          <GrowthPieChart year="2023/24" values={[0.67, 6.42, 15.27, 77.64]} activeSegment={activeSegment} onSegmentClick={setActiveSegment} />
         </motion.div>
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={whyNowVisible ? { opacity: 1, scale: 1 } : {}}
           transition={{ delay: 0.6 }}
         >
-          <GrowthCircle year="2029/2030" values={[1.94, 3.45, 48.51, 46.11]} activeSegment={activeSegment} onSegmentClick={setActiveSegment} />
+          <GrowthPieChart year="2029/2030" values={[1.94, 3.45, 48.51, 46.11]} activeSegment={activeSegment} onSegmentClick={setActiveSegment} />
         </motion.div>
       </div>
       {/* Legend */}
