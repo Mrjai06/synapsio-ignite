@@ -594,16 +594,23 @@ const OpportunitySection = () => {
             Why now – AI as the operating system of supply-chains
           </p>
           
-          <div className={`grid lg:grid-cols-2 gap-16 transition-all duration-1000 ${whyNowVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
-            {/* Left: Text content */}
-            <div className="space-y-10">
+          <div className={`transition-all duration-1000 ${whyNowVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
+            {/* Pie charts - centered and larger */}
+            <div className="max-w-3xl mx-auto mb-16">
+              <GlassPanel intensity="subtle" bordered className="p-10 md:p-14 rounded-xl">
+                <MarketGrowthComparison whyNowVisible={whyNowVisible} />
+              </GlassPanel>
+            </div>
+            
+            {/* Three text cards below */}
+            <div className="grid md:grid-cols-3 gap-6">
               {/* Technology */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={whyNowVisible ? { opacity: 1, y: 0 } : {}}
                 transition={{ delay: 0.2 }}
               >
-                <GlassPanel intensity="subtle" bordered className="p-6 rounded-xl">
+                <GlassPanel intensity="subtle" bordered className="p-6 rounded-xl h-full">
                   <h4 className="text-foreground text-sm mb-4">Technology:</h4>
                   <ul className="space-y-2 mb-4">
                     {whyNowData.technology.map((point, i) => (
@@ -626,7 +633,7 @@ const OpportunitySection = () => {
                 animate={whyNowVisible ? { opacity: 1, y: 0 } : {}}
                 transition={{ delay: 0.4 }}
               >
-                <GlassPanel intensity="subtle" bordered className="p-6 rounded-xl">
+                <GlassPanel intensity="subtle" bordered className="p-6 rounded-xl h-full">
                   <h4 className="text-foreground text-sm mb-4">Shift/Future:</h4>
                   <ul className="space-y-2 mb-4">
                     {whyNowData.shift.map((point, i) => (
@@ -649,7 +656,7 @@ const OpportunitySection = () => {
                 animate={whyNowVisible ? { opacity: 1, y: 0 } : {}}
                 transition={{ delay: 0.6 }}
               >
-                <GlassPanel intensity="subtle" bordered className="p-6 rounded-xl">
+                <GlassPanel intensity="subtle" bordered className="p-6 rounded-xl h-full">
                   <h4 className="text-foreground text-sm mb-4">Market Pressure:</h4>
                   <ul className="space-y-2 mb-4">
                     {whyNowData.pressure.map((point, i) => (
@@ -665,24 +672,17 @@ const OpportunitySection = () => {
                   </p>
                 </GlassPanel>
               </motion.div>
-              
-              {/* Conclusion */}
-              <motion.p
-                className="text-sm text-muted-foreground/70"
-                initial={{ opacity: 0 }}
-                animate={whyNowVisible ? { opacity: 1 } : {}}
-                transition={{ delay: 0.8 }}
-              >
-                AI is becoming the dominating operating system of supply chains by 2030 – <span className="text-primary">Now is the time to act!</span>
-              </motion.p>
             </div>
             
-            {/* Right: Circle visualizations - unified card */}
-            <div>
-              <GlassPanel intensity="subtle" bordered className="p-8 md:p-10 rounded-xl">
-                <MarketGrowthComparison whyNowVisible={whyNowVisible} />
-              </GlassPanel>
-            </div>
+            {/* Conclusion */}
+            <motion.p
+              className="text-sm text-muted-foreground/70 text-center mt-10"
+              initial={{ opacity: 0 }}
+              animate={whyNowVisible ? { opacity: 1 } : {}}
+              transition={{ delay: 0.8 }}
+            >
+              AI is becoming the dominating operating system of supply chains by 2030 – <span className="text-primary">Now is the time to act!</span>
+            </motion.p>
           </div>
         </div>
         
