@@ -82,9 +82,9 @@ const ProgressNavbar = () => {
   return (
     <nav className="fixed right-6 top-1/2 -translate-y-1/2 z-40 hidden lg:block">
       <div className="relative" ref={containerRef}>
-        {/* Background track - same width as dots */}
+        {/* Background track - anchored to dot column center (right-[5.5px] = center of 12px dot wrapper) */}
         <div 
-          className="absolute left-1/2 -translate-x-1/2 w-2 rounded-full bg-border/20"
+          className="absolute right-[5px] w-[2px] rounded-full bg-border/20"
           style={{ 
             top: dotPositions[0] || 0,
             height: dotPositions.length > 0 
@@ -93,9 +93,9 @@ const ProgressNavbar = () => {
           }}
         />
         
-        {/* Filled progress - same width as dots, reaches exactly to the active dot */}
+        {/* Filled progress */}
         <div 
-          className="absolute left-1/2 -translate-x-1/2 w-2 rounded-full bg-primary/50 transition-all duration-500 ease-out"
+          className="absolute right-[5px] w-[2px] rounded-full bg-primary/50 transition-all duration-500 ease-out"
           style={{ 
             top: dotPositions[0] || 0,
             height: Math.max(0, getProgressHeight() - (dotPositions[0] || 0))
