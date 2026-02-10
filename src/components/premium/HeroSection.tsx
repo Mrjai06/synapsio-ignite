@@ -22,7 +22,7 @@ const HeroSection = () => {
   }, []);
   const contentOpacity = 1 - scrollProgress * 1.5;
   const contentTranslate = scrollProgress * 40;
-  return <section ref={sectionRef} className="relative min-h-screen flex items-center justify-center overflow-hidden">
+  return <section ref={sectionRef} className="relative min-h-[110vh] flex items-center justify-center overflow-hidden">
       {/* Neural synapse animated background */}
       <CosmicSynapseCanvas className="absolute inset-0 opacity-60" />
       
@@ -37,36 +37,36 @@ const HeroSection = () => {
       
       
       {/* Content */}
-       <div className="relative z-10 container mx-auto px-6 lg:px-12 xl:px-20 2xl:px-28 transition-all duration-700" style={{
+      <div className="relative z-10 container mx-auto px-8 lg:px-20 xl:px-28 transition-all duration-700" style={{
       opacity: Math.max(0, contentOpacity),
       transform: `translateY(${contentTranslate}px)`
     }}>
-        <div className="max-w-5xl lg:max-w-xl xl:max-w-2xl 2xl:max-w-3xl">
-          {/* Branding */}
-          <div className="mb-10 lg:mb-12 xl:mb-16 2xl:mb-20 animate-fade-in flex items-center gap-3" style={{
+        <div className="max-w-5xl lg:max-w-2xl xl:max-w-3xl">
+          {/* Branding - very subtle */}
+          <div className="mb-20 animate-fade-in flex items-center gap-4" style={{
           animationDelay: "0.2s",
           animationDuration: "1.2s"
         }}>
-            <img src={synapsioLogo} alt="Synapsio" className="h-7 lg:h-8 xl:h-9 2xl:h-10 w-auto opacity-60" />
-            <span className="tracking-[0.5em] uppercase text-muted-foreground/40 font-light text-2xl lg:text-3xl xl:text-3xl 2xl:text-4xl font-mono">
+            <img src={synapsioLogo} alt="Synapsio" className="h-10 w-auto opacity-60" />
+            <span className="tracking-[0.5em] uppercase text-muted-foreground/40 font-light text-4xl font-mono">
               Synapsio
             </span>
           </div>
           
-          {/* Headline */}
-          <h1 className="text-4xl md:text-5xl lg:text-5xl xl:text-6xl 2xl:text-7xl font-light tracking-[-0.03em] mb-8 lg:mb-10 xl:mb-12 2xl:mb-14 animate-fade-in leading-[0.92]" style={{
+          {/* Headline - larger, more breathing room */}
+          <h1 className="text-5xl md:text-7xl lg:text-[5.5rem] font-light tracking-[-0.03em] mb-14 animate-fade-in leading-[0.92] xl:text-7xl" style={{
           animationDelay: "0.4s",
           animationDuration: "1.4s"
         }}>
             <span className="text-foreground">Connections</span>
             <br />
-            <span className="text-primary">you can rely </span>
+            <span className="text-primary">you can rely </span>
             <br />
             <span className="text-primary">on</span>
           </h1>
           
-          {/* Subheadline */}
-          <p className="text-base md:text-lg lg:text-lg xl:text-xl 2xl:text-2xl max-w-xl mb-10 lg:mb-12 xl:mb-16 2xl:mb-20 font-light leading-[1.7] animate-fade-in text-primary" style={{
+          {/* Subheadline - more space */}
+          <p className="text-lg md:text-xl max-w-xl mb-20 font-light leading-[1.7] animate-fade-in lg:text-2xl text-primary" style={{
           animationDelay: "0.6s",
           animationDuration: "1.4s"
         }}>A fully automated AI-based SCM-solution used for the management and creation of supply-chains</p>
@@ -77,13 +77,13 @@ const HeroSection = () => {
           animationDuration: "1.4s"
         }}>
             <FloatingSurface elevation="high" glow glowColor="primary" className="rounded-full">
-               <Button size="lg" className="group bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-8 py-5 lg:px-10 lg:py-6 xl:px-12 xl:py-7 2xl:px-12 2xl:py-8 text-sm tracking-wide font-normal transition-all duration-1000 hover:scale-[1.02]">
+              <Button size="lg" className="group bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-12 py-8 text-sm tracking-wide font-normal transition-all duration-1000 hover:scale-[1.02]">
                 View Pitchdeck
                 <ArrowRight className="ml-3 h-4 w-4 transition-transform duration-700 group-hover:translate-x-1" />
               </Button>
             </FloatingSurface>
             <FloatingSurface elevation="medium" className="rounded-full">
-              <Button size="lg" variant="ghost" className="text-muted-foreground/50 hover:text-foreground hover:bg-card/20 rounded-full px-8 py-5 lg:px-10 lg:py-6 xl:px-12 xl:py-7 2xl:px-12 2xl:py-8 text-sm tracking-wide font-normal border border-border/15 hover:border-border/35 transition-all duration-1000 backdrop-blur-sm">
+              <Button size="lg" variant="ghost" className="text-muted-foreground/50 hover:text-foreground hover:bg-card/20 rounded-full px-12 py-8 text-sm tracking-wide font-normal border border-border/15 hover:border-border/35 transition-all duration-1000 backdrop-blur-sm">
                 Explore Product
               </Button>
             </FloatingSurface>
