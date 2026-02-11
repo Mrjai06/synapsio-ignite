@@ -98,6 +98,7 @@ const FeaturesSection = () => {
   const [systemState, setSystemState] = useState<SystemState>("idle");
   const [isLoopPaused, setIsLoopPaused] = useState(false);
   const [headerVisible, setHeaderVisible] = useState(false);
+  const cardsRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -182,7 +183,7 @@ const FeaturesSection = () => {
         </div>
 
         {/* Feature Cards - Default 3-column, expands on click */}
-        <div className="relative mb-12">
+        <div className="relative mb-12" ref={cardsRef}>
           <motion.div 
             className="flex gap-4 items-stretch"
             layout
@@ -203,7 +204,23 @@ const FeaturesSection = () => {
                     flex: isActive ? "1 1 auto" : isInactive ? "0 0 60px" : "1 1 0%",
                   }}
                   transition={{ duration: 0 }}
-                  onClick={() => setActiveFeature(isActive ? "" : feature.id)}
+                  onClick={() => {
+                    if (cardsRef.current) {
+                      const rect = cardsRef.current.getBoundingClientRect();
+                      const offsetBefore = rect.top;
+                      setActiveFeature(isActive ? "" : feature.id);
+                      requestAnimationFrame(() => {
+                        const newRect = cardsRef.current!.getBoundingClientRect();
+                        const offsetAfter = newRect.top;
+                        const diff = offsetAfter - offsetBefore;
+                        if (diff !== 0) {
+                          window.scrollBy({ top: diff, behavior: "instant" as ScrollBehavior });
+                        }
+                      });
+                    } else {
+                      setActiveFeature(isActive ? "" : feature.id);
+                    }
+                  }}
                   className={`rounded-2xl border overflow-hidden cursor-pointer ${
                     isActive 
                       ? "bg-accent/10 border-accent/40 ring-2 ring-accent/20" 
