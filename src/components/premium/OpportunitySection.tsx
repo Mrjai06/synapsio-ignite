@@ -329,10 +329,10 @@ const segmentLabels = [
 ];
 
 const segmentColors = [
-  "hsl(var(--foreground))",           // AI-SCM Germany - bright white
-  "hsl(var(--muted-foreground) / 0.5)", // SCM Germany - gray
-  "hsl(var(--primary) / 0.7)",        // AI-SCM Global - strong teal
-  "hsl(var(--secondary) / 0.5)",      // SCM Global - copper/bronze
+  "hsl(var(--foreground))",              // AI-SCM Germany - bright white
+  "hsl(var(--muted-foreground) / 0.7)",  // SCM Germany - visible gray
+  "hsl(var(--primary))",                 // AI-SCM Global - full teal
+  "hsl(var(--secondary) / 0.7)",         // SCM Global - bronze
 ];
 
 // Pie chart slice path generator
@@ -391,18 +391,18 @@ const GrowthPieChart = ({ year, values, activeSegment, onSegmentClick }: {
           const dx = explode * Math.cos(midAngle);
           const dy = explode * Math.sin(midAngle);
 
-          return (
+            return (
             <motion.g key={slice.idx}>
               <motion.path
-                d={describeArc(cx + dx, cy + dy, r, slice.startAngle, slice.endAngle)}
+                d={describeArc(cx + dx, cy + dy, isActive ? r + 4 : r, slice.startAngle, slice.endAngle)}
                 fill={slice.color}
                 stroke="hsl(var(--background))"
-                strokeWidth={2}
+                strokeWidth={3}
                 className="cursor-pointer"
                 initial={{ scale: 0, opacity: 0 }}
                 animate={{ 
                   scale: 1, 
-                  opacity: isOther ? 0.3 : 1,
+                  opacity: isOther ? 0.25 : 1,
                 }}
                 transition={{ delay: 0.15 + i * 0.1, duration: 0.5, ease: "easeOut" }}
                 style={{ transformOrigin: `${cx}px ${cy}px` }}
@@ -410,8 +410,19 @@ const GrowthPieChart = ({ year, values, activeSegment, onSegmentClick }: {
                   e.stopPropagation();
                   onSegmentClick(isActive ? null : slice.idx);
                 }}
-                whileHover={{ scale: 1.03 }}
+                whileHover={{ scale: 1.05 }}
               />
+              {/* Outer stroke highlight for small or active slices */}
+              {(slice.val / total < 0.05 || isActive) && (
+                <motion.path
+                  d={describeArc(cx + dx, cy + dy, isActive ? r + 4 : r, slice.startAngle, slice.endAngle)}
+                  fill="none"
+                  stroke={isActive ? "hsl(var(--primary))" : "hsl(var(--foreground) / 0.6)"}
+                  strokeWidth={1.5}
+                  className="pointer-events-none"
+                  animate={{ opacity: isOther ? 0.1 : 1 }}
+                />
+              )}
               {/* Percentage label inside slice if large enough */}
               {slice.val / total > 0.08 && (
                 <motion.text
