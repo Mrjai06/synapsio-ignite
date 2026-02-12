@@ -399,10 +399,6 @@ const GrowthPieChart = ({ year, values, compareValues, activeSegment, onSegmentC
           const dx = explode * Math.cos(midAngle);
           const dy = explode * Math.sin(midAngle);
 
-          // Growth badge position - outside the slice
-          const badgeR = r + 24;
-          const badgeX = cx + badgeR * Math.cos(midAngle) + dx;
-          const badgeY = cy + badgeR * Math.sin(midAngle) + dy;
           const isGrowth = slice.changePercent !== null && slice.changePercent > 0;
 
             return (
@@ -437,11 +433,11 @@ const GrowthPieChart = ({ year, values, compareValues, activeSegment, onSegmentC
                   animate={{ opacity: isOther ? 0.1 : 1 }}
                 />
               )}
-              {/* Percentage label inside slice if large enough */}
+              {/* Percentage label inside slice - shows growth/decrease when active */}
               {slice.val / total > 0.08 && (
                 <motion.text
                   x={slice.labelX + dx}
-                  y={slice.labelY + dy}
+                  y={slice.labelY + dy - (isActive && slice.changePercent !== null ? 6 : 0)}
                   textAnchor="middle"
                   dominantBaseline="central"
                   className="fill-foreground text-xs font-medium pointer-events-none"
@@ -452,35 +448,21 @@ const GrowthPieChart = ({ year, values, compareValues, activeSegment, onSegmentC
                   {slice.val.toFixed(1)}%
                 </motion.text>
               )}
-              {/* Growth/decrease badge outside the slice */}
-              {slice.changePercent !== null && !isOther && (
-                <motion.g
-                  initial={{ opacity: 0, scale: 0.5 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.6 + i * 0.12, duration: 0.4 }}
-                  className="pointer-events-none"
+              {/* Growth/decrease shown below percentage inside slice when active */}
+              {isActive && slice.changePercent !== null && slice.val / total > 0.08 && (
+                <motion.text
+                  x={slice.labelX + dx}
+                  y={slice.labelY + dy + 8}
+                  textAnchor="middle"
+                  dominantBaseline="central"
+                  className="text-[10px] font-semibold pointer-events-none"
+                  fill={isGrowth ? "hsl(var(--primary))" : "hsl(var(--destructive))"}
+                  initial={{ opacity: 0, y: -4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.2 }}
                 >
-                  <motion.rect
-                    x={badgeX - 22}
-                    y={badgeY - 10}
-                    width={44}
-                    height={20}
-                    rx={10}
-                    fill={isGrowth ? "hsl(var(--primary) / 0.15)" : "hsl(var(--destructive) / 0.15)"}
-                    stroke={isGrowth ? "hsl(var(--primary) / 0.4)" : "hsl(var(--destructive) / 0.4)"}
-                    strokeWidth={0.5}
-                  />
-                  <text
-                    x={badgeX + 2}
-                    y={badgeY + 1}
-                    textAnchor="middle"
-                    dominantBaseline="central"
-                    className="text-[9px] font-semibold pointer-events-none"
-                    fill={isGrowth ? "hsl(var(--primary))" : "hsl(var(--destructive))"}
-                  >
-                    {isGrowth ? "▲" : "▼"} {Math.abs(slice.changePercent).toFixed(0)}%
-                  </text>
-                </motion.g>
+                  {isGrowth ? "▲" : "▼"} {Math.abs(slice.changePercent).toFixed(0)}%
+                </motion.text>
               )}
             </motion.g>
           );
