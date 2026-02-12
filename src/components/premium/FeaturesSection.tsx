@@ -280,9 +280,9 @@ const FeaturesSection = () => {
                       {!isInactive && (
                         <div className="ml-auto shrink-0">
                           {isActive ? (
-                            <X className="w-4 h-4 text-accent/60" />
+                            <X className="w-4 h-4 text-foreground" />
                           ) : (
-                            <Plus className="w-4 h-4 text-muted-foreground/40" />
+                            <Plus className="w-4 h-4 text-foreground" />
                           )}
                         </div>
                       )}
