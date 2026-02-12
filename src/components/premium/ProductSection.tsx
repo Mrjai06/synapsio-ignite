@@ -53,21 +53,8 @@ const comparisonExample = {
 };
 
 const ProductSection = () => {
-  const [headerVisible, setHeaderVisible] = useState(false);
   const [comparisonVisible, setComparisonVisible] = useState(false);
-  const headerRef = useRef<HTMLDivElement>(null);
   const comparisonRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) setHeaderVisible(true);
-      },
-      { threshold: 0.3 }
-    );
-    if (headerRef.current) observer.observe(headerRef.current);
-    return () => observer.disconnect();
-  }, []);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -86,25 +73,7 @@ const ProductSection = () => {
       <AmbientGlow color="primary" size="md" intensity="subtle" position="right" className="top-1/4" />
       <AmbientGlow color="accent" size="md" intensity="subtle" position="left" className="bottom-1/4" />
       
-      <div className="relative z-10 container mx-auto px-8 lg:px-20 xl:px-28">
-        {/* Section header */}
-        <div ref={headerRef} className="max-w-2xl mb-20 md:mb-28">
-          <p 
-            className={`text-[10px] tracking-[0.4em] uppercase text-primary/50 mb-10 transition-all duration-1000 ${headerVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}
-          >
-            Our Product
-          </p>
-          <h2 
-            className={`text-4xl md:text-5xl lg:text-[3.5rem] font-light tracking-[-0.02em] leading-[1.08] transition-all duration-1000 ${headerVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
-            style={{ transitionDelay: "100ms" }}
-          >
-            <span className="text-foreground">A living system</span>
-            <br />
-            <span className="text-muted-foreground/30">that grows with you</span>
-          </h2>
-        </div>
-      </div>
-      
+
       <FeaturesSection />
       
       {/* Before/After Comparison */}
