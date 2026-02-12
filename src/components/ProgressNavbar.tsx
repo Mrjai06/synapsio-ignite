@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from "react";
+import synapsioLogo from "@/assets/synapsio-logo.png";
 
 const ProgressNavbar = () => {
   const [activeSection, setActiveSection] = useState(0);
@@ -79,7 +80,11 @@ const ProgressNavbar = () => {
   };
 
   return (
-    <nav className="fixed right-6 top-1/2 -translate-y-1/2 z-40 hidden lg:block">
+    <nav className="fixed right-6 top-1/2 -translate-y-1/2 z-40 hidden lg:flex flex-col items-center gap-6">
+      {/* Brand mark */}
+      <a href="#hero" className="mb-2 opacity-40 hover:opacity-70 transition-opacity duration-500">
+        <img src={synapsioLogo} alt="Synapsio" className="h-6 w-auto" />
+      </a>
       <div className="relative" ref={containerRef}>
         {/* Background track - anchored to dot column center (right-[5.5px] = center of 12px dot wrapper) */}
         <div 

@@ -2,14 +2,26 @@ import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { FloatingSurface } from "./DepthSystem";
+import synapsioLogo from "@/assets/synapsio-logo.png";
 
 const VisionSection = () => {
   return (
     <section className="relative py-20 md:py-28">
       <div className="container mx-auto px-8 lg:px-16">
         <div className="max-w-2xl mx-auto text-center">
+          {/* Logo */}
+          <motion.div
+            className="flex justify-center mb-10"
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+          >
+            <img src={synapsioLogo} alt="Synapsio" className="h-12 w-auto opacity-50" />
+          </motion.div>
+          
           {/* CTA content */}
-          <motion.h2 
+          <motion.h2
             className="text-3xl md:text-4xl font-light text-foreground mb-8 tracking-tight leading-tight"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
