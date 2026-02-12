@@ -389,7 +389,7 @@ const GrowthPieChart = ({ year, values, compareValues, activeSegment, onSegmentC
   return (
     <div className="flex flex-col items-center">
       <p className="text-2xl font-light text-foreground mb-6">{year}</p>
-      <svg viewBox="0 0 400 400" className="w-full max-w-[280px] md:max-w-[320px]">
+      <svg viewBox="0 0 400 400" className="w-full max-w-[340px] md:max-w-[400px]">
         {slices.map((slice, i) => {
           const isActive = activeSegment === slice.idx;
           const isOther = activeSegment !== null && activeSegment !== slice.idx;
@@ -403,8 +403,20 @@ const GrowthPieChart = ({ year, values, compareValues, activeSegment, onSegmentC
 
             return (
             <motion.g key={slice.idx}>
+              {/* Invisible larger hit area for small slices */}
+              {slice.val / total < 0.08 && (
+                <motion.path
+                  d={describeArc(cx + dx, cy + dy, r + 20, slice.startAngle - 0.08, slice.endAngle + 0.08)}
+                  fill="transparent"
+                  className="cursor-pointer"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onSegmentClick(isActive ? null : slice.idx);
+                  }}
+                />
+              )}
               <motion.path
-                d={describeArc(cx + dx, cy + dy, isActive ? r + 4 : r, slice.startAngle, slice.endAngle)}
+                d={describeArc(cx + dx, cy + dy, isActive ? r + 6 : r, slice.startAngle, slice.endAngle)}
                 fill={slice.color}
                 stroke="hsl(var(--background))"
                 strokeWidth={3}
@@ -425,10 +437,10 @@ const GrowthPieChart = ({ year, values, compareValues, activeSegment, onSegmentC
               {/* Outer stroke highlight for small or active slices */}
               {(slice.val / total < 0.05 || isActive) && (
                 <motion.path
-                  d={describeArc(cx + dx, cy + dy, isActive ? r + 4 : r, slice.startAngle, slice.endAngle)}
+                  d={describeArc(cx + dx, cy + dy, isActive ? r + 6 : r, slice.startAngle, slice.endAngle)}
                   fill="none"
                   stroke={isActive ? "hsl(var(--primary))" : "hsl(var(--foreground) / 0.6)"}
-                  strokeWidth={1.5}
+                  strokeWidth={2}
                   className="pointer-events-none"
                   animate={{ opacity: isOther ? 0.1 : 1 }}
                 />
