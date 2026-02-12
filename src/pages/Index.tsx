@@ -55,14 +55,9 @@ const Index = () => {
         </section>
         
         
-        {/* Process Overview - Interactive workflow diagram */}
-        <section id="process">
-          <ProcessOverviewSection />
-        </section>
-        
-        
-        {/* Act 4: Our Product - Explanation, Key Features, Examples */}
+        {/* Act 4: Our Product - Process Overview + Features + Comparison */}
         <section id="product">
+          <ProcessOverviewSection />
           <ProductSection />
         </section>
         

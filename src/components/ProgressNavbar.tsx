@@ -10,7 +10,6 @@ const ProgressNavbar = () => {
     { id: "preface", label: "Preface" },
     { id: "problem", label: "Challenge" },
     { id: "solution", label: "Solution" },
-    { id: "process", label: "Process" },
     { id: "product", label: "Product" },
     { id: "opportunity", label: "Opportunity" },
     { id: "roadmap", label: "Roadmap" },
