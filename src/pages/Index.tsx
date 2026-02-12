@@ -2,7 +2,7 @@ import HeroSection from "@/components/premium/HeroSection";
 import PrefaceSection from "@/components/premium/PrefaceSection";
 import ProblemSection from "@/components/premium/ProblemSection";
 import SolutionSection from "@/components/premium/SolutionSection";
-import ProcessOverviewSection from "@/components/premium/ProcessOverviewSection";
+
 import ProductSection from "@/components/premium/ProductSection";
 import OpportunitySection from "@/components/premium/OpportunitySection";
 import RoadmapSection from "@/components/premium/RoadmapSection";
@@ -57,7 +57,6 @@ const Index = () => {
         
         {/* Act 4: Our Product - Process Overview + Features + Comparison */}
         <section id="product">
-          <ProcessOverviewSection />
           <ProductSection />
         </section>
         
