@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Building2, Layers, Zap, Check, X, ArrowLeft, ArrowRight } from "lucide-react";
+import { Building2, Layers, Zap, Check, X, ArrowLeft, ArrowRight, TrendingUp, TrendingDown } from "lucide-react";
 import { AnimatedTabs } from "@/components/ui/animated-tabs";
 import { FloatingSurface, GlassPanel, AmbientGlow } from "./DepthSystem";
 
@@ -350,9 +350,10 @@ const describeArc = (cx: number, cy: number, r: number, startAngle: number, endA
 };
 
 // Interactive pie chart for a single year
-const GrowthPieChart = ({ year, values, activeSegment, onSegmentClick }: { 
+const GrowthPieChart = ({ year, values, compareValues, activeSegment, onSegmentClick }: { 
   year: string; 
   values: number[]; 
+  compareValues?: number[];
   activeSegment: number | null;
   onSegmentClick: (idx: number | null) => void;
 }) => {
@@ -375,7 +376,14 @@ const GrowthPieChart = ({ year, values, activeSegment, onSegmentClick }: {
     const labelX = cx + labelR * Math.cos(midAngle);
     const labelY = cy + labelR * Math.sin(midAngle);
 
-    return { val, idx, startAngle, endAngle, color: segmentColors[idx], labelX, labelY, midAngle };
+    // Calculate growth/decrease compared to other year
+    let changePercent: number | null = null;
+    if (compareValues) {
+      const diff = val - compareValues[idx];
+      changePercent = compareValues[idx] !== 0 ? (diff / compareValues[idx]) * 100 : 0;
+    }
+
+    return { val, idx, startAngle, endAngle, color: segmentColors[idx], labelX, labelY, midAngle, changePercent };
   });
 
   return (
@@ -390,6 +398,12 @@ const GrowthPieChart = ({ year, values, activeSegment, onSegmentClick }: {
           const midAngle = slice.startAngle + (slice.endAngle - slice.startAngle) / 2;
           const dx = explode * Math.cos(midAngle);
           const dy = explode * Math.sin(midAngle);
+
+          // Growth badge position - outside the slice
+          const badgeR = r + 24;
+          const badgeX = cx + badgeR * Math.cos(midAngle) + dx;
+          const badgeY = cy + badgeR * Math.sin(midAngle) + dy;
+          const isGrowth = slice.changePercent !== null && slice.changePercent > 0;
 
             return (
             <motion.g key={slice.idx}>
@@ -438,6 +452,36 @@ const GrowthPieChart = ({ year, values, activeSegment, onSegmentClick }: {
                   {slice.val.toFixed(1)}%
                 </motion.text>
               )}
+              {/* Growth/decrease badge outside the slice */}
+              {slice.changePercent !== null && !isOther && (
+                <motion.g
+                  initial={{ opacity: 0, scale: 0.5 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.6 + i * 0.12, duration: 0.4 }}
+                  className="pointer-events-none"
+                >
+                  <motion.rect
+                    x={badgeX - 22}
+                    y={badgeY - 10}
+                    width={44}
+                    height={20}
+                    rx={10}
+                    fill={isGrowth ? "hsl(var(--primary) / 0.15)" : "hsl(var(--destructive) / 0.15)"}
+                    stroke={isGrowth ? "hsl(var(--primary) / 0.4)" : "hsl(var(--destructive) / 0.4)"}
+                    strokeWidth={0.5}
+                  />
+                  <text
+                    x={badgeX + 2}
+                    y={badgeY + 1}
+                    textAnchor="middle"
+                    dominantBaseline="central"
+                    className="text-[9px] font-semibold pointer-events-none"
+                    fill={isGrowth ? "hsl(var(--primary))" : "hsl(var(--destructive))"}
+                  >
+                    {isGrowth ? "▲" : "▼"} {Math.abs(slice.changePercent).toFixed(0)}%
+                  </text>
+                </motion.g>
+              )}
             </motion.g>
           );
         })}
@@ -447,7 +491,7 @@ const GrowthPieChart = ({ year, values, activeSegment, onSegmentClick }: {
         </text>
       </svg>
       {/* Active segment tooltip below */}
-      <div className="h-16 flex items-start justify-center mt-2">
+      <div className="h-20 flex items-start justify-center mt-2">
         <AnimatePresence mode="wait">
           {activeSegment !== null && (
             <motion.div
@@ -459,10 +503,18 @@ const GrowthPieChart = ({ year, values, activeSegment, onSegmentClick }: {
               transition={{ duration: 0.2 }}
             >
               <p className="text-xl font-light text-primary">
-                {values[activeSegment] === 48.51 
-                  ? `${values[activeSegment].toFixed(2)}%, ~+35% CAGR` 
-                  : `${values[activeSegment].toFixed(2)}%`}
+                {values[activeSegment].toFixed(2)}%
               </p>
+              {compareValues && (
+                <p className={`text-sm font-medium mt-0.5 ${
+                  values[activeSegment] > compareValues[activeSegment] 
+                    ? "text-primary" 
+                    : "text-destructive"
+                }`}>
+                  {values[activeSegment] > compareValues[activeSegment] ? "↑" : "↓"}{" "}
+                  {Math.abs(((values[activeSegment] - compareValues[activeSegment]) / compareValues[activeSegment]) * 100).toFixed(0)}% vs {compareValues === undefined ? "" : year.includes("2023") ? "2029/30" : "2023/24"}
+                </p>
+              )}
               <p className="text-xs text-muted-foreground/50 mt-1">{segmentLabels[activeSegment]}</p>
             </motion.div>
           )}
@@ -484,14 +536,14 @@ const MarketGrowthComparison = ({ whyNowVisible }: { whyNowVisible: boolean }) =
           animate={whyNowVisible ? { opacity: 1, scale: 1 } : {}}
           transition={{ delay: 0.4 }}
         >
-          <GrowthPieChart year="2023/24" values={[0.67, 6.42, 15.27, 77.64]} activeSegment={activeSegment} onSegmentClick={setActiveSegment} />
+          <GrowthPieChart year="2023/24" values={[0.67, 6.42, 15.27, 77.64]} compareValues={[1.94, 3.45, 48.51, 46.11]} activeSegment={activeSegment} onSegmentClick={setActiveSegment} />
         </motion.div>
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={whyNowVisible ? { opacity: 1, scale: 1 } : {}}
           transition={{ delay: 0.6 }}
         >
-          <GrowthPieChart year="2029/2030" values={[1.94, 3.45, 48.51, 46.11]} activeSegment={activeSegment} onSegmentClick={setActiveSegment} />
+          <GrowthPieChart year="2029/2030" values={[1.94, 3.45, 48.51, 46.11]} compareValues={[0.67, 6.42, 15.27, 77.64]} activeSegment={activeSegment} onSegmentClick={setActiveSegment} />
         </motion.div>
       </div>
       {/* Legend */}
