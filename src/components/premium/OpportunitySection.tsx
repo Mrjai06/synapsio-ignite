@@ -361,10 +361,12 @@ const GrowthPieChart = ({ year, values, activeSegment, onSegmentClick }: {
   const r = 160;
   const total = values.reduce((sum, v) => sum + v, 0);
 
-  // Build slices
+  // Build slices - enforce minimum visual angle for tiny segments
+  const minAngle = 0.12; // ~7 degrees minimum so small slices are visible & clickable
   let currentAngle = -Math.PI / 2; // start from top
   const slices = values.map((val, idx) => {
-    const sliceAngle = (val / total) * 2 * Math.PI;
+    const rawAngle = (val / total) * 2 * Math.PI;
+    const sliceAngle = Math.max(rawAngle, minAngle);
     const startAngle = currentAngle;
     const endAngle = currentAngle + sliceAngle;
     currentAngle = endAngle;
@@ -375,7 +377,7 @@ const GrowthPieChart = ({ year, values, activeSegment, onSegmentClick }: {
     const labelX = cx + labelR * Math.cos(midAngle);
     const labelY = cy + labelR * Math.sin(midAngle);
 
-    return { val, idx, startAngle, endAngle, color: segmentColors[idx], labelX, labelY, midAngle };
+    return { val, idx, startAngle, endAngle, color: segmentColors[idx], labelX, labelY, midAngle, isSmall: rawAngle < minAngle };
   });
 
   return (
@@ -421,6 +423,24 @@ const GrowthPieChart = ({ year, values, activeSegment, onSegmentClick }: {
                   strokeWidth={1.5}
                   className="pointer-events-none"
                   animate={{ opacity: isOther ? 0.1 : 1 }}
+                />
+              )}
+              {/* Outer dot marker for small slices */}
+              {slice.isSmall && (
+                <motion.circle
+                  cx={cx + (r + 16) * Math.cos(midAngle) + dx}
+                  cy={cy + (r + 16) * Math.sin(midAngle) + dy}
+                  r={5}
+                  fill={slice.color}
+                  stroke="hsl(var(--background))"
+                  strokeWidth={2}
+                  className="cursor-pointer"
+                  animate={{ opacity: isOther ? 0.3 : 1, scale: isActive ? 1.4 : 1 }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onSegmentClick(isActive ? null : slice.idx);
+                  }}
+                  whileHover={{ scale: 1.5 }}
                 />
               )}
               {/* Percentage label inside slice if large enough */}
