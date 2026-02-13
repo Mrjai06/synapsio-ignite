@@ -3,6 +3,19 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Building2, Layers, Zap, Check, X, ArrowLeft, ArrowRight, TrendingUp, TrendingDown } from "lucide-react";
 import { AnimatedTabs } from "@/components/ui/animated-tabs";
 import { FloatingSurface, GlassPanel, AmbientGlow } from "./DepthSystem";
+import sapLogo from "@/assets/logos/sap.png";
+import odooLogo from "@/assets/logos/odoo.png";
+import coupaLogo from "@/assets/logos/coupa.png";
+import tactoLogo from "@/assets/logos/tacto.png";
+import jaggaerLogo from "@/assets/logos/jaggaer.png";
+
+const companyLogos: Record<string, string> = {
+  SAP: sapLogo,
+  Odoo: odooLogo,
+  Coupa: coupaLogo,
+  Tacto: tactoLogo,
+  Jaggaer: jaggaerLogo,
+};
 
 // Market Opportunity Data (Pyramid)
 const marketLayers = [
@@ -911,7 +924,15 @@ const OpportunitySection = () => {
                     id: `${system.id}-${business.name.toLowerCase()}`,
                     label: business.name,
                     content: (
-                      <GlassPanel intensity="subtle" bordered className="rounded-xl p-6 md:p-8">
+                      <GlassPanel intensity="subtle" bordered className="rounded-xl p-6 md:p-8 relative">
+                        {/* Company logo */}
+                        {companyLogos[business.name] && (
+                          <img
+                            src={companyLogos[business.name]}
+                            alt={`${business.name} logo`}
+                            className="absolute top-4 right-4 w-8 h-8 object-contain rounded-md opacity-60"
+                          />
+                        )}
                         {/* Company type badge */}
                         <div className="flex items-center gap-3 mb-6">
                           <span className="text-[10px] tracking-[0.2em] uppercase text-muted-foreground/40 px-3 py-1 rounded-full border border-border/20 bg-secondary/20">
