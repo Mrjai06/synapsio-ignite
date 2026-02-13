@@ -50,8 +50,8 @@ const BackgroundSystem = () => {
     const particles: Particle[] = [];
     const pageHeight = Math.max(document.documentElement.scrollHeight, height * 3);
     
-    // Background layer - large, slow, sparse
-    const bgCount = 25;
+    // Background layer - large, slow
+    const bgCount = 60;
     for (let i = 0; i < bgCount; i++) {
       const x = Math.random() * width;
       const y = Math.random() * pageHeight;
@@ -59,7 +59,7 @@ const BackgroundSystem = () => {
         x, y, baseX: x, baseY: y,
         vx: 0, vy: 0,
         radius: Math.random() * 3 + 2,
-        opacity: Math.random() * 0.08 + 0.03,
+        opacity: Math.random() * 0.12 + 0.06,
         phase: Math.random() * Math.PI * 2,
         layer: "background",
         speed: 0.15 + Math.random() * 0.1,
@@ -67,31 +67,31 @@ const BackgroundSystem = () => {
     }
     
     // Midground layer - medium density
-    const midCount = 45;
+    const midCount = 90;
     for (let i = 0; i < midCount; i++) {
       const x = Math.random() * width;
       const y = Math.random() * pageHeight;
       particles.push({
         x, y, baseX: x, baseY: y,
         vx: 0, vy: 0,
-        radius: Math.random() * 2 + 1,
-        opacity: Math.random() * 0.12 + 0.05,
+        radius: Math.random() * 2 + 1.2,
+        opacity: Math.random() * 0.18 + 0.08,
         phase: Math.random() * Math.PI * 2,
         layer: "midground",
         speed: 0.25 + Math.random() * 0.15,
       });
     }
     
-    // Foreground layer - small, subtle, closer
-    const fgCount = 35;
+    // Foreground layer - closer, more visible
+    const fgCount = 70;
     for (let i = 0; i < fgCount; i++) {
       const x = Math.random() * width;
       const y = Math.random() * pageHeight;
       particles.push({
         x, y, baseX: x, baseY: y,
         vx: 0, vy: 0,
-        radius: Math.random() * 1.5 + 0.5,
-        opacity: Math.random() * 0.15 + 0.08,
+        radius: Math.random() * 1.8 + 0.8,
+        opacity: Math.random() * 0.2 + 0.1,
         phase: Math.random() * Math.PI * 2,
         layer: "foreground",
         speed: 0.4 + Math.random() * 0.2,
@@ -224,8 +224,8 @@ const BackgroundSystem = () => {
         fromIdx,
         toIdx,
         progress: 0,
-        speed: 0.008 + Math.random() * 0.006, // slow travel
-        opacity: 0.15 + Math.random() * 0.15,
+        speed: 0.006 + Math.random() * 0.006,
+        opacity: 0.25 + Math.random() * 0.2,
         color,
         chain: chainLength,
       });
@@ -247,9 +247,10 @@ const BackgroundSystem = () => {
       const now = Date.now();
       const particles = particlesRef.current;
 
-      // Spawn signals periodically (every 3-6 seconds)
-      if (now - lastSignalTime.current > 3000 + Math.random() * 3000) {
-        spawnSignal();
+      // Spawn signals frequently (every 1-2.5 seconds, 2-3 at a time)
+      if (now - lastSignalTime.current > 1000 + Math.random() * 1500) {
+        const count = Math.floor(Math.random() * 2) + 2;
+        for (let s = 0; s < count; s++) spawnSignal();
         lastSignalTime.current = now;
       }
 
@@ -280,13 +281,13 @@ const BackgroundSystem = () => {
           const maxDist = particle.layer === "background" ? 300 : particle.layer === "midground" ? 200 : 150;
           
           if (distance < maxDist && particle.layer === other.layer) {
-            const lineOpacity = (1 - distance / maxDist) * particle.opacity * 0.3;
+            const lineOpacity = (1 - distance / maxDist) * particle.opacity * 0.5;
             
             ctx.beginPath();
             ctx.moveTo(particle.x, visibleY);
             ctx.lineTo(other.x, otherVisibleY);
             ctx.strokeStyle = getLayerColor(particle.layer, lineOpacity);
-            ctx.lineWidth = particle.layer === "background" ? 1 : 0.5;
+            ctx.lineWidth = particle.layer === "background" ? 1.2 : 0.8;
             ctx.stroke();
           }
         }
@@ -309,8 +310,8 @@ const BackgroundSystem = () => {
               x: dest.x,
               y: destVisY,
               radius: 0,
-              maxRadius: 8 + Math.random() * 12,
-              opacity: sig.opacity * 0.6,
+              maxRadius: 15 + Math.random() * 20,
+              opacity: sig.opacity * 0.8,
               color: sig.color,
               life: 0,
             });
@@ -354,11 +355,11 @@ const BackgroundSystem = () => {
         const pulseOpacity = sig.opacity * Math.sin(sig.progress * Math.PI);
         
         // Glow
-        const glow = ctx.createRadialGradient(sx, sy, 0, sx, sy, 6);
+        const glow = ctx.createRadialGradient(sx, sy, 0, sx, sy, 10);
         glow.addColorStop(0, `${sig.color} ${pulseOpacity})`);
         glow.addColorStop(1, `${sig.color} 0)`);
         ctx.beginPath();
-        ctx.arc(sx, sy, 6, 0, Math.PI * 2);
+        ctx.arc(sx, sy, 10, 0, Math.PI * 2);
         ctx.fillStyle = glow;
         ctx.fill();
         
