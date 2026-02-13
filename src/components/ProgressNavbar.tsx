@@ -80,13 +80,9 @@ const ProgressNavbar = () => {
   };
 
   return (
-    <nav className="fixed right-6 top-1/2 -translate-y-1/2 z-40 hidden lg:flex flex-col items-center gap-6">
-      {/* Brand mark */}
-      <a href="#hero" className="mb-2 opacity-40 hover:opacity-70 transition-opacity duration-500">
-        <img src={synapsioLogo} alt="Synapsio" className="h-6 w-auto" />
-      </a>
+    <nav className="fixed right-6 top-1/2 -translate-y-1/2 z-40 hidden lg:flex flex-col items-center">
       <div className="relative" ref={containerRef}>
-        {/* Background track - anchored to dot column center (right-[5.5px] = center of 12px dot wrapper) */}
+        {/* Background track */}
         <div 
           className="absolute right-[3px] w-[6px] rounded-full bg-border/20"
           style={{ 
@@ -113,7 +109,6 @@ const ProgressNavbar = () => {
             const isPast = index < activeSection;
             const isFirst = index === 0;
             const isLast = index === sections.length - 1;
-            const isEndpoint = isFirst || isLast;
             const isPrev = index === activeSection - 1;
             const isNext = index === activeSection + 1;
             const isAdjacent = isPrev || isNext;
@@ -139,21 +134,31 @@ const ProgressNavbar = () => {
                   {section.label}
                 </span>
                 
-                {/* Dot wrapper - fixed size keeps all dots centered on the track axis */}
+                {/* First point is the logo, rest are dots */}
                 <div className="w-3 flex items-center justify-center flex-shrink-0">
-                  <div 
-                    className={`
-                      dot-indicator rounded-full transition-all duration-500 relative z-10
-                      ${isEndpoint
-                        ? "w-3 h-3 bg-primary"
-                        : isActive 
-                          ? "w-2.5 h-2.5 bg-primary" 
-                          : isPast 
-                            ? "w-2 h-2 bg-primary/50" 
-                            : "w-2 h-2 bg-border/30 group-hover:bg-muted-foreground/30"
-                      }
-                    `}
-                  />
+                  {isFirst ? (
+                    <img 
+                      src={synapsioLogo} 
+                      alt="Synapsio" 
+                      className={`dot-indicator h-3.5 w-auto relative z-10 transition-all duration-500 ${
+                        isActive ? "opacity-70" : isPast ? "opacity-40" : "opacity-30 group-hover:opacity-50"
+                      }`}
+                    />
+                  ) : (
+                    <div 
+                      className={`
+                        dot-indicator rounded-full transition-all duration-500 relative z-10
+                        ${isLast
+                          ? "w-3 h-3 bg-primary"
+                          : isActive 
+                            ? "w-2.5 h-2.5 bg-primary" 
+                            : isPast 
+                              ? "w-2 h-2 bg-primary/50" 
+                              : "w-2 h-2 bg-border/30 group-hover:bg-muted-foreground/30"
+                        }
+                      `}
+                    />
+                  )}
                 </div>
               </button>
             );
