@@ -388,7 +388,8 @@ const GrowthPieChart = ({ year, values, compareValues, activeSegment, onSegmentC
 }) => {
   const cx = 200;
   const cy = 200;
-  const r = 160;
+  const baseR = 120;
+  const maxR = 170;
   const total = values.reduce((sum, v) => sum + v, 0);
 
   // Build slices with gaps for fragmented look
@@ -400,9 +401,13 @@ const GrowthPieChart = ({ year, values, compareValues, activeSegment, onSegmentC
     const endAngle = currentAngle + sliceAngle - gapAngle / 2;
     currentAngle = currentAngle + sliceAngle;
     
+    // Radius scales with percentage for visible size differentiation
+    const fraction = val / total;
+    const sliceR = baseR + (maxR - baseR) * Math.sqrt(fraction);
+
     // Label position at midpoint of arc
     const midAngle = startAngle + sliceAngle / 2;
-    const labelR = r * 0.6;
+    const labelR = sliceR * 0.6;
     const labelX = cx + labelR * Math.cos(midAngle);
     const labelY = cy + labelR * Math.sin(midAngle);
 
@@ -413,7 +418,7 @@ const GrowthPieChart = ({ year, values, compareValues, activeSegment, onSegmentC
       changePercent = compareValues[idx] !== 0 ? (diff / compareValues[idx]) * 100 : 0;
     }
 
-    return { val, idx, startAngle, endAngle, color: segmentColors[idx], labelX, labelY, midAngle, changePercent };
+    return { val, idx, startAngle, endAngle, sliceR, color: segmentColors[idx], labelX, labelY, midAngle, changePercent };
   });
 
   return (
@@ -436,7 +441,7 @@ const GrowthPieChart = ({ year, values, compareValues, activeSegment, onSegmentC
               {/* Invisible larger hit area for small slices */}
               {slice.val / total < 0.08 && (
                 <motion.path
-                  d={describeArc(cx + dx, cy + dy, r + 20, slice.startAngle - 0.08, slice.endAngle + 0.08)}
+                  d={describeArc(cx + dx, cy + dy, slice.sliceR + 20, slice.startAngle - 0.08, slice.endAngle + 0.08)}
                   fill="transparent"
                   className="cursor-pointer"
                   onClick={(e) => {
@@ -446,7 +451,7 @@ const GrowthPieChart = ({ year, values, compareValues, activeSegment, onSegmentC
                 />
               )}
               <motion.path
-                d={describeArc(cx + dx, cy + dy, isActive ? r + 6 : r, slice.startAngle, slice.endAngle)}
+                d={describeArc(cx + dx, cy + dy, isActive ? slice.sliceR + 6 : slice.sliceR, slice.startAngle, slice.endAngle)}
                 fill={slice.color}
                 stroke="none"
                 strokeWidth={3}
@@ -467,7 +472,7 @@ const GrowthPieChart = ({ year, values, compareValues, activeSegment, onSegmentC
               {/* Outer stroke highlight for small or active slices */}
               {(slice.val / total < 0.05 || isActive) && (
                 <motion.path
-                  d={describeArc(cx + dx, cy + dy, isActive ? r + 6 : r, slice.startAngle, slice.endAngle)}
+                  d={describeArc(cx + dx, cy + dy, isActive ? slice.sliceR + 6 : slice.sliceR, slice.startAngle, slice.endAngle)}
                   fill="none"
                   stroke={isActive ? "hsl(var(--primary))" : "hsl(var(--foreground) / 0.6)"}
                   strokeWidth={2}
