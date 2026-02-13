@@ -14,14 +14,37 @@ interface Particle {
   speed: number;
 }
 
+interface Signal {
+  fromIdx: number;
+  toIdx: number;
+  progress: number; // 0 to 1
+  speed: number;
+  opacity: number;
+  color: string;
+  chain: number; // how many more hops this signal can make
+}
+
+interface Burst {
+  x: number;
+  y: number;
+  radius: number;
+  maxRadius: number;
+  opacity: number;
+  color: string;
+  life: number; // 0 to 1
+}
+
 const BackgroundSystem = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animationRef = useRef<number>();
   const particlesRef = useRef<Particle[]>([]);
+  const signalsRef = useRef<Signal[]>([]);
+  const burstsRef = useRef<Burst[]>([]);
   const scrollRef = useRef(0);
   const targetScrollRef = useRef(0);
   const mouseRef = useRef({ x: -1000, y: -1000 });
   const dimensionsRef = useRef({ width: 0, height: 0 });
+  const lastSignalTime = useRef(0);
 
   const initParticles = useCallback((width: number, height: number) => {
     const particles: Particle[] = [];
@@ -122,17 +145,90 @@ const BackgroundSystem = () => {
     };
 
     const getLayerColor = (layer: string, opacity: number) => {
-      // Using the brand palette - warm terracotta accent mixed with cool teal
       switch (layer) {
         case "background":
-          return `rgba(14, 75, 88, ${opacity})`; // Teal surface
+          return `rgba(14, 75, 88, ${opacity})`;
         case "midground":
           return `rgba(255, 255, 255, ${opacity * 0.8})`;
         case "foreground":
-          return `rgba(218, 138, 103, ${opacity * 0.6})`; // Terracotta accent
+          return `rgba(218, 138, 103, ${opacity * 0.6})`;
         default:
           return `rgba(255, 255, 255, ${opacity})`;
       }
+    };
+
+    // Find nearby particles for signal propagation
+    const findNearbyParticles = (particleIdx: number, maxDist: number): number[] => {
+      const particle = particlesRef.current[particleIdx];
+      const nearby: number[] = [];
+      const scroll = scrollRef.current;
+      const { height } = dimensionsRef.current;
+      const pFactor = getParallaxFactor(particle.layer);
+      const pVisY = particle.y - scroll * pFactor;
+      
+      if (pVisY < -200 || pVisY > height + 200) return nearby;
+      
+      for (let i = 0; i < particlesRef.current.length; i++) {
+        if (i === particleIdx) continue;
+        const other = particlesRef.current[i];
+        if (other.layer !== particle.layer) continue;
+        
+        const oFactor = getParallaxFactor(other.layer);
+        const oVisY = other.y - scroll * oFactor;
+        
+        const dx = other.x - particle.x;
+        const dy = oVisY - pVisY;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        
+        if (dist < maxDist) nearby.push(i);
+      }
+      return nearby;
+    };
+
+    // Spawn a new signal cascade
+    const spawnSignal = () => {
+      const particles = particlesRef.current;
+      if (particles.length === 0) return;
+      
+      const { height } = dimensionsRef.current;
+      const scroll = scrollRef.current;
+      
+      // Pick a random visible particle
+      const visibleIndices: number[] = [];
+      particles.forEach((p, i) => {
+        const pf = getParallaxFactor(p.layer);
+        const vy = p.y - scroll * pf;
+        if (vy > -100 && vy < height + 100) visibleIndices.push(i);
+      });
+      
+      if (visibleIndices.length < 2) return;
+      
+      const fromIdx = visibleIndices[Math.floor(Math.random() * visibleIndices.length)];
+      const from = particles[fromIdx];
+      const maxDist = from.layer === "background" ? 300 : from.layer === "midground" ? 200 : 150;
+      const nearby = findNearbyParticles(fromIdx, maxDist);
+      
+      if (nearby.length === 0) return;
+      
+      const toIdx = nearby[Math.floor(Math.random() * nearby.length)];
+      const chainLength = Math.floor(Math.random() * 3) + 1; // 1-3 hops
+      
+      const colorChoices = [
+        "rgba(218, 138, 103,",  // terracotta
+        "rgba(14, 75, 88,",     // teal
+        "rgba(255, 255, 255,",  // white
+      ];
+      const color = colorChoices[Math.floor(Math.random() * colorChoices.length)];
+      
+      signalsRef.current.push({
+        fromIdx,
+        toIdx,
+        progress: 0,
+        speed: 0.008 + Math.random() * 0.006, // slow travel
+        opacity: 0.15 + Math.random() * 0.15,
+        color,
+        chain: chainLength,
+      });
     };
 
     const animate = () => {
@@ -142,30 +238,34 @@ const BackgroundSystem = () => {
         return;
       }
 
-      // Clear with transparency
       ctx.clearRect(0, 0, width, height);
 
-      // Smooth scroll interpolation (very slow - 1.5% per frame)
+      // Smooth scroll interpolation
       scrollRef.current += (targetScrollRef.current - scrollRef.current) * 0.015;
 
-      const time = Date.now() * 0.0003; // Very slow time progression
+      const time = Date.now() * 0.0003;
+      const now = Date.now();
       const particles = particlesRef.current;
 
-      // Sort by layer for proper depth rendering
+      // Spawn signals periodically (every 3-6 seconds)
+      if (now - lastSignalTime.current > 3000 + Math.random() * 3000) {
+        spawnSignal();
+        lastSignalTime.current = now;
+      }
+
+      // Sort by layer
       const sortedParticles = [...particles].sort((a, b) => {
         const layerOrder = { background: 0, midground: 1, foreground: 2 };
         return layerOrder[a.layer] - layerOrder[b.layer];
       });
 
-      // Draw connections first (behind nodes)
+      // Draw connections
       sortedParticles.forEach((particle, i) => {
         const parallax = getParallaxFactor(particle.layer);
         const visibleY = particle.y - scrollRef.current * parallax;
         
-        // Only process visible particles
         if (visibleY < -100 || visibleY > height + 100) return;
 
-        // Draw connections to nearby particles of same or adjacent layer
         for (let j = i + 1; j < sortedParticles.length; j++) {
           const other = sortedParticles[j];
           const otherParallax = getParallaxFactor(other.layer);
@@ -192,6 +292,113 @@ const BackgroundSystem = () => {
         }
       });
 
+      // Update and draw signals
+      const signals = signalsRef.current;
+      for (let i = signals.length - 1; i >= 0; i--) {
+        const sig = signals[i];
+        sig.progress += sig.speed;
+        
+        if (sig.progress >= 1) {
+          // Signal arrived — create a small burst at destination
+          const dest = particles[sig.toIdx];
+          const destParallax = getParallaxFactor(dest.layer);
+          const destVisY = dest.y - scrollRef.current * destParallax;
+          
+          if (destVisY > -100 && destVisY < height + 100) {
+            burstsRef.current.push({
+              x: dest.x,
+              y: destVisY,
+              radius: 0,
+              maxRadius: 8 + Math.random() * 12,
+              opacity: sig.opacity * 0.6,
+              color: sig.color,
+              life: 0,
+            });
+          }
+          
+          // Chain to next particle
+          if (sig.chain > 0) {
+            const maxDist = dest.layer === "background" ? 300 : dest.layer === "midground" ? 200 : 150;
+            const nearby = findNearbyParticles(sig.toIdx, maxDist);
+            const filtered = nearby.filter(n => n !== sig.fromIdx);
+            if (filtered.length > 0) {
+              const nextIdx = filtered[Math.floor(Math.random() * filtered.length)];
+              signals.push({
+                fromIdx: sig.toIdx,
+                toIdx: nextIdx,
+                progress: 0,
+                speed: sig.speed,
+                opacity: sig.opacity * 0.8,
+                color: sig.color,
+                chain: sig.chain - 1,
+              });
+            }
+          }
+          
+          signals.splice(i, 1);
+          continue;
+        }
+        
+        // Draw signal dot traveling along the connection
+        const from = particles[sig.fromIdx];
+        const to = particles[sig.toIdx];
+        const fromParallax = getParallaxFactor(from.layer);
+        const toParallax = getParallaxFactor(to.layer);
+        const fromVisY = from.y - scrollRef.current * fromParallax;
+        const toVisY = to.y - scrollRef.current * toParallax;
+        
+        const sx = from.x + (to.x - from.x) * sig.progress;
+        const sy = fromVisY + (toVisY - fromVisY) * sig.progress;
+        
+        // Pulse opacity peaks in the middle of travel
+        const pulseOpacity = sig.opacity * Math.sin(sig.progress * Math.PI);
+        
+        // Glow
+        const glow = ctx.createRadialGradient(sx, sy, 0, sx, sy, 6);
+        glow.addColorStop(0, `${sig.color} ${pulseOpacity})`);
+        glow.addColorStop(1, `${sig.color} 0)`);
+        ctx.beginPath();
+        ctx.arc(sx, sy, 6, 0, Math.PI * 2);
+        ctx.fillStyle = glow;
+        ctx.fill();
+        
+        // Core dot
+        ctx.beginPath();
+        ctx.arc(sx, sy, 1.5, 0, Math.PI * 2);
+        ctx.fillStyle = `${sig.color} ${pulseOpacity * 1.5})`;
+        ctx.fill();
+      }
+
+      // Update and draw bursts
+      const bursts = burstsRef.current;
+      for (let i = bursts.length - 1; i >= 0; i--) {
+        const b = bursts[i];
+        b.life += 0.015; // slow expansion
+        
+        if (b.life >= 1) {
+          bursts.splice(i, 1);
+          continue;
+        }
+        
+        b.radius = b.maxRadius * b.life;
+        const burstOpacity = b.opacity * (1 - b.life) * (1 - b.life);
+        
+        ctx.beginPath();
+        ctx.arc(b.x, b.y, b.radius, 0, Math.PI * 2);
+        ctx.strokeStyle = `${b.color} ${burstOpacity})`;
+        ctx.lineWidth = 1;
+        ctx.stroke();
+        
+        // Inner glow
+        const burstGlow = ctx.createRadialGradient(b.x, b.y, 0, b.x, b.y, b.radius);
+        burstGlow.addColorStop(0, `${b.color} ${burstOpacity * 0.3})`);
+        burstGlow.addColorStop(1, `${b.color} 0)`);
+        ctx.beginPath();
+        ctx.arc(b.x, b.y, b.radius, 0, Math.PI * 2);
+        ctx.fillStyle = burstGlow;
+        ctx.fill();
+      }
+
       // Draw nodes
       sortedParticles.forEach((particle) => {
         const parallax = getParallaxFactor(particle.layer);
@@ -199,18 +406,15 @@ const BackgroundSystem = () => {
         
         if (visibleY < -100 || visibleY > height + 100) return;
 
-        // Organic floating motion - very slow
         const waveX = Math.sin(time * particle.speed + particle.phase) * 20;
         const waveY = Math.cos(time * particle.speed * 0.7 + particle.phase * 1.3) * 15;
         
         const targetX = particle.baseX + waveX;
         const targetY = particle.baseY + waveY;
         
-        // Ultra-slow interpolation for calm movement
         particle.vx = (targetX - particle.x) * 0.008;
         particle.vy = (targetY - particle.y) * 0.008;
         
-        // Subtle mouse influence (only foreground)
         if (particle.layer === "foreground") {
           const mouseX = mouseRef.current.x;
           const mouseY = mouseRef.current.y - scrollRef.current * parallax + scrollRef.current;
@@ -225,14 +429,12 @@ const BackgroundSystem = () => {
           }
         }
         
-        // Heavy damping
         particle.vx *= 0.95;
         particle.vy *= 0.95;
         
         particle.x += particle.vx;
         particle.y += particle.vy;
 
-        // Soft glow (subtle, not neon)
         const glowSize = particle.radius * (particle.layer === "background" ? 8 : particle.layer === "midground" ? 5 : 3);
         const gradient = ctx.createRadialGradient(
           particle.x, visibleY, 0,
@@ -247,15 +449,13 @@ const BackgroundSystem = () => {
         ctx.fillStyle = gradient;
         ctx.fill();
 
-        // Core node
         ctx.beginPath();
         ctx.arc(particle.x, visibleY, particle.radius, 0, Math.PI * 2);
         ctx.fillStyle = getLayerColor(particle.layer, particle.opacity);
         ctx.fill();
       });
 
-      // Ambient light gradients (depth/atmosphere)
-      // Top-left warm gradient
+      // Ambient light gradients
       const warmGradient = ctx.createRadialGradient(
         width * 0.1, height * 0.2, 0,
         width * 0.1, height * 0.2, width * 0.5
@@ -266,7 +466,6 @@ const BackgroundSystem = () => {
       ctx.fillStyle = warmGradient;
       ctx.fillRect(0, 0, width, height);
 
-      // Bottom-right cool gradient
       const coolGradient = ctx.createRadialGradient(
         width * 0.9, height * 0.8, 0,
         width * 0.9, height * 0.8, width * 0.6
@@ -280,7 +479,6 @@ const BackgroundSystem = () => {
       animationRef.current = requestAnimationFrame(animate);
     };
 
-    // Initialize particles after a brief delay to get accurate page height
     setTimeout(() => {
       particlesRef.current = initParticles(window.innerWidth, window.innerHeight);
       animate();
