@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Building2, Layers, Zap, Check, X, ArrowLeft, ArrowRight, TrendingUp, TrendingDown } from "lucide-react";
+import { Building2, Layers, Zap, Check, X, ArrowLeft, ArrowRight } from "lucide-react";
 import { AnimatedTabs } from "@/components/ui/animated-tabs";
 import { FloatingSurface, GlassPanel, AmbientGlow } from "./DepthSystem";
 import sapLogo from "@/assets/logos/sap.png";
@@ -146,7 +146,7 @@ const competitionTable = {
   ]
 };
 
-// Market Landscape Data - Separate system types with individual businesses
+// Market Landscape Data
 const marketLandscapeSystems = [
   {
     id: "erp",
@@ -278,7 +278,6 @@ const MarketPyramid = ({ activeLayer, onLayerClick }: { activeLayer: string; onL
     const r = 5;
 
     if (isTop) {
-      // Sharp apex triangle with rounded bottom corners
       const apex = { x: 200, y: y1 };
       const bl = { x: bot.left, y: y2 };
       const br = { x: bot.right, y: y2 };
@@ -291,7 +290,6 @@ const MarketPyramid = ({ activeLayer, onLayerClick }: { activeLayer: string; onL
         Z
       `;
     }
-    // Trapezoid: top edges align exactly with the bottom edges of the layer above
     const top = xAt(y1);
     const tl = { x: top.left, y: y1 };
     const tr = { x: top.right, y: y1 };
@@ -362,7 +360,8 @@ const MarketPyramid = ({ activeLayer, onLayerClick }: { activeLayer: string; onL
   );
 };
 
-// Segment labels for the concentric circles
+// ====== MARKET GROWTH CHART (Single large chart with year toggle) ======
+
 const segmentLabels = [
   "AI-SCM-solution spend | Germany",
   "SCM-solution spend | Germany", 
@@ -371,285 +370,316 @@ const segmentLabels = [
 ];
 
 const segmentColors = [
-  "hsl(var(--foreground))",              // AI-SCM Germany - bright white (hero segment)
-  "hsl(var(--muted-foreground) / 0.45)", // SCM Germany - muted
-  "hsl(var(--primary) / 0.7)",           // AI-SCM Global - teal, slightly muted
-  "hsl(var(--secondary) / 0.5)",         // SCM Global - bronze, muted
+  "hsl(var(--foreground))",
+  "hsl(var(--muted-foreground) / 0.45)",
+  "hsl(var(--primary) / 0.7)",
+  "hsl(var(--secondary) / 0.5)",
 ];
 
-// Pie chart slice path generator
+const yearData: Record<string, number[]> = {
+  "2023/24": [0.67, 6.42, 15.27, 77.64],
+  "2029/30": [1.94, 3.45, 48.51, 46.11],
+};
+
 const describeArc = (cx: number, cy: number, r: number, startAngle: number, endAngle: number) => {
-  const start = {
-    x: cx + r * Math.cos(startAngle),
-    y: cy + r * Math.sin(startAngle),
-  };
-  const end = {
-    x: cx + r * Math.cos(endAngle),
-    y: cy + r * Math.sin(endAngle),
-  };
+  const start = { x: cx + r * Math.cos(startAngle), y: cy + r * Math.sin(startAngle) };
+  const end = { x: cx + r * Math.cos(endAngle), y: cy + r * Math.sin(endAngle) };
   const largeArc = endAngle - startAngle > Math.PI ? 1 : 0;
   return `M ${cx} ${cy} L ${start.x} ${start.y} A ${r} ${r} 0 ${largeArc} 1 ${end.x} ${end.y} Z`;
 };
 
-// Interactive pie chart for a single year
-const GrowthPieChart = ({ year, values, compareValues, activeSegment, onSegmentClick }: { 
-  year: string; 
-  values: number[]; 
-  compareValues?: number[];
-  activeSegment: number | null;
-  onSegmentClick: (idx: number | null) => void;
-}) => {
-  const cx = 200;
-  const cy = 200;
-  const baseR = 130;
-  const maxR = 165;
+const MarketGrowthComparison = ({ whyNowVisible }: { whyNowVisible: boolean }) => {
+  const [activeYear, setActiveYear] = useState<"2023/24" | "2029/30">("2023/24");
+  const [activeSegment, setActiveSegment] = useState<number | null>(null);
+
+  const values = yearData[activeYear];
   const total = values.reduce((sum, v) => sum + v, 0);
 
-  // Build slices with controlled gaps (4-6° = ~0.07-0.1 rad)
-  const gapAngle = 0.06;
+  const cx = 250;
+  const cy = 250;
+  const baseR = 180;
+  const maxR = 220;
+  const gapAngle = 0.12; // ~7°
+
   let currentAngle = -Math.PI / 2;
   const slices = values.map((val, idx) => {
     const sliceAngle = (val / total) * 2 * Math.PI;
     const startAngle = currentAngle + gapAngle / 2;
     const endAngle = currentAngle + sliceAngle - gapAngle / 2;
-    currentAngle = currentAngle + sliceAngle;
-    
+    currentAngle += sliceAngle;
     const fraction = val / total;
     const sliceR = baseR + (maxR - baseR) * Math.sqrt(fraction);
-
-    const midAngle = startAngle + (endAngle - startAngle) / 2;
-
-    let changePercent: number | null = null;
-    if (compareValues) {
-      const diff = val - compareValues[idx];
-      changePercent = compareValues[idx] !== 0 ? (diff / compareValues[idx]) * 100 : 0;
-    }
-
-    return { val, idx, startAngle, endAngle, sliceR, color: segmentColors[idx], midAngle, changePercent };
+    const midAngle = (startAngle + endAngle) / 2;
+    return { val, idx, startAngle, endAngle, sliceR, midAngle };
   });
 
-  // External label positions
-  const labelRadius = maxR + 35;
+  const selectedSegment = activeSegment !== null ? {
+    label: segmentLabels[activeSegment],
+    val2023: yearData["2023/24"][activeSegment],
+    val2029: yearData["2029/30"][activeSegment],
+    growth: yearData["2023/24"][activeSegment] !== 0
+      ? ((yearData["2029/30"][activeSegment] - yearData["2023/24"][activeSegment]) / yearData["2023/24"][activeSegment]) * 100
+      : 0,
+    abs: yearData["2029/30"][activeSegment] - yearData["2023/24"][activeSegment],
+  } : null;
 
-  return (
-    <div className="flex flex-col items-center">
-      <p className="text-2xl font-light text-foreground mb-6">{year}</p>
-      <svg viewBox="-40 -40 480 480" className="w-full max-w-[340px] md:max-w-[400px]">
-        <defs>
-          <filter id={`aiGlow-${year}`}>
-            <feGaussianBlur stdDeviation="4" result="blur" />
-            <feComposite in="SourceGraphic" in2="blur" operator="over" />
-          </filter>
-          <filter id={`aiOuterGlow-${year}`}>
-            <feGaussianBlur stdDeviation="6" />
-          </filter>
-        </defs>
-
-        {slices.map((slice, i) => {
-          const isActive = activeSegment === slice.idx;
-          const isOther = activeSegment !== null && activeSegment !== slice.idx;
-          const isAiScm = slice.idx === 0; // AI-SCM Germany = hero segment
-
-          // Only explode the AI-SCM (white) segment
-          const explode = isAiScm ? 14 : 0;
-          const activeExplode = isActive ? 6 : 0;
-          const totalExplode = explode + activeExplode;
-          const dx = totalExplode * Math.cos(slice.midAngle);
-          const dy = totalExplode * Math.sin(slice.midAngle);
-
-          const displayR = isActive ? slice.sliceR + 4 : slice.sliceR;
-
-          // External label
-          const extLabelR = labelRadius + (isAiScm ? 12 : 0);
-          const labelX = cx + dx + extLabelR * Math.cos(slice.midAngle);
-          const labelY = cy + dy + extLabelR * Math.sin(slice.midAngle);
-          const connectorStartR = displayR + 4;
-          const connectorEndR = extLabelR - 8;
-          const connStartX = cx + dx + connectorStartR * Math.cos(slice.midAngle);
-          const connStartY = cy + dy + connectorStartR * Math.sin(slice.midAngle);
-          const connEndX = cx + dx + connectorEndR * Math.cos(slice.midAngle);
-          const connEndY = cy + dy + connectorEndR * Math.sin(slice.midAngle);
-
-          const textAnchor = slice.midAngle > -Math.PI / 2 && slice.midAngle < Math.PI / 2 ? "start" : "end";
-
-          return (
-            <motion.g key={slice.idx}>
-              {/* Invisible hit area for small segments */}
-              {slice.val / total < 0.12 && (
-                <motion.path
-                  d={describeArc(cx + dx, cy + dy, slice.sliceR + 30, slice.startAngle - 0.15, slice.endAngle + 0.15)}
-                  fill="transparent"
-                  className="cursor-pointer"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onSegmentClick(isActive ? null : slice.idx);
-                  }}
-                />
-              )}
-
-              {/* Glow behind AI-SCM segment */}
-              {isAiScm && (
-                <motion.path
-                  d={describeArc(cx + dx, cy + dy, displayR + 3, slice.startAngle, slice.endAngle)}
-                  fill="hsl(var(--foreground) / 0.15)"
-                  filter={`url(#aiOuterGlow-${year})`}
-                  className="pointer-events-none"
-                  animate={{ opacity: isOther ? 0.1 : 0.6 }}
-                />
-              )}
-
-              {/* Main slice */}
-              <motion.path
-                d={describeArc(cx + dx, cy + dy, displayR, slice.startAngle, slice.endAngle)}
-                fill={slice.color}
-                stroke="none"
-                className="cursor-pointer"
-                initial={{ scale: 0, opacity: 0 }}
-                animate={{ 
-                  scale: 1, 
-                  opacity: isOther ? 0.2 : 1,
-                }}
-                transition={{ delay: 0.15 + i * 0.1, duration: 0.5, ease: "easeOut" }}
-                style={{ transformOrigin: `${cx}px ${cy}px` }}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onSegmentClick(isActive ? null : slice.idx);
-                }}
-                whileHover={{ scale: 1.035 }}
-              />
-
-              {/* Highlight ring for AI-SCM or active */}
-              {(isAiScm || isActive) && (
-                <motion.path
-                  d={describeArc(cx + dx, cy + dy, displayR + 1, slice.startAngle, slice.endAngle)}
-                  fill="none"
-                  stroke={isAiScm ? "hsl(var(--foreground) / 0.5)" : "hsl(var(--primary) / 0.6)"}
-                  strokeWidth={isAiScm ? 1.5 : 1}
-                  className="pointer-events-none"
-                  animate={{ opacity: isOther ? 0.1 : 0.8 }}
-                />
-              )}
-
-              {/* Connector line */}
-              <motion.line
-                x1={connStartX}
-                y1={connStartY}
-                x2={connEndX}
-                y2={connEndY}
-                stroke="hsl(var(--muted-foreground) / 0.2)"
-                strokeWidth={0.8}
-                className="pointer-events-none"
-                animate={{ opacity: isOther ? 0.05 : 0.4 }}
-              />
-
-              {/* External percentage label */}
-              <motion.text
-                x={labelX}
-                y={labelY}
-                textAnchor={textAnchor}
-                dominantBaseline="central"
-                className={`pointer-events-none font-medium ${isAiScm ? "fill-foreground text-xs" : "fill-muted-foreground/60 text-[10px]"}`}
-                animate={{ opacity: isOther ? 0.15 : 1 }}
-              >
-                {slice.val.toFixed(1)}%
-              </motion.text>
-
-              {/* Growth indicator for active segment */}
-              {isActive && slice.changePercent !== null && (
-                <motion.text
-                  x={labelX}
-                  y={labelY + 14}
-                  textAnchor={textAnchor}
-                  dominantBaseline="central"
-                  className="text-[9px] font-semibold pointer-events-none"
-                  fill={slice.changePercent > 0 ? "hsl(var(--primary))" : "hsl(var(--destructive))"}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                >
-                  {slice.changePercent > 0 ? "▲" : "▼"} {Math.abs(slice.changePercent).toFixed(0)}%
-                </motion.text>
-              )}
-            </motion.g>
-          );
-        })}
-        {/* Center label */}
-        <text x={cx} y={cy} textAnchor="middle" dominantBaseline="central" className="fill-muted-foreground/30 text-[10px] font-light pointer-events-none">
-          Market Share
-        </text>
-      </svg>
-    </div>
-  );
-};
-
-// Investment Highlight Box
-const InvestmentHighlightBox = ({ visible }: { visible: boolean }) => (
-  <motion.div
-    initial={{ opacity: 0, y: 16 }}
-    animate={visible ? { opacity: 1, y: 0 } : {}}
-    transition={{ delay: 0.8, duration: 0.5 }}
-    className="w-full max-w-xs mx-auto lg:mx-0"
-  >
-    <GlassPanel intensity="subtle" bordered className="p-6 rounded-xl">
-      <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground/40 mb-4">Investment Highlight</p>
-      <h4 className="text-sm font-medium text-foreground/80 mb-5">AI-SCM Share (Germany)</h4>
-      <div className="space-y-3">
-        <div className="flex items-center justify-between">
-          <span className="text-xs text-muted-foreground/50">2023/24</span>
-          <span className="text-sm font-light text-foreground/70">0.67%</span>
-        </div>
-        <div className="flex items-center justify-between">
-          <span className="text-xs text-muted-foreground/50">2029/30</span>
-          <span className="text-sm font-light text-foreground">1.94%</span>
-        </div>
-        <div className="h-px bg-border/20 my-1" />
-        <div className="flex items-center justify-between">
-          <span className="text-xs text-primary/80">Growth</span>
-          <span className="text-base font-medium text-primary">↑ 190%</span>
-        </div>
-      </div>
-    </GlassPanel>
-  </motion.div>
-);
-
-// Wrapper component that holds shared state
-const MarketGrowthComparison = ({ whyNowVisible }: { whyNowVisible: boolean }) => {
-  const [activeSegment, setActiveSegment] = useState<number | null>(null);
+  const aiScmStart = 0.67;
+  const aiScmEnd = 1.94;
+  const aiScmGrowth = ((aiScmEnd - aiScmStart) / aiScmStart * 100).toFixed(0);
 
   return (
     <div>
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_1fr_auto] gap-8 md:gap-10 items-center">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={whyNowVisible ? { opacity: 1, scale: 1 } : {}}
-          transition={{ delay: 0.4 }}
-        >
-          <GrowthPieChart year="2023/24" values={[0.67, 6.42, 15.27, 77.64]} compareValues={[1.94, 3.45, 48.51, 46.11]} activeSegment={activeSegment} onSegmentClick={setActiveSegment} />
-        </motion.div>
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={whyNowVisible ? { opacity: 1, scale: 1 } : {}}
-          transition={{ delay: 0.6 }}
-        >
-          <GrowthPieChart year="2029/2030" values={[1.94, 3.45, 48.51, 46.11]} compareValues={[0.67, 6.42, 15.27, 77.64]} activeSegment={activeSegment} onSegmentClick={setActiveSegment} />
-        </motion.div>
-        <InvestmentHighlightBox visible={whyNowVisible} />
-      </div>
-      {/* Legend - interactive */}
-      <div className="flex flex-wrap gap-5 justify-center mt-8 pt-6 border-t border-border/20">
-        {segmentLabels.map((label, i) => (
-          <button
-            key={i}
-            className={`flex items-center gap-2 transition-all duration-300 group ${activeSegment !== null && activeSegment !== i ? "opacity-30" : "opacity-100"} hover:opacity-100`}
-            onClick={() => setActiveSegment(activeSegment === i ? null : i)}
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-10 items-start">
+        {/* Main chart area */}
+        <div className="flex flex-col items-center">
+          {/* Year toggle */}
+          <div className="flex items-center gap-1 mb-8 p-1 rounded-lg bg-secondary/20 border border-border/20 backdrop-blur-sm">
+            {(["2023/24", "2029/30"] as const).map((year) => (
+              <button
+                key={year}
+                onClick={() => setActiveYear(year)}
+                className={`relative px-5 py-2 text-sm font-medium rounded-md transition-colors duration-300 ${
+                  activeYear === year ? "text-primary-foreground" : "text-muted-foreground/50 hover:text-muted-foreground/70"
+                }`}
+              >
+                {activeYear === year && (
+                  <motion.div
+                    layoutId="year-toggle-bg"
+                    className="absolute inset-0 rounded-md bg-primary/80"
+                    transition={{ type: "spring", bounce: 0.2, duration: 0.5 }}
+                  />
+                )}
+                <span className="relative z-10">{year}</span>
+              </button>
+            ))}
+          </div>
+
+          {/* Large pie chart */}
+          <svg viewBox="-20 -20 540 540" className="w-full max-w-[520px]" onClick={() => setActiveSegment(null)}>
+            <defs>
+              <filter id="aiOuterGlowMain">
+                <feGaussianBlur stdDeviation="8" />
+              </filter>
+            </defs>
+
+            {slices.map((slice) => {
+              const isActive = activeSegment === slice.idx;
+              const isOther = activeSegment !== null && activeSegment !== slice.idx;
+              const isAiScm = slice.idx === 0;
+
+              const explode = isAiScm ? 16 : 0;
+              const activeExplode = isActive ? 8 : 0;
+              const totalExplode = explode + activeExplode;
+              const dx = totalExplode * Math.cos(slice.midAngle);
+              const dy = totalExplode * Math.sin(slice.midAngle);
+              const displayR = isActive ? slice.sliceR + 5 : slice.sliceR;
+
+              return (
+                <motion.g key={slice.idx}>
+                  {/* Invisible hit area for small segments */}
+                  {slice.val / total < 0.12 && (
+                    <motion.path
+                      d={describeArc(cx + dx, cy + dy, slice.sliceR + 40, slice.startAngle - 0.2, slice.endAngle + 0.2)}
+                      fill="transparent"
+                      className="cursor-pointer"
+                      onClick={(e) => { e.stopPropagation(); setActiveSegment(isActive ? null : slice.idx); }}
+                    />
+                  )}
+
+                  {/* Glow behind AI-SCM */}
+                  {isAiScm && (
+                    <motion.path
+                      d={describeArc(cx + dx, cy + dy, displayR + 4, slice.startAngle, slice.endAngle)}
+                      fill="hsl(var(--foreground) / 0.12)"
+                      filter="url(#aiOuterGlowMain)"
+                      className="pointer-events-none"
+                      animate={{ opacity: isOther ? 0.05 : 0.5 }}
+                    />
+                  )}
+
+                  {/* Main slice */}
+                  <motion.path
+                    d={describeArc(cx + dx, cy + dy, displayR, slice.startAngle, slice.endAngle)}
+                    fill={segmentColors[slice.idx]}
+                    className="cursor-pointer"
+                    animate={{ opacity: isOther ? 0.15 : 1 }}
+                    transition={{ duration: 0.6, ease: [0.23, 0.86, 0.39, 0.96] }}
+                    style={{ transformOrigin: `${cx}px ${cy}px` }}
+                    onClick={(e) => { e.stopPropagation(); setActiveSegment(isActive ? null : slice.idx); }}
+                    whileHover={{ scale: 1.035 }}
+                  />
+
+                  {/* Highlight ring */}
+                  {(isAiScm || isActive) && (
+                    <motion.path
+                      d={describeArc(cx + dx, cy + dy, displayR + 1.5, slice.startAngle, slice.endAngle)}
+                      fill="none"
+                      stroke={isAiScm ? "hsl(var(--foreground) / 0.4)" : "hsl(var(--primary) / 0.5)"}
+                      strokeWidth={isAiScm ? 1.5 : 1}
+                      className="pointer-events-none"
+                      animate={{ opacity: isOther ? 0.05 : 0.7 }}
+                    />
+                  )}
+
+                  {/* Percentage label inside slice */}
+                  {slice.val / total > 0.03 && (
+                    <motion.text
+                      x={cx + dx + (displayR * 0.6) * Math.cos(slice.midAngle)}
+                      y={cy + dy + (displayR * 0.6) * Math.sin(slice.midAngle)}
+                      textAnchor="middle"
+                      dominantBaseline="central"
+                      className={`pointer-events-none font-medium select-none ${isAiScm ? "fill-background text-sm" : "fill-background/80 text-[11px]"}`}
+                      animate={{ opacity: isOther ? 0.1 : 0.9 }}
+                    >
+                      {slice.val.toFixed(1)}%
+                    </motion.text>
+                  )}
+                </motion.g>
+              );
+            })}
+
+            {/* Center label */}
+            <text x={cx} y={cy - 8} textAnchor="middle" dominantBaseline="central" className="fill-muted-foreground/25 text-xs font-light pointer-events-none select-none">Market Share</text>
+            <text x={cx} y={cy + 10} textAnchor="middle" dominantBaseline="central" className="fill-foreground/50 text-sm font-medium pointer-events-none select-none">{activeYear}</text>
+          </svg>
+
+          {/* Interactive legend */}
+          <div className="flex flex-wrap gap-5 justify-center mt-6">
+            {segmentLabels.map((label, i) => (
+              <button
+                key={i}
+                className={`flex items-center gap-2 transition-all duration-300 group ${activeSegment !== null && activeSegment !== i ? "opacity-25" : "opacity-100"} hover:opacity-100`}
+                onClick={() => setActiveSegment(activeSegment === i ? null : i)}
+              >
+                <div
+                  className={`w-3 h-3 rounded-full transition-transform duration-200 ${activeSegment === i ? "scale-125" : "group-hover:scale-110"}`}
+                  style={{ background: segmentColors[i], boxShadow: i === 0 ? "0 0 8px hsl(var(--foreground) / 0.3)" : "none" }}
+                />
+                <span className={`text-xs transition-colors duration-200 ${activeSegment === i ? "text-foreground/80" : "text-muted-foreground/45 group-hover:text-muted-foreground/65"}`}>
+                  {label}
+                </span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Right side panel */}
+        <div className="flex flex-col gap-6 lg:pt-16">
+          {/* Segment comparison panel */}
+          <AnimatePresence mode="wait">
+            {selectedSegment ? (
+              <motion.div
+                key={activeSegment}
+                initial={{ opacity: 0, x: 12 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -8 }}
+                transition={{ duration: 0.3 }}
+              >
+                <GlassPanel intensity="subtle" bordered className="p-6 rounded-xl">
+                  <div className="flex items-center gap-2 mb-5">
+                    <div className="w-2.5 h-2.5 rounded-full" style={{ background: segmentColors[activeSegment!], boxShadow: activeSegment === 0 ? "0 0 6px hsl(var(--foreground) / 0.3)" : "none" }} />
+                    <p className="text-xs text-foreground/70 font-medium">{selectedSegment.label}</p>
+                  </div>
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[11px] text-muted-foreground/45">2023/24</span>
+                      <span className="text-sm font-light text-foreground/60">{selectedSegment.val2023.toFixed(2)}%</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-[11px] text-muted-foreground/45">2029/30</span>
+                      <span className="text-sm font-light text-foreground">{selectedSegment.val2029.toFixed(2)}%</span>
+                    </div>
+                    <div className="h-px bg-border/15 my-1" />
+                    <div className="flex items-center justify-between">
+                      <span className="text-[11px] text-muted-foreground/45">Abs. change</span>
+                      <span className={`text-sm font-medium ${selectedSegment.abs >= 0 ? "text-primary" : "text-destructive/70"}`}>
+                        {selectedSegment.abs >= 0 ? "+" : ""}{selectedSegment.abs.toFixed(2)}pp
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-[11px] text-muted-foreground/45">Rel. growth</span>
+                      <span className={`text-sm font-semibold ${selectedSegment.growth >= 0 ? "text-primary" : "text-destructive/70"}`}>
+                        {selectedSegment.growth >= 0 ? "↑" : "↓"} {Math.abs(selectedSegment.growth).toFixed(0)}%
+                      </span>
+                    </div>
+                  </div>
+                </GlassPanel>
+              </motion.div>
+            ) : (
+              <motion.div key="empty" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                <GlassPanel intensity="subtle" bordered className="p-6 rounded-xl">
+                  <p className="text-xs text-muted-foreground/30 text-center py-4">Select a segment to compare</p>
+                </GlassPanel>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* AI-SCM Growth highlight */}
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={whyNowVisible ? { opacity: 1, y: 0 } : {}}
+            transition={{ delay: 0.8, duration: 0.5 }}
           >
-            <div
-              className={`w-3 h-3 rounded-full transition-transform duration-200 ${activeSegment === i ? "scale-125" : "group-hover:scale-110"}`}
-              style={{ background: segmentColors[i], boxShadow: i === 0 ? "0 0 8px hsl(var(--foreground) / 0.3)" : "none" }}
-            />
-            <span className={`text-xs transition-colors duration-200 ${activeSegment === i ? "text-foreground/80" : "text-muted-foreground/50 group-hover:text-muted-foreground/70"}`}>{label}</span>
-          </button>
-        ))}
+            <GlassPanel intensity="subtle" bordered className="p-6 rounded-xl">
+              <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground/35 mb-4">Investment Highlight</p>
+              <h4 className="text-sm font-medium text-foreground/80 mb-5">AI-SCM Share (Germany)</h4>
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] text-muted-foreground/45">2023/24</span>
+                  <span className="text-sm font-light text-foreground/60">{aiScmStart}%</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] text-muted-foreground/45">2029/30</span>
+                  <span className="text-sm font-light text-foreground">{aiScmEnd}%</span>
+                </div>
+                <div className="h-px bg-border/15 my-1" />
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] text-primary/70">Growth</span>
+                  <span className="text-base font-medium text-primary">↑ {aiScmGrowth}%</span>
+                </div>
+              </div>
+            </GlassPanel>
+          </motion.div>
+        </div>
       </div>
+
+      {/* AI-SCM Growth Bar */}
+      <motion.div
+        className="mt-10 max-w-lg mx-auto"
+        initial={{ opacity: 0, y: 10 }}
+        animate={whyNowVisible ? { opacity: 1, y: 0 } : {}}
+        transition={{ delay: 1, duration: 0.5 }}
+      >
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground/35">AI-SCM Share Growth (Germany)</span>
+        </div>
+        <div className="relative h-2 rounded-full bg-secondary/20 overflow-hidden">
+          <motion.div
+            className="absolute inset-y-0 left-0 rounded-full bg-foreground/10"
+            initial={{ width: "0%" }}
+            animate={whyNowVisible ? { width: `${(aiScmEnd / 3) * 100}%` } : {}}
+            transition={{ delay: 1.2, duration: 0.8, ease: "easeOut" }}
+          />
+          <motion.div
+            className="absolute inset-y-0 left-0 rounded-full"
+            style={{ background: "linear-gradient(90deg, hsl(var(--primary) / 0.6), hsl(var(--foreground) / 0.9))" }}
+            initial={{ width: `${(aiScmStart / 3) * 100}%` }}
+            animate={whyNowVisible ? { width: `${(aiScmEnd / 3) * 100}%` } : {}}
+            transition={{ delay: 2.2, duration: 1.2, ease: [0.23, 0.86, 0.39, 0.96] }}
+          />
+        </div>
+        <div className="flex items-center justify-between mt-2">
+          <span className="text-[11px] text-muted-foreground/40">{aiScmStart}%</span>
+          <motion.span
+            className="text-[11px] text-foreground/70 font-medium"
+            initial={{ opacity: 0 }}
+            animate={whyNowVisible ? { opacity: 1 } : {}}
+            transition={{ delay: 3 }}
+          >
+            {aiScmEnd}% → ↑ {aiScmGrowth}%
+          </motion.span>
+        </div>
+      </motion.div>
     </div>
   );
 };
@@ -745,7 +775,6 @@ const OpportunitySection = () => {
   const landscapeRef = useRef<HTMLDivElement>(null);
   const businessRef = useRef<HTMLDivElement>(null);
 
-  // Observers
   useEffect(() => {
     const createObserver = (ref: React.RefObject<HTMLDivElement>, setter: (v: boolean) => void, threshold = 0.2) => {
       const observer = new IntersectionObserver(
@@ -802,7 +831,6 @@ const OpportunitySection = () => {
             <div>
               <MarketPyramid activeLayer={activeLayer} onLayerClick={setActiveLayer} />
               
-              {/* Active layer info */}
               <AnimatePresence mode="wait">
                 {activeMarketData && (
                   <motion.div
@@ -821,7 +849,7 @@ const OpportunitySection = () => {
               </AnimatePresence>
             </div>
             
-            {/* Opportunity points - per segment */}
+            {/* Opportunity points */}
             <div>
               <AnimatePresence mode="wait">
                 {activeMarketData && (
@@ -876,8 +904,8 @@ const OpportunitySection = () => {
           </p>
           
           <div className={`transition-all duration-1000 ${whyNowVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
-            {/* Pie charts - centered and larger */}
-            <div className="max-w-3xl mx-auto mb-16">
+            {/* Single large pie chart */}
+            <div className="max-w-5xl mx-auto mb-16">
               <GlassPanel intensity="subtle" bordered className="p-10 md:p-14 rounded-xl">
                 <MarketGrowthComparison whyNowVisible={whyNowVisible} />
               </GlassPanel>
@@ -895,7 +923,6 @@ const OpportunitySection = () => {
           </p>
           
           <div className={`max-w-3xl mx-auto transition-all duration-1000 ${competitionVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
-            {/* Comparison Table */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={competitionVisible ? { opacity: 1, y: 0 } : {}}
@@ -942,7 +969,6 @@ const OpportunitySection = () => {
                 </table>
               </GlassPanel>
               
-              {/* Synapsio tagline */}
               <motion.p
                 className="mt-8 text-sm text-foreground/80 text-center"
                 initial={{ opacity: 0 }}
@@ -955,7 +981,7 @@ const OpportunitySection = () => {
           </div>
         </div>
         
-        {/* === MARKET LANDSCAPE (new subsection) === */}
+        {/* === MARKET LANDSCAPE === */}
         <div ref={landscapeRef} className="mb-40 md:mb-56">
           <p className="text-xs tracking-[0.25em] uppercase text-muted-foreground/35 mb-16">
             Market Landscape
@@ -974,7 +1000,6 @@ const OpportunitySection = () => {
                     label: business.name,
                     content: (
                       <GlassPanel intensity="subtle" bordered className="rounded-xl p-6 md:p-8 relative">
-                        {/* Company logo */}
                         {companyLogos[business.name] && (
                           <img
                             src={companyLogos[business.name]}
@@ -982,7 +1007,6 @@ const OpportunitySection = () => {
                             className="absolute top-4 right-4 w-8 h-8 object-contain rounded-md opacity-60"
                           />
                         )}
-                        {/* Company type badge */}
                         <div className="flex items-center gap-3 mb-6">
                           <span className="text-[10px] tracking-[0.2em] uppercase text-muted-foreground/40 px-3 py-1 rounded-full border border-border/20 bg-secondary/20">
                             {system.systemType}
@@ -993,7 +1017,6 @@ const OpportunitySection = () => {
                         <p className="text-xs text-muted-foreground/40 mb-6">{system.description}</p>
                         
                         <div className="grid md:grid-cols-2 gap-6">
-                          {/* Facts */}
                           <div>
                             <p className="text-xs uppercase tracking-wider text-muted-foreground/40 mb-3">Facts</p>
                             <ul className="space-y-2">
@@ -1005,8 +1028,6 @@ const OpportunitySection = () => {
                               ))}
                             </ul>
                           </div>
-                          
-                          {/* Arguments */}
                           <div>
                             <p className="text-xs uppercase tracking-wider text-muted-foreground/40 mb-3">Arguments</p>
                             <ul className="space-y-2">
@@ -1029,7 +1050,7 @@ const OpportunitySection = () => {
           </div>
         </div>
         
-        {/* === BUSINESS MODEL (unchanged) === */}
+        {/* === BUSINESS MODEL === */}
         <div ref={businessRef}>
           <p className="text-xs tracking-[0.25em] uppercase text-muted-foreground/35 mb-12">
             Business Model
