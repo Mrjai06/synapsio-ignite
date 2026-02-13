@@ -725,7 +725,7 @@ const OpportunitySection = () => {
             </div>
             
             {/* Opportunity points - per segment */}
-            <div className="space-y-8">
+            <div>
               <AnimatePresence mode="wait">
                 {activeMarketData && (
                   <motion.div
@@ -735,28 +735,36 @@ const OpportunitySection = () => {
                     exit={{ opacity: 0, x: -10 }}
                     transition={{ duration: 0.3 }}
                   >
-                    <h3 className="text-xl text-primary/80 mb-6">
-                      {activeMarketData.label} Opportunity:
+                    <h3 className="text-xl font-light text-foreground mb-2">
+                      <span className="text-primary">{activeMarketData.label}</span> Opportunity
                     </h3>
-                    {activeMarketData.opportunityPoints.map((section: { category: string; points: string[] }, i: number) => (
-                      <motion.div
-                        key={section.category}
-                        initial={{ opacity: 0, x: 20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 0.1 + i * 0.1 }}
-                        className="mb-6"
-                      >
-                        <h4 className="text-primary text-sm mb-3">{section.category}:</h4>
-                        <ul className="space-y-2">
-                          {section.points.map((point: string, j: number) => (
-                            <li key={j} className="text-sm text-muted-foreground/60 flex items-start gap-3">
-                              <span className="text-muted-foreground/40 mt-1">-</span>
-                              {point}
-                            </li>
-                          ))}
-                        </ul>
-                      </motion.div>
-                    ))}
+                    <p className="text-xs text-muted-foreground/40 mb-6">
+                      {activeMarketData.title}
+                    </p>
+                    <div className="space-y-4">
+                      {activeMarketData.opportunityPoints.map((section: { category: string; points: string[] }, i: number) => (
+                        <motion.div
+                          key={section.category}
+                          initial={{ opacity: 0, y: 12 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: 0.1 + i * 0.08 }}
+                        >
+                          <GlassPanel intensity="subtle" bordered className="rounded-xl p-5">
+                            <p className="text-[10px] uppercase tracking-[0.3em] text-primary/60 mb-3">
+                              {section.category}
+                            </p>
+                            <ul className="space-y-2.5">
+                              {section.points.map((point: string, j: number) => (
+                                <li key={j} className="text-sm text-muted-foreground/70 flex items-start gap-3">
+                                  <span className="w-1.5 h-1.5 rounded-full bg-primary/40 shrink-0 mt-1.5" />
+                                  {point}
+                                </li>
+                              ))}
+                            </ul>
+                          </GlassPanel>
+                        </motion.div>
+                      ))}
+                    </div>
                   </motion.div>
                 )}
               </AnimatePresence>
