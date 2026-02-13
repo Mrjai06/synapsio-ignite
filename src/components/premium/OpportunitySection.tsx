@@ -245,29 +245,59 @@ const tiers = [
   }
 ];
 
-// Traditional Pyramid Component
+// Traditional Pyramid Component with rounded edges
 const MarketPyramid = ({ activeLayer, onLayerClick }: { activeLayer: string; onLayerClick: (id: string) => void }) => {
-  // Mathematically aligned pyramid: single apex, consistent slope, uniform gaps
-  // Apex at (200, 30), base corners at (40, 310) and (360, 310)
-  // Slope: dx/dy = (200-40)/(310-30) = 160/280
   const xAt = (y: number) => {
     const t = (y - 30) / 280;
     const halfW = t * 160;
     return { left: 200 - halfW, right: 200 + halfW };
   };
 
-  const gap = 6; // vertical gap between layers
+  const gap = 6;
   const layers = [
-    { id: "som", y1: 30, y2: 120 },   // top ~32%
-    { id: "sam", y1: 120 + gap, y2: 210 }, // mid ~32%
-    { id: "tam", y1: 210 + gap, y2: 310 }, // base ~36%
+    { id: "som", y1: 30, y2: 120 },
+    { id: "sam", y1: 120 + gap, y2: 210 },
+    { id: "tam", y1: 210 + gap, y2: 310 },
   ];
 
-  const buildPoints = (y1: number, y2: number, isTop: boolean) => {
+  const buildPath = (y1: number, y2: number, isTop: boolean) => {
     const top = xAt(y1);
     const bot = xAt(y2);
-    if (isTop) return `${200},${y1} ${bot.right},${y2} ${bot.left},${y2}`;
-    return `${top.left},${y1} ${top.right},${y1} ${bot.right},${y2} ${bot.left},${y2}`;
+    const r = isTop ? 8 : 10;
+    const rTop = isTop ? 6 : r;
+
+    if (isTop) {
+      const apex = { x: 200, y: y1 };
+      const bl = { x: bot.left, y: y2 };
+      const br = { x: bot.right, y: y2 };
+      return `
+        M ${apex.x} ${apex.y + rTop}
+        Q ${apex.x} ${apex.y}, ${apex.x + rTop} ${apex.y + rTop * 0.6}
+        L ${br.x - r} ${br.y - r * 0.4}
+        Q ${br.x} ${br.y}, ${br.x - r} ${br.y}
+        L ${bl.x + r} ${bl.y}
+        Q ${bl.x} ${bl.y}, ${bl.x + r} ${bl.y - r * 0.4}
+        L ${apex.x - rTop} ${apex.y + rTop * 0.6}
+        Q ${apex.x} ${apex.y}, ${apex.x} ${apex.y + rTop}
+        Z
+      `;
+    }
+    const tl = { x: top.left, y: y1 };
+    const tr = { x: top.right, y: y1 };
+    const bl = { x: bot.left, y: y2 };
+    const br = { x: bot.right, y: y2 };
+    return `
+      M ${tl.x + r} ${tl.y}
+      L ${tr.x - r} ${tr.y}
+      Q ${tr.x} ${tr.y}, ${tr.x + r * 0.4} ${tr.y + r * 0.6}
+      L ${br.x - r * 0.4} ${br.y - r * 0.6}
+      Q ${br.x} ${br.y}, ${br.x - r} ${br.y}
+      L ${bl.x + r} ${bl.y}
+      Q ${bl.x} ${bl.y}, ${bl.x + r * 0.4} ${bl.y - r * 0.6}
+      L ${tl.x - r * 0.4} ${tl.y + r * 0.6}
+      Q ${tl.x} ${tl.y}, ${tl.x + r} ${tl.y}
+      Z
+    `;
   };
 
   return (
@@ -277,12 +307,16 @@ const MarketPyramid = ({ activeLayer, onLayerClick }: { activeLayer: string; onL
           <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity="0.6" />
           <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity="0.15" />
         </linearGradient>
+        <filter id="pyramidGlow">
+          <feGaussianBlur stdDeviation="6" result="blur" />
+          <feComposite in="SourceGraphic" in2="blur" operator="over" />
+        </filter>
       </defs>
 
       {layers.map((layer, i) => {
         const isActive = activeLayer === layer.id;
         const isTop = i === 0;
-        const points = buildPoints(layer.y1, layer.y2, isTop);
+        const path = buildPath(layer.y1, layer.y2, isTop);
         const labelY = (layer.y1 + layer.y2) / 2 + (isTop ? 4 : 0);
 
         return (
@@ -296,13 +330,13 @@ const MarketPyramid = ({ activeLayer, onLayerClick }: { activeLayer: string; onL
             whileHover={{ scale: 1.012 }}
             style={{ transformOrigin: "200px 170px" }}
           >
-            <motion.polygon
-              points={points}
+            <motion.path
+              d={path}
               fill={isActive ? "url(#pyramidFillActive)" : `hsl(var(--secondary) / ${0.12 + i * 0.1})`}
               stroke={isActive ? "hsl(var(--primary))" : "hsl(var(--border) / 0.35)"}
               strokeWidth={isActive ? 1.5 : 0.7}
-              strokeLinejoin="round"
-              className="transition-all duration-300"
+              className="transition-all duration-500"
+              filter={isActive ? "url(#pyramidGlow)" : undefined}
             />
             <text
               x={200}
