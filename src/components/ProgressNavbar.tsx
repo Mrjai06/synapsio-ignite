@@ -82,7 +82,7 @@ const ProgressNavbar = () => {
     <nav className="fixed right-6 top-1/2 -translate-y-1/2 z-40 hidden lg:flex flex-col items-center gap-4">
       {/* Brand mark - aligned with dot column */}
       <a href="#hero" className="opacity-60 hover:opacity-90 transition-opacity duration-500 flex justify-end w-full mb-3">
-        <img src={synapsioLogo} alt="Synapsio" className="h-auto w-6" />
+        <img src={synapsioLogo} alt="Synapsio" className="h-auto w-6 mr-[-6px]" />
       </a>
       <div className="relative" ref={containerRef}>
         {/* Background track - anchored to dot column center (right-[5.5px] = center of 12px dot wrapper) */}
