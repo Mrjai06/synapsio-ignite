@@ -422,9 +422,8 @@ const GrowthPieChart = ({ year, values, compareValues, activeSegment, onSegmentC
         {slices.map((slice, i) => {
           const isActive = activeSegment === slice.idx;
           const isOther = activeSegment !== null && activeSegment !== slice.idx;
-          // Spread all segments outward, explode active further
-          const baseSpread = 6;
-          const explode = isActive ? 14 : baseSpread;
+          // Explode active slice outward
+          const explode = isActive ? 8 : 0;
           const midAngle = slice.startAngle + (slice.endAngle - slice.startAngle) / 2;
           const dx = explode * Math.cos(midAngle);
           const dy = explode * Math.sin(midAngle);
@@ -434,9 +433,9 @@ const GrowthPieChart = ({ year, values, compareValues, activeSegment, onSegmentC
             return (
             <motion.g key={slice.idx}>
               {/* Invisible larger hit area for small slices */}
-              {slice.val / total < 0.12 && (
+              {slice.val / total < 0.08 && (
                 <motion.path
-                  d={describeArc(cx + dx, cy + dy, r + 30, slice.startAngle - 0.15, slice.endAngle + 0.15)}
+                  d={describeArc(cx + dx, cy + dy, r + 20, slice.startAngle - 0.08, slice.endAngle + 0.08)}
                   fill="transparent"
                   className="cursor-pointer"
                   onClick={(e) => {
@@ -464,30 +463,6 @@ const GrowthPieChart = ({ year, values, compareValues, activeSegment, onSegmentC
                 }}
                 whileHover={{ scale: 1.05 }}
               />
-              {/* White dot indicator only for the smallest (white/muted) segment */}
-              {slice.idx === 0 && (() => {
-                const dotMid = slice.startAngle + (slice.endAngle - slice.startAngle) / 2;
-                const dotR = (isActive ? r + 6 : r) + 14;
-                const dotX = cx + dx + dotR * Math.cos(dotMid);
-                const dotY = cy + dy + dotR * Math.sin(dotMid);
-                return (
-                  <motion.circle
-                    cx={dotX}
-                    cy={dotY}
-                    r={6}
-                    fill="hsl(var(--foreground))"
-                    stroke="hsl(var(--background))"
-                    strokeWidth={2}
-                    className="cursor-pointer"
-                    animate={{ opacity: isOther ? 0.15 : 0.9 }}
-                    whileHover={{ scale: 1.5 }}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onSegmentClick(isActive ? null : slice.idx);
-                    }}
-                  />
-                );
-              })()}
               {/* Outer stroke highlight for small or active slices */}
               {(slice.val / total < 0.05 || isActive) && (
                 <motion.path
