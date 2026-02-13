@@ -476,10 +476,10 @@ const MarketGrowthComparison = ({ whyNowVisible }: { whyNowVisible: boolean }) =
 
               return (
                 <motion.g key={slice.idx}>
-                  {/* Invisible hit area for small segments */}
-                  {slice.val / total < 0.12 && (
+                  {/* Expanded invisible hit area – always for AI-SCM, otherwise for small segments */}
+                  {(isAiScm || slice.val / total < 0.12) && (
                     <motion.path
-                      d={describeArc(cx + dx, cy + dy, slice.sliceR + 40, slice.startAngle - 0.2, slice.endAngle + 0.2)}
+                      d={describeArc(cx + dx, cy + dy, slice.sliceR + (isAiScm ? 55 : 40), slice.startAngle - (isAiScm ? 0.35 : 0.2), slice.endAngle + (isAiScm ? 0.35 : 0.2))}
                       fill="transparent"
                       className="cursor-pointer"
                       onClick={(e) => { e.stopPropagation(); setActiveSegment(isActive ? null : slice.idx); }}
