@@ -261,44 +261,36 @@ const MarketPyramid = ({ activeLayer, onLayerClick }: { activeLayer: string; onL
   ];
 
   const buildPath = (y1: number, y2: number, isTop: boolean) => {
-    const top = xAt(y1);
     const bot = xAt(y2);
-    const r = 5; // subtle corner radius
+    const r = 5;
 
     if (isTop) {
-      // Top segment as a trapezoid with a narrow flat top instead of a sharp apex
-      const flatHalf = 12; // half-width of the flat top edge
-      const tl = { x: 200 - flatHalf, y: y1 };
-      const tr = { x: 200 + flatHalf, y: y1 };
+      // Sharp apex triangle with rounded bottom corners
+      const apex = { x: 200, y: y1 };
       const bl = { x: bot.left, y: y2 };
       const br = { x: bot.right, y: y2 };
       return `
-        M ${tl.x + r} ${tl.y}
-        L ${tr.x - r} ${tr.y}
-        Q ${tr.x} ${tr.y}, ${tr.x + r * 0.3} ${tr.y + r * 0.5}
+        M ${apex.x} ${apex.y}
         L ${br.x - r * 0.3} ${br.y - r * 0.5}
         Q ${br.x} ${br.y}, ${br.x - r} ${br.y}
         L ${bl.x + r} ${bl.y}
         Q ${bl.x} ${bl.y}, ${bl.x + r * 0.3} ${bl.y - r * 0.5}
-        L ${tl.x - r * 0.3} ${tl.y + r * 0.5}
-        Q ${tl.x} ${tl.y}, ${tl.x + r} ${tl.y}
         Z
       `;
     }
+    // Trapezoid: top edges align exactly with the bottom edges of the layer above
+    const top = xAt(y1);
     const tl = { x: top.left, y: y1 };
     const tr = { x: top.right, y: y1 };
     const bl = { x: bot.left, y: y2 };
     const br = { x: bot.right, y: y2 };
     return `
-      M ${tl.x + r} ${tl.y}
-      L ${tr.x - r} ${tr.y}
-      Q ${tr.x} ${tr.y}, ${tr.x + r * 0.3} ${tr.y + r * 0.5}
+      M ${tl.x} ${tl.y}
+      L ${tr.x} ${tr.y}
       L ${br.x - r * 0.3} ${br.y - r * 0.5}
       Q ${br.x} ${br.y}, ${br.x - r} ${br.y}
       L ${bl.x + r} ${bl.y}
       Q ${bl.x} ${bl.y}, ${bl.x + r * 0.3} ${bl.y - r * 0.5}
-      L ${tl.x - r * 0.3} ${tl.y + r * 0.5}
-      Q ${tl.x} ${tl.y}, ${tl.x + r} ${tl.y}
       Z
     `;
   };
