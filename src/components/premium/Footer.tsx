@@ -74,7 +74,7 @@ const Footer = () => {
             <div className="max-w-sm">
               <div className="flex items-center gap-3">
                 <img src={synapsioLogo} alt="Synapsio" className="h-10 w-auto" />
-                <span className="text-lg font-medium tracking-tight text-foreground">
+                <span className="text-lg font-medium tracking-tight text-foreground uppercase">
                   Synapsio
                 </span>
               </div>
