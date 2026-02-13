@@ -422,8 +422,9 @@ const GrowthPieChart = ({ year, values, compareValues, activeSegment, onSegmentC
         {slices.map((slice, i) => {
           const isActive = activeSegment === slice.idx;
           const isOther = activeSegment !== null && activeSegment !== slice.idx;
-          // Explode active slice outward
-          const explode = isActive ? 8 : 0;
+          // Spread all segments outward, explode active further
+          const baseSpread = 6;
+          const explode = isActive ? 14 : baseSpread;
           const midAngle = slice.startAngle + (slice.endAngle - slice.startAngle) / 2;
           const dx = explode * Math.cos(midAngle);
           const dy = explode * Math.sin(midAngle);
