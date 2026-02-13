@@ -392,7 +392,7 @@ const GrowthPieChart = ({ year, values, compareValues, activeSegment, onSegmentC
   const total = values.reduce((sum, v) => sum + v, 0);
 
   // Build slices with gaps for fragmented look
-  const gapAngle = 0.04; // radians gap between slices
+  const gapAngle = 0.08; // radians gap between slices
   let currentAngle = -Math.PI / 2; // start from top
   const slices = values.map((val, idx) => {
     const sliceAngle = (val / total) * 2 * Math.PI;
@@ -419,12 +419,12 @@ const GrowthPieChart = ({ year, values, compareValues, activeSegment, onSegmentC
   return (
     <div className="flex flex-col items-center">
       <p className="text-2xl font-light text-foreground mb-6">{year}</p>
-      <svg viewBox="0 0 400 400" className="w-full max-w-[340px] md:max-w-[400px]">
+      <svg viewBox="-20 -20 440 440" className="w-full max-w-[340px] md:max-w-[400px]">
         {slices.map((slice, i) => {
           const isActive = activeSegment === slice.idx;
           const isOther = activeSegment !== null && activeSegment !== slice.idx;
-          // Explode active slice outward
-          const explode = isActive ? 8 : 0;
+          // All slices explode outward; active slices explode more
+          const explode = isActive ? 18 : 10;
           const midAngle = slice.startAngle + (slice.endAngle - slice.startAngle) / 2;
           const dx = explode * Math.cos(midAngle);
           const dy = explode * Math.sin(midAngle);
