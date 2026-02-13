@@ -140,7 +140,7 @@ const ProgressNavbar = () => {
                     <img 
                       src={synapsioLogo} 
                       alt="Synapsio" 
-                      className={`dot-indicator h-3.5 w-auto relative z-10 transition-all duration-500 ${
+                      className={`dot-indicator h-5 w-auto relative z-10 transition-all duration-500 ${
                         isActive ? "opacity-70" : isPast ? "opacity-40" : "opacity-30 group-hover:opacity-50"
                       }`}
                     />
