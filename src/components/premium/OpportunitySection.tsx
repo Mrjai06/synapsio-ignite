@@ -391,13 +391,14 @@ const GrowthPieChart = ({ year, values, compareValues, activeSegment, onSegmentC
   const r = 160;
   const total = values.reduce((sum, v) => sum + v, 0);
 
-  // Build slices
+  // Build slices with gaps for fragmented look
+  const gapAngle = 0.04; // radians gap between slices
   let currentAngle = -Math.PI / 2; // start from top
   const slices = values.map((val, idx) => {
     const sliceAngle = (val / total) * 2 * Math.PI;
-    const startAngle = currentAngle;
-    const endAngle = currentAngle + sliceAngle;
-    currentAngle = endAngle;
+    const startAngle = currentAngle + gapAngle / 2;
+    const endAngle = currentAngle + sliceAngle - gapAngle / 2;
+    currentAngle = currentAngle + sliceAngle;
     
     // Label position at midpoint of arc
     const midAngle = startAngle + sliceAngle / 2;
@@ -447,7 +448,7 @@ const GrowthPieChart = ({ year, values, compareValues, activeSegment, onSegmentC
               <motion.path
                 d={describeArc(cx + dx, cy + dy, isActive ? r + 6 : r, slice.startAngle, slice.endAngle)}
                 fill={slice.color}
-                stroke="hsl(var(--background))"
+                stroke="none"
                 strokeWidth={3}
                 className="cursor-pointer"
                 initial={{ scale: 0, opacity: 0 }}
