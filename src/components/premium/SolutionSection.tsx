@@ -11,7 +11,7 @@ const slides = [
     label: "What It Is",
     title: "The Intelligence Layer",
     subtitle: "for Supply Chains",
-    description: "Synapsio is an AI-powered platform that connects every node of your supply chain—ERP systems, warehouses, carriers, and marketplaces—into a unified, self-optimizing network.",
+    description: "Synapsio is an AI-powered platform that connects every node of your supply chain—ERP systems, warehouses, carriers, and our internal marketplace —into a unified, self-optimizing network.",
     diagram: {
       type: "connect",
       elements: ["ERP", "WMS", "TMS", "Marketplace"],
