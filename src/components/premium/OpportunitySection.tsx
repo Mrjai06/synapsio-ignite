@@ -352,67 +352,81 @@ const MarketPyramid = ({ activeLayer, onLayerClick }: { activeLayer: string; onL
   );
 };
 
-// ====== RADIAL GROWTH BANDS ======
+// ====== STACKED AREA CHART ======
 
-const radialSegments = [
-  { label: "AI-SCM (Germany)", color: "hsl(var(--foreground))", values: [0.67, 1.94], isHighlight: true },
-  { label: "SCM (Germany)", color: "hsl(var(--muted-foreground) / 0.4)", values: [6.42, 3.45], isHighlight: false },
-  { label: "AI-SCM (Global)", color: "hsl(var(--primary) / 0.7)", values: [15.27, 48.51], isHighlight: false },
-  { label: "SCM (Global)", color: "hsl(var(--secondary) / 0.5)", values: [77.64, 46.11], isHighlight: false },
+const areaSegments = [
+  { key: "aiScmGermany", label: "AI-SCM (Germany)", color: "hsl(var(--foreground))", isHighlight: true },
+  { key: "scmGermany", label: "SCM (Germany)", color: "hsl(var(--muted-foreground))" },
+  { key: "aiScmGlobal", label: "AI-SCM (Global)", color: "hsl(var(--primary))" },
+  { key: "scmGlobal", label: "SCM (Global)", color: "hsl(var(--secondary))" },
 ];
 
-const RadialGrowthBands = ({ whyNowVisible }: { whyNowVisible: boolean }) => {
-  const [activeSegment, setActiveSegment] = useState<number | null>(null);
+const stackedData = [
+  { year: "2023", aiScmGermany: 0.67, scmGermany: 6.42, aiScmGlobal: 15.27, scmGlobal: 77.64 },
+  { year: "2024", aiScmGermany: 0.85, scmGermany: 6.10, aiScmGlobal: 18.50, scmGlobal: 74.55 },
+  { year: "2025", aiScmGermany: 1.00, scmGermany: 5.70, aiScmGlobal: 22.00, scmGlobal: 71.30 },
+  { year: "2026", aiScmGermany: 1.18, scmGermany: 5.20, aiScmGlobal: 26.50, scmGlobal: 67.12 },
+  { year: "2027", aiScmGermany: 1.38, scmGermany: 4.70, aiScmGlobal: 31.50, scmGlobal: 62.42 },
+  { year: "2028", aiScmGermany: 1.58, scmGermany: 4.15, aiScmGlobal: 37.00, scmGlobal: 57.27 },
+  { year: "2029", aiScmGermany: 1.78, scmGermany: 3.75, aiScmGlobal: 43.00, scmGlobal: 51.47 },
+  { year: "2030", aiScmGermany: 1.94, scmGermany: 3.45, aiScmGlobal: 48.51, scmGlobal: 46.11 },
+];
 
-  const cx = 220;
-  const cy = 220;
-  const maxVal = Math.max(...radialSegments.flatMap(s => s.values));
-  const minRadius = 45;
-  const maxRadius = 185;
+const StackedAreaChart = ({ whyNowVisible }: { whyNowVisible: boolean }) => {
+  const [activeSegment, setActiveSegment] = useState<string | null>(null);
 
-  const valToR = (val: number) => minRadius + (val / maxVal) * (maxRadius - minRadius);
-
-  const segCount = radialSegments.length;
-  const gapAngle = 4;
-  const sliceAngle = (360 - gapAngle * segCount) / segCount;
-
-  const describeArc = (startAngle: number, endAngle: number, innerR: number, outerR: number) => {
-    const toRad = (a: number) => ((a - 90) * Math.PI) / 180;
-    const s1 = toRad(startAngle);
-    const e1 = toRad(endAngle);
-    const largeArc = endAngle - startAngle > 180 ? 1 : 0;
-
-    const outerStart = { x: cx + outerR * Math.cos(s1), y: cy + outerR * Math.sin(s1) };
-    const outerEnd = { x: cx + outerR * Math.cos(e1), y: cy + outerR * Math.sin(e1) };
-    const innerStart = { x: cx + innerR * Math.cos(e1), y: cy + innerR * Math.sin(e1) };
-    const innerEnd = { x: cx + innerR * Math.cos(s1), y: cy + innerR * Math.sin(s1) };
-
-    return [
-      `M ${outerStart.x} ${outerStart.y}`,
-      `A ${outerR} ${outerR} 0 ${largeArc} 1 ${outerEnd.x} ${outerEnd.y}`,
-      `L ${innerStart.x} ${innerStart.y}`,
-      `A ${innerR} ${innerR} 0 ${largeArc} 0 ${innerEnd.x} ${innerEnd.y}`,
-      `Z`,
-    ].join(" ");
-  };
-
-  const selectedSegment = activeSegment !== null ? {
-    label: radialSegments[activeSegment].label,
-    val2023: radialSegments[activeSegment].values[0],
-    val2029: radialSegments[activeSegment].values[1],
-    growth: ((radialSegments[activeSegment].values[1] - radialSegments[activeSegment].values[0]) / radialSegments[activeSegment].values[0]) * 100,
-    abs: radialSegments[activeSegment].values[1] - radialSegments[activeSegment].values[0],
+  const selectedMeta = activeSegment ? areaSegments.find(s => s.key === activeSegment) : null;
+  const selectedData = activeSegment ? {
+    label: selectedMeta?.label || "",
+    val2023: stackedData[0][activeSegment as keyof typeof stackedData[0]] as number,
+    val2030: stackedData[stackedData.length - 1][activeSegment as keyof typeof stackedData[0]] as number,
   } : null;
+
+  const growth = selectedData ? ((selectedData.val2030 - selectedData.val2023) / selectedData.val2023) * 100 : 0;
+  const abs = selectedData ? selectedData.val2030 - selectedData.val2023 : 0;
+
+  // SVG-based stacked area chart
+  const width = 700;
+  const height = 340;
+  const padL = 48;
+  const padR = 20;
+  const padT = 20;
+  const padB = 40;
+  const chartW = width - padL - padR;
+  const chartH = height - padT - padB;
+  const n = stackedData.length;
+
+  // Compute cumulative stacks (bottom to top: scmGlobal, aiScmGlobal, scmGermany, aiScmGermany)
+  const stackOrder = ["scmGlobal", "aiScmGlobal", "scmGermany", "aiScmGermany"] as const;
+  const cumulative = stackedData.map(d => {
+    let cum = 0;
+    const result: Record<string, { y0: number; y1: number }> = {};
+    for (const key of stackOrder) {
+      const val = d[key] as number;
+      result[key] = { y0: cum, y1: cum + val };
+      cum += val;
+    }
+    return result;
+  });
+
+  const xScale = (i: number) => padL + (i / (n - 1)) * chartW;
+  const yScale = (v: number) => padT + chartH - (v / 100) * chartH;
+
+  const buildAreaPath = (key: string) => {
+    const top = cumulative.map((c, i) => `${i === 0 ? "M" : "L"} ${xScale(i)} ${yScale(c[key].y1)}`).join(" ");
+    const bottom = [...cumulative].reverse().map((c, i) => `${i === 0 ? "L" : "L"} ${xScale(n - 1 - i)} ${yScale(c[key].y0)}`).join(" ");
+    return `${top} ${bottom} Z`;
+  };
 
   return (
     <div>
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-10 items-start">
         <div className="flex flex-col items-center">
-          <svg viewBox="0 0 440 440" className="w-full max-w-[440px]" onClick={() => setActiveSegment(null)}>
+          <svg viewBox={`0 0 ${width} ${height}`} className="w-full" onClick={() => setActiveSegment(null)}>
             <defs>
-              <filter id="bandGlowOuter">
-                <feGaussianBlur stdDeviation="10" result="blur" />
-                <feFlood floodColor="hsl(var(--foreground))" floodOpacity="0.12" result="color" />
+              <filter id="areaGlow">
+                <feGaussianBlur stdDeviation="8" result="blur" />
+                <feFlood floodColor="hsl(var(--foreground))" floodOpacity="0.15" result="color" />
                 <feComposite in="color" in2="blur" operator="in" result="glow" />
                 <feMerge>
                   <feMergeNode in="glow" />
@@ -421,96 +435,57 @@ const RadialGrowthBands = ({ whyNowVisible }: { whyNowVisible: boolean }) => {
               </filter>
             </defs>
 
-            {/* Guide rings */}
-            {[0.25, 0.5, 0.75, 1].map((frac, i) => (
-              <circle key={i} cx={cx} cy={cy} r={minRadius + frac * (maxRadius - minRadius)} fill="none" stroke="hsl(var(--border) / 0.07)" strokeWidth="0.5" />
+            {/* Subtle grid lines */}
+            {[0, 25, 50, 75, 100].map(v => (
+              <g key={v}>
+                <line x1={padL} y1={yScale(v)} x2={padL + chartW} y2={yScale(v)} stroke="hsl(var(--border) / 0.08)" strokeWidth="0.5" />
+                <text x={padL - 8} y={yScale(v)} textAnchor="end" dominantBaseline="central" className="fill-muted-foreground/20 text-[9px]">{v}%</text>
+              </g>
             ))}
 
-            <circle cx={cx} cy={cy} r="3" fill="hsl(var(--muted-foreground) / 0.12)" />
+            {/* Year labels */}
+            {stackedData.map((d, i) => (
+              <text key={d.year} x={xScale(i)} y={height - 8} textAnchor="middle" className="fill-muted-foreground/30 text-[10px]">{d.year}</text>
+            ))}
 
-            {radialSegments.map((seg, i) => {
-              const startAngle = i * (sliceAngle + gapAngle);
-              const endAngle = startAngle + sliceAngle;
-
-              const r2023 = valToR(seg.values[0]);
-              const r2029 = valToR(seg.values[1]);
-              const innerR = Math.min(r2023, r2029);
-              const outerR = Math.max(r2023, r2029);
-              const effectiveInnerR = Math.max(minRadius, innerR);
-              const effectiveOuterR = Math.max(effectiveInnerR + 6, outerR);
-
-              const isActive = activeSegment === i;
-              const isOther = activeSegment !== null && activeSegment !== i;
-              const isGrowing = seg.values[1] > seg.values[0];
-
-              const midAngle = (startAngle + endAngle) / 2;
-              const labelR = effectiveOuterR + 18;
-              const labelRad = ((midAngle - 90) * Math.PI) / 180;
-              const labelX = cx + labelR * Math.cos(labelRad);
-              const labelY = cy + labelR * Math.sin(labelRad);
-
-              const baselineR = r2023;
-              const baselinePath = describeArc(startAngle, endAngle, Math.max(minRadius, baselineR - 1.5), baselineR);
+            {/* Stacked areas */}
+            {stackOrder.map(key => {
+              const seg = areaSegments.find(s => s.key === key)!;
+              const isActive = activeSegment === key;
+              const isOther = activeSegment !== null && activeSegment !== key;
+              const baseOpacity = seg.isHighlight ? 0.85 : 0.25;
 
               return (
-                <motion.g key={i}>
-                  <motion.path
-                    d={describeArc(startAngle, endAngle, effectiveInnerR, effectiveOuterR)}
-                    fill={seg.color}
-                    className="cursor-pointer"
-                    filter={seg.isHighlight && !isOther ? "url(#bandGlowOuter)" : undefined}
-                    animate={{ opacity: isOther ? 0.1 : isActive ? 1 : 0.6, scale: isActive ? 1.02 : 1 }}
-                    transition={{ duration: 0.4 }}
-                    style={{ transformOrigin: `${cx}px ${cy}px` }}
-                    onClick={(e) => { e.stopPropagation(); setActiveSegment(isActive ? null : i); }}
-                    whileHover={{ opacity: 0.85 }}
-                  />
-
-                  <motion.path
-                    d={baselinePath}
-                    fill="none"
-                    stroke={isGrowing ? "hsl(var(--foreground) / 0.2)" : "hsl(var(--destructive) / 0.25)"}
-                    strokeWidth="0.8"
-                    strokeDasharray="3 3"
-                    className="pointer-events-none"
-                    animate={{ opacity: isOther ? 0.04 : 0.45 }}
-                  />
-
-                  <path
-                    d={describeArc(startAngle - 3, endAngle + 3, Math.max(minRadius - 12, 18), effectiveOuterR + 22)}
-                    fill="transparent"
-                    className="cursor-pointer"
-                    onClick={(e) => { e.stopPropagation(); setActiveSegment(isActive ? null : i); }}
-                  />
-
-                  <motion.text
-                    x={labelX} y={labelY}
-                    textAnchor="middle" dominantBaseline="central"
-                    className={`pointer-events-none select-none text-[9px] ${seg.isHighlight ? "fill-foreground/70 font-medium" : "fill-muted-foreground/30"}`}
-                    animate={{ opacity: isOther ? 0.06 : 0.75 }}
-                  >
-                    {seg.label.split(" (")[0]}
-                  </motion.text>
-                </motion.g>
+                <motion.path
+                  key={key}
+                  d={buildAreaPath(key)}
+                  fill={seg.color}
+                  className="cursor-pointer"
+                  filter={seg.isHighlight && !isOther ? "url(#areaGlow)" : undefined}
+                  animate={{ opacity: isOther ? 0.06 : isActive ? 0.95 : baseOpacity }}
+                  transition={{ duration: 0.4 }}
+                  onClick={(e) => { e.stopPropagation(); setActiveSegment(isActive ? null : key); }}
+                  whileHover={{ opacity: isOther ? 0.12 : 0.9 }}
+                />
               );
             })}
           </svg>
 
           {/* Legend */}
           <div className="flex flex-wrap gap-5 justify-center mt-4">
-            {radialSegments.map((seg, i) => {
-              const isGrowing = seg.values[1] > seg.values[0];
+            {areaSegments.map(seg => {
+              const isGrowing = (stackedData[stackedData.length - 1][seg.key as keyof typeof stackedData[0]] as number) > (stackedData[0][seg.key as keyof typeof stackedData[0]] as number);
               return (
                 <button
-                  key={i}
-                  className={`flex items-center gap-2 transition-all duration-300 group ${activeSegment !== null && activeSegment !== i ? "opacity-25" : "opacity-100"} hover:opacity-100`}
-                  onClick={() => setActiveSegment(activeSegment === i ? null : i)}
+                  key={seg.key}
+                  className={`flex items-center gap-2 transition-all duration-300 group ${activeSegment !== null && activeSegment !== seg.key ? "opacity-25" : "opacity-100"} hover:opacity-100`}
+                  onClick={() => setActiveSegment(activeSegment === seg.key ? null : seg.key)}
                 >
                   <div
-                    className={`w-2.5 h-2.5 rounded-full transition-transform duration-200 ${activeSegment === i ? "scale-125" : "group-hover:scale-110"}`}
+                    className={`w-2.5 h-2.5 rounded-full transition-transform duration-200 ${activeSegment === seg.key ? "scale-125" : "group-hover:scale-110"}`}
                     style={{ background: seg.color, boxShadow: seg.isHighlight ? "0 0 6px hsl(var(--foreground) / 0.25)" : "none" }}
                   />
-                  <span className={`text-[10px] transition-colors duration-200 ${activeSegment === i ? "text-foreground/75" : "text-muted-foreground/35 group-hover:text-muted-foreground/55"}`}>
+                  <span className={`text-[10px] transition-colors duration-200 ${activeSegment === seg.key ? "text-foreground/75" : "text-muted-foreground/35 group-hover:text-muted-foreground/55"}`}>
                     {seg.label}
                   </span>
                   <span className={`text-[9px] ${isGrowing ? "text-primary/40" : "text-destructive/35"}`}>
@@ -520,23 +495,12 @@ const RadialGrowthBands = ({ whyNowVisible }: { whyNowVisible: boolean }) => {
               );
             })}
           </div>
-
-          <div className="flex items-center gap-6 mt-3">
-            <div className="flex items-center gap-2">
-              <div className="w-3.5 h-0.5 border-t border-dashed border-muted-foreground/25" />
-              <span className="text-[8px] text-muted-foreground/25">2023/24 baseline</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-3.5 h-2.5 rounded-sm bg-muted-foreground/12" />
-              <span className="text-[8px] text-muted-foreground/25">Band = shift</span>
-            </div>
-          </div>
         </div>
 
         {/* Side panel */}
         <div className="flex flex-col gap-6 lg:pt-8">
           <AnimatePresence mode="wait">
-            {selectedSegment ? (
+            {selectedData && selectedMeta ? (
               <motion.div
                 key={activeSegment}
                 initial={{ opacity: 0, x: 12 }}
@@ -546,29 +510,29 @@ const RadialGrowthBands = ({ whyNowVisible }: { whyNowVisible: boolean }) => {
               >
                 <GlassPanel intensity="subtle" bordered className="p-6 rounded-xl">
                   <div className="flex items-center gap-2 mb-5">
-                    <div className="w-2.5 h-2.5 rounded-full" style={{ background: radialSegments[activeSegment!].color, boxShadow: radialSegments[activeSegment!].isHighlight ? "0 0 6px hsl(var(--foreground) / 0.25)" : "none" }} />
-                    <p className="text-xs text-foreground/65 font-medium">{selectedSegment.label}</p>
+                    <div className="w-2.5 h-2.5 rounded-full" style={{ background: selectedMeta.color, boxShadow: selectedMeta.isHighlight ? "0 0 6px hsl(var(--foreground) / 0.25)" : "none" }} />
+                    <p className="text-xs text-foreground/65 font-medium">{selectedData.label}</p>
                   </div>
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
                       <span className="text-[11px] text-muted-foreground/40">2023/24</span>
-                      <span className="text-sm font-light text-foreground/55">{selectedSegment.val2023.toFixed(2)}%</span>
+                      <span className="text-sm font-light text-foreground/55">{selectedData.val2023.toFixed(2)}%</span>
                     </div>
                     <div className="flex items-center justify-between">
                       <span className="text-[11px] text-muted-foreground/40">2029/30</span>
-                      <span className="text-sm font-light text-foreground">{selectedSegment.val2029.toFixed(2)}%</span>
+                      <span className="text-sm font-light text-foreground">{selectedData.val2030.toFixed(2)}%</span>
                     </div>
                     <div className="h-px bg-border/12 my-1" />
                     <div className="flex items-center justify-between">
                       <span className="text-[11px] text-muted-foreground/40">Abs. change</span>
-                      <span className={`text-sm font-medium ${selectedSegment.abs >= 0 ? "text-primary" : "text-destructive/65"}`}>
-                        {selectedSegment.abs >= 0 ? "+" : ""}{selectedSegment.abs.toFixed(2)}pp
+                      <span className={`text-sm font-medium ${abs >= 0 ? "text-primary" : "text-destructive/65"}`}>
+                        {abs >= 0 ? "+" : ""}{abs.toFixed(2)}pp
                       </span>
                     </div>
                     <div className="flex items-center justify-between">
                       <span className="text-[11px] text-muted-foreground/40">Rel. growth</span>
-                      <span className={`text-sm font-semibold ${selectedSegment.growth >= 0 ? "text-primary" : "text-destructive/65"}`}>
-                        {selectedSegment.growth >= 0 ? "↑" : "↓"} {Math.abs(selectedSegment.growth).toFixed(0)}%
+                      <span className={`text-sm font-semibold ${growth >= 0 ? "text-primary" : "text-destructive/65"}`}>
+                        {growth >= 0 ? "↑" : "↓"} {Math.abs(growth).toFixed(0)}%
                       </span>
                     </div>
                   </div>
@@ -587,6 +551,7 @@ const RadialGrowthBands = ({ whyNowVisible }: { whyNowVisible: boolean }) => {
     </div>
   );
 };
+
 // Why Now Carousel Component
 const whyNowCards = [
   { key: "technology", title: "Technology", dataKey: "technology" as const, highlightKey: "technologyHighlight" as const, sourceKey: "technologySource" as const },
@@ -813,7 +778,7 @@ const OpportunitySection = () => {
             {/* Slope chart */}
             <div className="max-w-5xl mx-auto mb-16">
               <GlassPanel intensity="subtle" bordered className="p-10 md:p-14 rounded-xl">
-                <RadialGrowthBands whyNowVisible={whyNowVisible} />
+                <StackedAreaChart whyNowVisible={whyNowVisible} />
               </GlassPanel>
             </div>
             
