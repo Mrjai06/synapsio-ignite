@@ -568,32 +568,6 @@ const MarketSlopeChart = ({ whyNowVisible }: { whyNowVisible: boolean }) => {
             )}
           </AnimatePresence>
 
-          {/* AI-SCM Growth highlight */}
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={whyNowVisible ? { opacity: 1, y: 0 } : {}}
-            transition={{ delay: 0.8, duration: 0.5 }}
-          >
-            <GlassPanel intensity="subtle" bordered className="p-6 rounded-xl">
-              <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground/35 mb-4">Investment Highlight</p>
-              <h4 className="text-sm font-medium text-foreground/80 mb-5">AI-SCM Share (Germany)</h4>
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-[11px] text-muted-foreground/45">2023/24</span>
-                  <span className="text-sm font-light text-foreground/60">0.67%</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-[11px] text-muted-foreground/45">2029/30</span>
-                  <span className="text-sm font-light text-foreground">1.94%</span>
-                </div>
-                <div className="h-px bg-border/15 my-1" />
-                <div className="flex items-center justify-between">
-                  <span className="text-[11px] text-primary/70">Growth</span>
-                  <span className="text-base font-medium text-primary">↑ 190%</span>
-                </div>
-              </div>
-            </GlassPanel>
-          </motion.div>
         </div>
       </div>
 
