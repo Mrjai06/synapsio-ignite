@@ -90,7 +90,7 @@ export function TestimonialCarousel({ className, testimonials }: TestimonialCaro
                 {currentTestimonial.title}
               </p>
 
-              <p className="text-base lg:text-lg text-muted-foreground/70 leading-relaxed mb-8">
+              <p className="text-base lg:text-lg text-muted-foreground/70 leading-relaxed mb-8 whitespace-pre-line">
                 {currentTestimonial.description}
               </p>
 
@@ -154,7 +154,7 @@ export function TestimonialCarousel({ className, testimonials }: TestimonialCaro
                 {currentTestimonial.title}
               </p>
               
-              <p className="text-sm text-muted-foreground/70 leading-relaxed mb-6">
+              <p className="text-sm text-muted-foreground/70 leading-relaxed mb-6 whitespace-pre-line">
                 {currentTestimonial.description}
               </p>
               
