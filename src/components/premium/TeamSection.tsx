@@ -12,7 +12,7 @@ const team = [
     title: "CEO & Co-founder",
     description: "• Student at TU Berlin - BSci in computer science\n• Sales and marketing advisor",
     imageUrl: jakobImg,
-    linkedinUrl: "#"
+    linkedinUrl: "https://linkedin.com/in/jakob-ibrahim-62807721b"
   },
   {
     name: "Luis Boy",
