@@ -352,173 +352,188 @@ const MarketPyramid = ({ activeLayer, onLayerClick }: { activeLayer: string; onL
   );
 };
 
-// ====== SLOPE CHART (Two-column comparison) ======
+// ====== RADIAL GROWTH BANDS ======
 
-const slopeSegments = [
+const radialSegments = [
   { label: "AI-SCM (Germany)", color: "hsl(var(--foreground))", values: [0.67, 1.94], isHighlight: true },
-  { label: "SCM (Germany)", color: "hsl(var(--muted-foreground) / 0.5)", values: [6.42, 3.45], isHighlight: false },
-  { label: "AI-SCM (Global)", color: "hsl(var(--primary) / 0.8)", values: [15.27, 48.51], isHighlight: false },
-  { label: "SCM (Global)", color: "hsl(var(--secondary) / 0.6)", values: [77.64, 46.11], isHighlight: false },
+  { label: "SCM (Germany)", color: "hsl(var(--muted-foreground) / 0.4)", values: [6.42, 3.45], isHighlight: false },
+  { label: "AI-SCM (Global)", color: "hsl(var(--primary) / 0.7)", values: [15.27, 48.51], isHighlight: false },
+  { label: "SCM (Global)", color: "hsl(var(--secondary) / 0.5)", values: [77.64, 46.11], isHighlight: false },
 ];
 
-const MarketSlopeChart = ({ whyNowVisible }: { whyNowVisible: boolean }) => {
+const RadialGrowthBands = ({ whyNowVisible }: { whyNowVisible: boolean }) => {
   const [activeSegment, setActiveSegment] = useState<number | null>(null);
 
-  // Chart dimensions
-  const leftX = 100;
-  const rightX = 520;
-  const topY = 40;
-  const bottomY = 380;
-  const chartHeight = bottomY - topY;
+  const cx = 220;
+  const cy = 220;
+  const maxVal = Math.max(...radialSegments.flatMap(s => s.values));
+  const minRadius = 45;
+  const maxRadius = 185;
 
-  // Scale: log-ish mapping for better spread since values range 0.67–77.64
-  const allValues = slopeSegments.flatMap(s => s.values);
-  const maxVal = Math.max(...allValues);
-  const getY = (val: number) => bottomY - (val / maxVal) * chartHeight;
+  const valToR = (val: number) => minRadius + (val / maxVal) * (maxRadius - minRadius);
+
+  const segCount = radialSegments.length;
+  const gapAngle = 4;
+  const sliceAngle = (360 - gapAngle * segCount) / segCount;
+
+  const describeArc = (startAngle: number, endAngle: number, innerR: number, outerR: number) => {
+    const toRad = (a: number) => ((a - 90) * Math.PI) / 180;
+    const s1 = toRad(startAngle);
+    const e1 = toRad(endAngle);
+    const largeArc = endAngle - startAngle > 180 ? 1 : 0;
+
+    const outerStart = { x: cx + outerR * Math.cos(s1), y: cy + outerR * Math.sin(s1) };
+    const outerEnd = { x: cx + outerR * Math.cos(e1), y: cy + outerR * Math.sin(e1) };
+    const innerStart = { x: cx + innerR * Math.cos(e1), y: cy + innerR * Math.sin(e1) };
+    const innerEnd = { x: cx + innerR * Math.cos(s1), y: cy + innerR * Math.sin(s1) };
+
+    return [
+      `M ${outerStart.x} ${outerStart.y}`,
+      `A ${outerR} ${outerR} 0 ${largeArc} 1 ${outerEnd.x} ${outerEnd.y}`,
+      `L ${innerStart.x} ${innerStart.y}`,
+      `A ${innerR} ${innerR} 0 ${largeArc} 0 ${innerEnd.x} ${innerEnd.y}`,
+      `Z`,
+    ].join(" ");
+  };
 
   const selectedSegment = activeSegment !== null ? {
-    label: slopeSegments[activeSegment].label,
-    val2023: slopeSegments[activeSegment].values[0],
-    val2029: slopeSegments[activeSegment].values[1],
-    growth: ((slopeSegments[activeSegment].values[1] - slopeSegments[activeSegment].values[0]) / slopeSegments[activeSegment].values[0]) * 100,
-    abs: slopeSegments[activeSegment].values[1] - slopeSegments[activeSegment].values[0],
+    label: radialSegments[activeSegment].label,
+    val2023: radialSegments[activeSegment].values[0],
+    val2029: radialSegments[activeSegment].values[1],
+    growth: ((radialSegments[activeSegment].values[1] - radialSegments[activeSegment].values[0]) / radialSegments[activeSegment].values[0]) * 100,
+    abs: radialSegments[activeSegment].values[1] - radialSegments[activeSegment].values[0],
   } : null;
 
   return (
     <div>
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-10 items-start">
-        {/* Chart */}
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-10 items-start">
         <div className="flex flex-col items-center">
-          <svg viewBox="0 0 620 440" className="w-full max-w-[620px]" onClick={() => setActiveSegment(null)}>
+          <svg viewBox="0 0 440 440" className="w-full max-w-[440px]" onClick={() => setActiveSegment(null)}>
             <defs>
-              <filter id="slopeGlow">
-                <feGaussianBlur stdDeviation="6" result="blur" />
-                <feComposite in="SourceGraphic" in2="blur" operator="over" />
+              <filter id="bandGlowOuter">
+                <feGaussianBlur stdDeviation="10" result="blur" />
+                <feFlood floodColor="hsl(var(--foreground))" floodOpacity="0.12" result="color" />
+                <feComposite in="color" in2="blur" operator="in" result="glow" />
+                <feMerge>
+                  <feMergeNode in="glow" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
               </filter>
             </defs>
 
-            {/* Year labels */}
-            <text x={leftX} y={topY - 16} textAnchor="middle" className="fill-muted-foreground/40 text-xs font-medium select-none">2023/24</text>
-            <text x={rightX} y={topY - 16} textAnchor="middle" className="fill-muted-foreground/40 text-xs font-medium select-none">2029/30</text>
+            {/* Guide rings */}
+            {[0.25, 0.5, 0.75, 1].map((frac, i) => (
+              <circle key={i} cx={cx} cy={cy} r={minRadius + frac * (maxRadius - minRadius)} fill="none" stroke="hsl(var(--border) / 0.07)" strokeWidth="0.5" />
+            ))}
 
-            {/* Vertical axes */}
-            <line x1={leftX} y1={topY} x2={leftX} y2={bottomY} stroke="hsl(var(--border) / 0.15)" strokeWidth="1" />
-            <line x1={rightX} y1={topY} x2={rightX} y2={bottomY} stroke="hsl(var(--border) / 0.15)" strokeWidth="1" />
+            <circle cx={cx} cy={cy} r="3" fill="hsl(var(--muted-foreground) / 0.12)" />
 
-            {/* Segments */}
-            {slopeSegments.map((seg, i) => {
-              const y1 = getY(seg.values[0]);
-              const y2 = getY(seg.values[1]);
+            {radialSegments.map((seg, i) => {
+              const startAngle = i * (sliceAngle + gapAngle);
+              const endAngle = startAngle + sliceAngle;
+
+              const r2023 = valToR(seg.values[0]);
+              const r2029 = valToR(seg.values[1]);
+              const innerR = Math.min(r2023, r2029);
+              const outerR = Math.max(r2023, r2029);
+              const effectiveInnerR = Math.max(minRadius, innerR);
+              const effectiveOuterR = Math.max(effectiveInnerR + 6, outerR);
+
               const isActive = activeSegment === i;
               const isOther = activeSegment !== null && activeSegment !== i;
               const isGrowing = seg.values[1] > seg.values[0];
 
+              const midAngle = (startAngle + endAngle) / 2;
+              const labelR = effectiveOuterR + 18;
+              const labelRad = ((midAngle - 90) * Math.PI) / 180;
+              const labelX = cx + labelR * Math.cos(labelRad);
+              const labelY = cy + labelR * Math.sin(labelRad);
+
+              const baselineR = r2023;
+              const baselinePath = describeArc(startAngle, endAngle, Math.max(minRadius, baselineR - 1.5), baselineR);
+
               return (
                 <motion.g key={i}>
-                  {/* Invisible wider hit area */}
-                  <line
-                    x1={leftX} y1={y1} x2={rightX} y2={y2}
-                    stroke="transparent"
-                    strokeWidth="28"
+                  <motion.path
+                    d={describeArc(startAngle, endAngle, effectiveInnerR, effectiveOuterR)}
+                    fill={seg.color}
                     className="cursor-pointer"
-                    onClick={(e) => { e.stopPropagation(); setActiveSegment(isActive ? null : i); }}
-                  />
-
-                  {/* Glow for AI-SCM highlight */}
-                  {seg.isHighlight && (
-                    <motion.line
-                      x1={leftX} y1={y1} x2={rightX} y2={y2}
-                      stroke="hsl(var(--foreground) / 0.15)"
-                      strokeWidth="8"
-                      filter="url(#slopeGlow)"
-                      className="pointer-events-none"
-                      animate={{ opacity: isOther ? 0.05 : 0.6 }}
-                    />
-                  )}
-
-                  {/* Main line */}
-                  <motion.line
-                    x1={leftX} y1={y1} x2={rightX} y2={y2}
-                    stroke={seg.color}
-                    strokeWidth={isActive ? 3 : seg.isHighlight ? 2.5 : 1.5}
-                    strokeLinecap="round"
-                    className="cursor-pointer"
-                    animate={{ opacity: isOther ? 0.12 : 1 }}
+                    filter={seg.isHighlight && !isOther ? "url(#bandGlowOuter)" : undefined}
+                    animate={{ opacity: isOther ? 0.1 : isActive ? 1 : 0.6, scale: isActive ? 1.02 : 1 }}
                     transition={{ duration: 0.4 }}
+                    style={{ transformOrigin: `${cx}px ${cy}px` }}
                     onClick={(e) => { e.stopPropagation(); setActiveSegment(isActive ? null : i); }}
-                    whileHover={{ strokeWidth: 3.5 }}
+                    whileHover={{ opacity: 0.85 }}
                   />
 
-                  {/* Left dot */}
-                  <motion.circle
-                    cx={leftX} cy={y1} r={isActive ? 5 : seg.isHighlight ? 4.5 : 3.5}
-                    fill={seg.color}
+                  <motion.path
+                    d={baselinePath}
+                    fill="none"
+                    stroke={isGrowing ? "hsl(var(--foreground) / 0.2)" : "hsl(var(--destructive) / 0.25)"}
+                    strokeWidth="0.8"
+                    strokeDasharray="3 3"
+                    className="pointer-events-none"
+                    animate={{ opacity: isOther ? 0.04 : 0.45 }}
+                  />
+
+                  <path
+                    d={describeArc(startAngle - 3, endAngle + 3, Math.max(minRadius - 12, 18), effectiveOuterR + 22)}
+                    fill="transparent"
                     className="cursor-pointer"
-                    animate={{ opacity: isOther ? 0.15 : 1 }}
                     onClick={(e) => { e.stopPropagation(); setActiveSegment(isActive ? null : i); }}
                   />
 
-                  {/* Right dot */}
-                  <motion.circle
-                    cx={rightX} cy={y2} r={isActive ? 5 : seg.isHighlight ? 4.5 : 3.5}
-                    fill={seg.color}
-                    className="cursor-pointer"
-                    animate={{ opacity: isOther ? 0.15 : 1 }}
-                    onClick={(e) => { e.stopPropagation(); setActiveSegment(isActive ? null : i); }}
-                  />
-
-                  {/* Left value label */}
                   <motion.text
-                    x={leftX - 12} y={y1} textAnchor="end" dominantBaseline="central"
-                    className={`pointer-events-none select-none ${seg.isHighlight ? "fill-foreground text-xs font-medium" : "fill-muted-foreground/50 text-[11px]"}`}
-                    animate={{ opacity: isOther ? 0.1 : 0.9 }}
+                    x={labelX} y={labelY}
+                    textAnchor="middle" dominantBaseline="central"
+                    className={`pointer-events-none select-none text-[9px] ${seg.isHighlight ? "fill-foreground/70 font-medium" : "fill-muted-foreground/30"}`}
+                    animate={{ opacity: isOther ? 0.06 : 0.75 }}
                   >
-                    {seg.values[0].toFixed(seg.values[0] < 10 ? 2 : 1)}%
-                  </motion.text>
-
-                  {/* Right value label */}
-                  <motion.text
-                    x={rightX + 12} y={y2} textAnchor="start" dominantBaseline="central"
-                    className={`pointer-events-none select-none ${seg.isHighlight ? "fill-foreground text-xs font-medium" : "fill-muted-foreground/50 text-[11px]"}`}
-                    animate={{ opacity: isOther ? 0.1 : 0.9 }}
-                  >
-                    {seg.values[1].toFixed(seg.values[1] < 10 ? 2 : 1)}%
-                  </motion.text>
-
-                  {/* Growth indicator on right side */}
-                  <motion.text
-                    x={rightX + 12} y={y2 + 14} textAnchor="start" dominantBaseline="central"
-                    className={`pointer-events-none select-none text-[9px] ${isGrowing ? "fill-primary/60" : "fill-destructive/50"}`}
-                    animate={{ opacity: isOther ? 0 : 0.7 }}
-                  >
-                    {isGrowing ? "↑" : "↓"} {Math.abs(((seg.values[1] - seg.values[0]) / seg.values[0]) * 100).toFixed(0)}%
+                    {seg.label.split(" (")[0]}
                   </motion.text>
                 </motion.g>
               );
             })}
           </svg>
 
-          {/* Interactive legend */}
-          <div className="flex flex-wrap gap-5 justify-center mt-6">
-            {slopeSegments.map((seg, i) => (
-              <button
-                key={i}
-                className={`flex items-center gap-2 transition-all duration-300 group ${activeSegment !== null && activeSegment !== i ? "opacity-25" : "opacity-100"} hover:opacity-100`}
-                onClick={() => setActiveSegment(activeSegment === i ? null : i)}
-              >
-                <div
-                  className={`w-3 h-3 rounded-full transition-transform duration-200 ${activeSegment === i ? "scale-125" : "group-hover:scale-110"}`}
-                  style={{ background: seg.color, boxShadow: seg.isHighlight ? "0 0 8px hsl(var(--foreground) / 0.3)" : "none" }}
-                />
-                <span className={`text-xs transition-colors duration-200 ${activeSegment === i ? "text-foreground/80" : "text-muted-foreground/45 group-hover:text-muted-foreground/65"}`}>
-                  {seg.label}
-                </span>
-              </button>
-            ))}
+          {/* Legend */}
+          <div className="flex flex-wrap gap-5 justify-center mt-4">
+            {radialSegments.map((seg, i) => {
+              const isGrowing = seg.values[1] > seg.values[0];
+              return (
+                <button
+                  key={i}
+                  className={`flex items-center gap-2 transition-all duration-300 group ${activeSegment !== null && activeSegment !== i ? "opacity-25" : "opacity-100"} hover:opacity-100`}
+                  onClick={() => setActiveSegment(activeSegment === i ? null : i)}
+                >
+                  <div
+                    className={`w-2.5 h-2.5 rounded-full transition-transform duration-200 ${activeSegment === i ? "scale-125" : "group-hover:scale-110"}`}
+                    style={{ background: seg.color, boxShadow: seg.isHighlight ? "0 0 6px hsl(var(--foreground) / 0.25)" : "none" }}
+                  />
+                  <span className={`text-[10px] transition-colors duration-200 ${activeSegment === i ? "text-foreground/75" : "text-muted-foreground/35 group-hover:text-muted-foreground/55"}`}>
+                    {seg.label}
+                  </span>
+                  <span className={`text-[9px] ${isGrowing ? "text-primary/40" : "text-destructive/35"}`}>
+                    {isGrowing ? "↑" : "↓"}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+
+          <div className="flex items-center gap-6 mt-3">
+            <div className="flex items-center gap-2">
+              <div className="w-3.5 h-0.5 border-t border-dashed border-muted-foreground/25" />
+              <span className="text-[8px] text-muted-foreground/25">2023/24 baseline</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-3.5 h-2.5 rounded-sm bg-muted-foreground/12" />
+              <span className="text-[8px] text-muted-foreground/25">Band = shift</span>
+            </div>
           </div>
         </div>
 
-        {/* Right side panel */}
+        {/* Side panel */}
         <div className="flex flex-col gap-6 lg:pt-8">
           <AnimatePresence mode="wait">
             {selectedSegment ? (
@@ -531,28 +546,28 @@ const MarketSlopeChart = ({ whyNowVisible }: { whyNowVisible: boolean }) => {
               >
                 <GlassPanel intensity="subtle" bordered className="p-6 rounded-xl">
                   <div className="flex items-center gap-2 mb-5">
-                    <div className="w-2.5 h-2.5 rounded-full" style={{ background: slopeSegments[activeSegment!].color, boxShadow: slopeSegments[activeSegment!].isHighlight ? "0 0 6px hsl(var(--foreground) / 0.3)" : "none" }} />
-                    <p className="text-xs text-foreground/70 font-medium">{selectedSegment.label}</p>
+                    <div className="w-2.5 h-2.5 rounded-full" style={{ background: radialSegments[activeSegment!].color, boxShadow: radialSegments[activeSegment!].isHighlight ? "0 0 6px hsl(var(--foreground) / 0.25)" : "none" }} />
+                    <p className="text-xs text-foreground/65 font-medium">{selectedSegment.label}</p>
                   </div>
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
-                      <span className="text-[11px] text-muted-foreground/45">2023/24</span>
-                      <span className="text-sm font-light text-foreground/60">{selectedSegment.val2023.toFixed(2)}%</span>
+                      <span className="text-[11px] text-muted-foreground/40">2023/24</span>
+                      <span className="text-sm font-light text-foreground/55">{selectedSegment.val2023.toFixed(2)}%</span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-[11px] text-muted-foreground/45">2029/30</span>
+                      <span className="text-[11px] text-muted-foreground/40">2029/30</span>
                       <span className="text-sm font-light text-foreground">{selectedSegment.val2029.toFixed(2)}%</span>
                     </div>
-                    <div className="h-px bg-border/15 my-1" />
+                    <div className="h-px bg-border/12 my-1" />
                     <div className="flex items-center justify-between">
-                      <span className="text-[11px] text-muted-foreground/45">Abs. change</span>
-                      <span className={`text-sm font-medium ${selectedSegment.abs >= 0 ? "text-primary" : "text-destructive/70"}`}>
+                      <span className="text-[11px] text-muted-foreground/40">Abs. change</span>
+                      <span className={`text-sm font-medium ${selectedSegment.abs >= 0 ? "text-primary" : "text-destructive/65"}`}>
                         {selectedSegment.abs >= 0 ? "+" : ""}{selectedSegment.abs.toFixed(2)}pp
                       </span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-[11px] text-muted-foreground/45">Rel. growth</span>
-                      <span className={`text-sm font-semibold ${selectedSegment.growth >= 0 ? "text-primary" : "text-destructive/70"}`}>
+                      <span className="text-[11px] text-muted-foreground/40">Rel. growth</span>
+                      <span className={`text-sm font-semibold ${selectedSegment.growth >= 0 ? "text-primary" : "text-destructive/65"}`}>
                         {selectedSegment.growth >= 0 ? "↑" : "↓"} {Math.abs(selectedSegment.growth).toFixed(0)}%
                       </span>
                     </div>
@@ -562,52 +577,13 @@ const MarketSlopeChart = ({ whyNowVisible }: { whyNowVisible: boolean }) => {
             ) : (
               <motion.div key="empty" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
                 <GlassPanel intensity="subtle" bordered className="p-6 rounded-xl">
-                  <p className="text-xs text-muted-foreground/30 text-center py-4">Select a segment to compare</p>
+                  <p className="text-xs text-muted-foreground/25 text-center py-4">Select a segment to compare</p>
                 </GlassPanel>
               </motion.div>
             )}
           </AnimatePresence>
-
         </div>
       </div>
-
-      {/* AI-SCM Growth Bar */}
-      <motion.div
-        className="mt-10 max-w-lg mx-auto"
-        initial={{ opacity: 0, y: 10 }}
-        animate={whyNowVisible ? { opacity: 1, y: 0 } : {}}
-        transition={{ delay: 1, duration: 0.5 }}
-      >
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground/35">AI-SCM Share Growth (Germany)</span>
-        </div>
-        <div className="relative h-2 rounded-full bg-secondary/20 overflow-hidden">
-          <motion.div
-            className="absolute inset-y-0 left-0 rounded-full bg-foreground/10"
-            initial={{ width: "0%" }}
-            animate={whyNowVisible ? { width: `${(1.94 / 3) * 100}%` } : {}}
-            transition={{ delay: 1.2, duration: 0.8, ease: "easeOut" }}
-          />
-          <motion.div
-            className="absolute inset-y-0 left-0 rounded-full"
-            style={{ background: "linear-gradient(90deg, hsl(var(--primary) / 0.6), hsl(var(--foreground) / 0.9))" }}
-            initial={{ width: `${(0.67 / 3) * 100}%` }}
-            animate={whyNowVisible ? { width: `${(1.94 / 3) * 100}%` } : {}}
-            transition={{ delay: 2.2, duration: 1.2, ease: [0.23, 0.86, 0.39, 0.96] }}
-          />
-        </div>
-        <div className="flex items-center justify-between mt-2">
-          <span className="text-[11px] text-muted-foreground/40">0.67%</span>
-          <motion.span
-            className="text-[11px] text-foreground/70 font-medium"
-            initial={{ opacity: 0 }}
-            animate={whyNowVisible ? { opacity: 1 } : {}}
-            transition={{ delay: 3 }}
-          >
-            1.94% → ↑ 190%
-          </motion.span>
-        </div>
-      </motion.div>
     </div>
   );
 };
@@ -837,7 +813,7 @@ const OpportunitySection = () => {
             {/* Slope chart */}
             <div className="max-w-5xl mx-auto mb-16">
               <GlassPanel intensity="subtle" bordered className="p-10 md:p-14 rounded-xl">
-                <MarketSlopeChart whyNowVisible={whyNowVisible} />
+                <RadialGrowthBands whyNowVisible={whyNowVisible} />
               </GlassPanel>
             </div>
             
