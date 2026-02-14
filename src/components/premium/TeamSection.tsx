@@ -8,7 +8,7 @@ const team = [
   {
     name: "Jakob Ibrahim",
     title: "CEO & Co-founder",
-    description: "Former VP of Operations at Scale AI. Stanford MBA. 15 years in supply chain optimization.",
+    description: "Student at TU Berlin - BSci in computer science. Sales and marketing advisor.",
     imageUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=600&q=80",
     linkedinUrl: "#"
   },
