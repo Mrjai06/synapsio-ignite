@@ -448,7 +448,7 @@ const StackedAreaChart = ({ whyNowVisible }: { whyNowVisible: boolean }) => {
               <text key={d.year} x={xScale(i)} y={height - 8} textAnchor="middle" className="fill-muted-foreground/30 text-[10px]">{d.year}</text>
             ))}
 
-            {/* Stacked areas */}
+            {/* Stacked areas with dark outlines */}
             {stackOrder.map(key => {
               const seg = areaSegments.find(s => s.key === key)!;
               const isActive = activeSegment === key;
@@ -460,27 +460,15 @@ const StackedAreaChart = ({ whyNowVisible }: { whyNowVisible: boolean }) => {
                   key={key}
                   d={buildAreaPath(key)}
                   fill={seg.color}
+                  stroke="hsl(var(--background))"
+                  strokeWidth="1.5"
+                  paintOrder="stroke fill"
                   className="cursor-pointer"
                   filter={seg.isHighlight && !isOther ? "url(#areaGlow)" : undefined}
                   animate={{ opacity: isOther ? 0.08 : isActive ? 1 : baseOpacity }}
                   transition={{ duration: 0.4 }}
                   onClick={(e) => { e.stopPropagation(); setActiveSegment(isActive ? null : key); }}
                   whileHover={{ opacity: isOther ? 0.15 : 0.95 }}
-                />
-              );
-            })}
-
-            {/* Separator lines between segments */}
-            {stackOrder.map(key => {
-              const borderPath = cumulative.map((c, i) => `${i === 0 ? "M" : "L"} ${xScale(i)} ${yScale(c[key].y1)}`).join(" ");
-              return (
-                <path
-                  key={`border-${key}`}
-                  d={borderPath}
-                  fill="none"
-                  stroke="hsl(var(--background))"
-                  strokeWidth="1.5"
-                  className="pointer-events-none"
                 />
               );
             })}
