@@ -18,10 +18,10 @@ const problemNodes: ProblemNode[] = [
     icon: Users,
     title: "Restricted Communication",
     shortTitle: "Communication",
-    description: "Restricted communication between stakeholders in supply chains creates information silos and increases the risk of the bullwhip-effect.",
+    description: "Restricted communication between stakeholders in supply chains increases the risk of the bullwhip-effect.",
     impacts: [
-      "Bullwhip-effect amplifies demand distortions across tiers",
-      "ERP, CRM, and logistics systems don't communicate",
+      "Bullwhip-effect amplifies demand distortions",
+      "Stakeholders operate in information silos",
       "Poor coordination leads to overproduction or shortages"
     ],
     position: { x: 0, y: 0 },
@@ -31,11 +31,11 @@ const problemNodes: ProblemNode[] = [
     icon: Database,
     title: "Fragmented Digitalization",
     shortTitle: "Fragmented",
-    description: "Fragmented digitalization and no end-to-end visibility make it impossible to plan and manage complex supply chains transparently.",
+    description: "Fragmented digitalization and no end-to-end visibility make it harder to tackle complex and transparent supply chains.",
     impacts: [
       "No end-to-end visibility across the chain",
-      "Manual data reconciliation wastes 15+ hours weekly",
-      "Operational costs increase by up to 20% due to inefficiencies"
+      "More manual work required to plan supply chains",
+      "Supply chain inefficiencies increase operational costs by up to 20%"
     ],
     position: { x: 1, y: 0 },
   },
@@ -44,11 +44,11 @@ const problemNodes: ProblemNode[] = [
     icon: ShieldAlert,
     title: "Inflexible Supply Chains",
     shortTitle: "Inflexible",
-    description: "Inflexible supply chains lead to slow reaction times and unnecessary costs, with poor visibility forcing companies to hold excess inventory.",
+    description: "Inflexible supply chains lead to slow reaction times and unnecessary costs when market conditions shift.",
     impacts: [
-      "Slow reaction times to demand and market changes",
-      "Poor supply-chain visibility drives excess inventory",
-      "Due diligence and compliance checks take weeks, not hours"
+      "Slow reaction times to demand changes",
+      "Unnecessary costs from rigid processes",
+      "Poor supply-chain visibility and excess inventory"
     ],
     position: { x: 0, y: 1 },
   },
@@ -57,11 +57,11 @@ const problemNodes: ProblemNode[] = [
     icon: TrendingUp,
     title: "Geopolitical Tensions",
     shortTitle: "Geopolitical",
-    description: "Increasing geopolitical and economical tension creates higher volatility, supply disruptions, and planning uncertainty at global scale.",
+    description: "Increasing geopolitical and economical tension creates higher volatility, supply disruptions, and planning uncertainty.",
     impacts: [
-      "Higher volatility and supply disruptions worldwide",
-      "Integration costs exceed $500K per new connection",
-      "Poor supply-chain management costs $1 Trillion annually (Economist Intelligence Unit)"
+      "Higher volatility in global trade",
+      "Supply disruptions and planning uncertainty",
+      "The Economist Intelligence Unit estimates poor supply-chain management costs $1 Trillion annually"
     ],
     position: { x: 1, y: 1 },
   },
