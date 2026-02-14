@@ -20,17 +20,10 @@ const team = [
     linkedinUrl: "#"
   },
   {
-    name: "James Park",
-    title: "VP of Product",
-    description: "Former Director at Flexport. Built products serving Fortune 500 logistics operations.",
-    imageUrl: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=600&q=80",
-    linkedinUrl: "#"
-  },
-  {
-    name: "Sarah Mitchell",
-    title: "VP of Sales",
-    description: "20 years enterprise SaaS. Former SVP at SAP. Deep relationships across manufacturing.",
-    imageUrl: "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=600&q=80",
+    name: "You?",
+    title: "Co-founder & CTO",
+    description: "• We're looking for a technical co-founder\n• Adept in programming and software engineering\n• Ready to build the future of supply chain AI",
+    imageUrl: "",
     linkedinUrl: "#"
   }
 ];

@@ -60,13 +60,17 @@ export function TestimonialCarousel({ className, testimonials }: TestimonialCaro
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9 }}
               transition={{ duration: 0.5 }}
-              className="w-48 h-48 lg:w-64 lg:h-64 rounded-3xl overflow-hidden border border-border/20 shadow-xl"
+              className="w-48 h-48 lg:w-64 lg:h-64 rounded-3xl overflow-hidden border border-border/20 shadow-xl flex items-center justify-center bg-card/40"
             >
-              <img
-                src={currentTestimonial.imageUrl}
-                alt={currentTestimonial.name}
-                className="w-full h-full object-cover"
-              />
+              {currentTestimonial.imageUrl ? (
+                <img
+                  src={currentTestimonial.imageUrl}
+                  alt={currentTestimonial.name}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <span className="text-6xl lg:text-8xl text-muted-foreground/40 font-light select-none">?</span>
+              )}
             </motion.div>
           </AnimatePresence>
         </div>
@@ -124,13 +128,17 @@ export function TestimonialCarousel({ className, testimonials }: TestimonialCaro
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9 }}
               transition={{ duration: 0.5 }}
-              className="w-32 h-32 rounded-2xl overflow-hidden border border-border/20 shadow-lg"
+              className="w-32 h-32 rounded-2xl overflow-hidden border border-border/20 shadow-lg flex items-center justify-center bg-card/40"
             >
-              <img
-                src={currentTestimonial.imageUrl}
-                alt={currentTestimonial.name}
-                className="w-full h-full object-cover"
-              />
+              {currentTestimonial.imageUrl ? (
+                <img
+                  src={currentTestimonial.imageUrl}
+                  alt={currentTestimonial.name}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <span className="text-5xl text-muted-foreground/40 font-light select-none">?</span>
+              )}
             </motion.div>
           </AnimatePresence>
         </div>
