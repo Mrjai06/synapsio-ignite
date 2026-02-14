@@ -24,7 +24,7 @@ const slides = [
     label: "What It Does",
     title: "Predict. Optimize.",
     subtitle: "Execute.",
-    description: "Continuously analyzes millions of data points to forecast demand, optimize inventory placement, and orchestrate fulfillment—all in real-time, without manual intervention.",
+    description: "Continuously analyzes millions of data points to forecast demand, optimize inventory placement, orchestrate fulfillment and create new supply-chains — all in real-time, without manual intervention.",
     diagram: {
       type: "flow",
       steps: ["Data In", "AI Analysis", "Decision", "Action"]
