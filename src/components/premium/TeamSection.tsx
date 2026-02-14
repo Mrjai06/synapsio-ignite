@@ -13,7 +13,7 @@ const team = [
     linkedinUrl: "#"
   },
   {
-    name: "Maria Santos",
+    name: "Luis Boy",
     title: "CTO & Co-founder",
     description: "Ex-Google AI researcher. PhD in distributed systems. Led ML infrastructure for Google Cloud.",
     imageUrl: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=600&q=80",
