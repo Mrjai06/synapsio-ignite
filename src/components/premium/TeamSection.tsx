@@ -6,7 +6,7 @@ import { TestimonialCarousel } from "@/components/ui/profile-card-testimonial-ca
 
 const team = [
   {
-    name: "Alex Chen",
+    name: "Jakob Ibrahim",
     title: "CEO & Co-founder",
     description: "Former VP of Operations at Scale AI. Stanford MBA. 15 years in supply chain optimization.",
     imageUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=600&q=80",
