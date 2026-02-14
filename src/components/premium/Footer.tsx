@@ -2,7 +2,7 @@
 import React from 'react';
 import type { ComponentProps, ReactNode } from 'react';
 import { motion, useReducedMotion } from 'motion/react';
-import { Linkedin, Twitter, Mail, Globe } from 'lucide-react';
+import { Linkedin, Mail, Globe } from 'lucide-react';
 import synapsioLogo from "@/assets/synapsio-logo.png";
 
 interface FooterLink {
@@ -47,7 +47,6 @@ const footerLinks: FooterSection[] = [
     label: 'Connect',
     links: [
       { title: 'LinkedIn', href: '#', icon: Linkedin },
-      { title: 'Twitter', href: '#', icon: Twitter },
       { title: 'Email', href: '#', icon: Mail },
       { title: 'Website', href: '#', icon: Globe },
     ],
