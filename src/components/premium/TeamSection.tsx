@@ -14,7 +14,7 @@ const team = [
   },
   {
     name: "Luis Boy",
-    title: "CTO & Co-founder",
+    title: "COO & Co-founder",
     description: "E-Commerce operations coordinator at Götze Gold.",
     imageUrl: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=600&q=80",
     linkedinUrl: "#"
