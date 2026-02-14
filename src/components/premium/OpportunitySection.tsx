@@ -123,15 +123,7 @@ const whyNowData = {
   pressureSource: "WTW, 2025"
 };
 
-const marketGrowthData = {
-  years: ["2023/24", "2029/2030"],
-  segments: [
-    { label: "AI-SCM-solution spend | Germany", color: "muted", values: [0.67, 1.94] },
-    { label: "SCM-solution spend | Germany", color: "muted-foreground", values: [6.42, 3.45] },
-    { label: "AI-SCM-solution spend | Global", color: "primary", values: [15.27, 48.51] },
-    { label: "SCM-solution spend | Global", color: "secondary", values: [77.64, 46.11] }
-  ]
-};
+// (marketGrowthData kept for reference but slope chart uses slopeSegments directly)
 
 // Competition Data
 const competitionTable = {
@@ -360,192 +352,155 @@ const MarketPyramid = ({ activeLayer, onLayerClick }: { activeLayer: string; onL
   );
 };
 
-// ====== MARKET GROWTH CHART (Single large chart with year toggle) ======
+// ====== SLOPE CHART (Two-column comparison) ======
 
-const segmentLabels = [
-  "AI-SCM-solution spend | Germany",
-  "SCM-solution spend | Germany", 
-  "AI-SCM-solution spend | Global",
-  "SCM-solution spend | Global"
+const slopeSegments = [
+  { label: "AI-SCM (Germany)", color: "hsl(var(--foreground))", values: [0.67, 1.94], isHighlight: true },
+  { label: "SCM (Germany)", color: "hsl(var(--muted-foreground) / 0.5)", values: [6.42, 3.45], isHighlight: false },
+  { label: "AI-SCM (Global)", color: "hsl(var(--primary) / 0.8)", values: [15.27, 48.51], isHighlight: false },
+  { label: "SCM (Global)", color: "hsl(var(--secondary) / 0.6)", values: [77.64, 46.11], isHighlight: false },
 ];
 
-const segmentColors = [
-  "hsl(var(--foreground))",
-  "hsl(var(--muted-foreground) / 0.45)",
-  "hsl(var(--primary) / 0.7)",
-  "hsl(var(--secondary) / 0.5)",
-];
-
-const yearData: Record<string, number[]> = {
-  "2023/24": [0.67, 6.42, 15.27, 77.64],
-  "2029/30": [1.94, 3.45, 48.51, 46.11],
-};
-
-const describeArc = (cx: number, cy: number, r: number, startAngle: number, endAngle: number) => {
-  const start = { x: cx + r * Math.cos(startAngle), y: cy + r * Math.sin(startAngle) };
-  const end = { x: cx + r * Math.cos(endAngle), y: cy + r * Math.sin(endAngle) };
-  const largeArc = endAngle - startAngle > Math.PI ? 1 : 0;
-  return `M ${cx} ${cy} L ${start.x} ${start.y} A ${r} ${r} 0 ${largeArc} 1 ${end.x} ${end.y} Z`;
-};
-
-const MarketGrowthComparison = ({ whyNowVisible }: { whyNowVisible: boolean }) => {
-  const [activeYear, setActiveYear] = useState<"2023/24" | "2029/30">("2023/24");
+const MarketSlopeChart = ({ whyNowVisible }: { whyNowVisible: boolean }) => {
   const [activeSegment, setActiveSegment] = useState<number | null>(null);
 
-  const values = yearData[activeYear];
-  const total = values.reduce((sum, v) => sum + v, 0);
+  // Chart dimensions
+  const leftX = 100;
+  const rightX = 520;
+  const topY = 40;
+  const bottomY = 380;
+  const chartHeight = bottomY - topY;
 
-  const cx = 250;
-  const cy = 250;
-  const baseR = 180;
-  const maxR = 220;
-  const gapAngle = 0.12; // ~7°
-
-  let currentAngle = -Math.PI / 2;
-  const slices = values.map((val, idx) => {
-    const sliceAngle = (val / total) * 2 * Math.PI;
-    const startAngle = currentAngle + gapAngle / 2;
-    const endAngle = currentAngle + sliceAngle - gapAngle / 2;
-    currentAngle += sliceAngle;
-    const fraction = val / total;
-    const sliceR = baseR + (maxR - baseR) * Math.sqrt(fraction);
-    const midAngle = (startAngle + endAngle) / 2;
-    return { val, idx, startAngle, endAngle, sliceR, midAngle };
-  });
+  // Scale: log-ish mapping for better spread since values range 0.67–77.64
+  const allValues = slopeSegments.flatMap(s => s.values);
+  const maxVal = Math.max(...allValues);
+  const getY = (val: number) => bottomY - (val / maxVal) * chartHeight;
 
   const selectedSegment = activeSegment !== null ? {
-    label: segmentLabels[activeSegment],
-    val2023: yearData["2023/24"][activeSegment],
-    val2029: yearData["2029/30"][activeSegment],
-    growth: yearData["2023/24"][activeSegment] !== 0
-      ? ((yearData["2029/30"][activeSegment] - yearData["2023/24"][activeSegment]) / yearData["2023/24"][activeSegment]) * 100
-      : 0,
-    abs: yearData["2029/30"][activeSegment] - yearData["2023/24"][activeSegment],
+    label: slopeSegments[activeSegment].label,
+    val2023: slopeSegments[activeSegment].values[0],
+    val2029: slopeSegments[activeSegment].values[1],
+    growth: ((slopeSegments[activeSegment].values[1] - slopeSegments[activeSegment].values[0]) / slopeSegments[activeSegment].values[0]) * 100,
+    abs: slopeSegments[activeSegment].values[1] - slopeSegments[activeSegment].values[0],
   } : null;
-
-  const aiScmStart = 0.67;
-  const aiScmEnd = 1.94;
-  const aiScmGrowth = ((aiScmEnd - aiScmStart) / aiScmStart * 100).toFixed(0);
 
   return (
     <div>
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-10 items-start">
-        {/* Main chart area */}
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-10 items-start">
+        {/* Chart */}
         <div className="flex flex-col items-center">
-          {/* Year toggle */}
-          <div className="flex items-center gap-1 mb-8 p-1 rounded-lg bg-secondary/20 border border-border/20 backdrop-blur-sm">
-            {(["2023/24", "2029/30"] as const).map((year) => (
-              <button
-                key={year}
-                onClick={() => setActiveYear(year)}
-                className={`relative px-5 py-2 text-sm font-medium rounded-md transition-colors duration-300 ${
-                  activeYear === year ? "text-primary-foreground" : "text-muted-foreground/50 hover:text-muted-foreground/70"
-                }`}
-              >
-                {activeYear === year && (
-                  <motion.div
-                    layoutId="year-toggle-bg"
-                    className="absolute inset-0 rounded-md bg-primary/80"
-                    transition={{ type: "spring", bounce: 0.2, duration: 0.5 }}
-                  />
-                )}
-                <span className="relative z-10">{year}</span>
-              </button>
-            ))}
-          </div>
-
-          {/* Large pie chart */}
-          <svg viewBox="-20 -20 540 540" className="w-full max-w-[520px]" onClick={() => setActiveSegment(null)}>
+          <svg viewBox="0 0 620 440" className="w-full max-w-[620px]" onClick={() => setActiveSegment(null)}>
             <defs>
-              <filter id="aiOuterGlowMain">
-                <feGaussianBlur stdDeviation="8" />
+              <filter id="slopeGlow">
+                <feGaussianBlur stdDeviation="6" result="blur" />
+                <feComposite in="SourceGraphic" in2="blur" operator="over" />
               </filter>
             </defs>
 
-            {slices.map((slice) => {
-              const isActive = activeSegment === slice.idx;
-              const isOther = activeSegment !== null && activeSegment !== slice.idx;
-              const isAiScm = slice.idx === 0;
+            {/* Year labels */}
+            <text x={leftX} y={topY - 16} textAnchor="middle" className="fill-muted-foreground/40 text-xs font-medium select-none">2023/24</text>
+            <text x={rightX} y={topY - 16} textAnchor="middle" className="fill-muted-foreground/40 text-xs font-medium select-none">2029/30</text>
 
-              const explode = isAiScm ? 16 : 0;
-              const activeExplode = isActive ? 8 : 0;
-              const totalExplode = explode + activeExplode;
-              const dx = totalExplode * Math.cos(slice.midAngle);
-              const dy = totalExplode * Math.sin(slice.midAngle);
-              const displayR = isActive ? slice.sliceR + 5 : slice.sliceR;
+            {/* Vertical axes */}
+            <line x1={leftX} y1={topY} x2={leftX} y2={bottomY} stroke="hsl(var(--border) / 0.15)" strokeWidth="1" />
+            <line x1={rightX} y1={topY} x2={rightX} y2={bottomY} stroke="hsl(var(--border) / 0.15)" strokeWidth="1" />
+
+            {/* Segments */}
+            {slopeSegments.map((seg, i) => {
+              const y1 = getY(seg.values[0]);
+              const y2 = getY(seg.values[1]);
+              const isActive = activeSegment === i;
+              const isOther = activeSegment !== null && activeSegment !== i;
+              const isGrowing = seg.values[1] > seg.values[0];
 
               return (
-                <motion.g key={slice.idx}>
-                  {/* Expanded invisible hit area – always for AI-SCM, otherwise for small segments */}
-                  {(isAiScm || slice.val / total < 0.12) && (
-                    <motion.path
-                      d={describeArc(cx + dx, cy + dy, slice.sliceR + (isAiScm ? 55 : 40), slice.startAngle - (isAiScm ? 0.35 : 0.2), slice.endAngle + (isAiScm ? 0.35 : 0.2))}
-                      fill="transparent"
-                      className="cursor-pointer"
-                      onClick={(e) => { e.stopPropagation(); setActiveSegment(isActive ? null : slice.idx); }}
-                    />
-                  )}
-
-                  {/* Glow behind AI-SCM */}
-                  {isAiScm && (
-                    <motion.path
-                      d={describeArc(cx + dx, cy + dy, displayR + 4, slice.startAngle, slice.endAngle)}
-                      fill="hsl(var(--foreground) / 0.12)"
-                      filter="url(#aiOuterGlowMain)"
-                      className="pointer-events-none"
-                      animate={{ opacity: isOther ? 0.05 : 0.5 }}
-                    />
-                  )}
-
-                  {/* Main slice */}
-                  <motion.path
-                    d={describeArc(cx + dx, cy + dy, displayR, slice.startAngle, slice.endAngle)}
-                    fill={segmentColors[slice.idx]}
+                <motion.g key={i}>
+                  {/* Invisible wider hit area */}
+                  <line
+                    x1={leftX} y1={y1} x2={rightX} y2={y2}
+                    stroke="transparent"
+                    strokeWidth="28"
                     className="cursor-pointer"
-                    animate={{ opacity: isOther ? 0.15 : 1 }}
-                    transition={{ duration: 0.6, ease: [0.23, 0.86, 0.39, 0.96] }}
-                    style={{ transformOrigin: `${cx}px ${cy}px` }}
-                    onClick={(e) => { e.stopPropagation(); setActiveSegment(isActive ? null : slice.idx); }}
-                    whileHover={{ scale: 1.035 }}
+                    onClick={(e) => { e.stopPropagation(); setActiveSegment(isActive ? null : i); }}
                   />
 
-                  {/* Highlight ring */}
-                  {(isAiScm || isActive) && (
-                    <motion.path
-                      d={describeArc(cx + dx, cy + dy, displayR + 1.5, slice.startAngle, slice.endAngle)}
-                      fill="none"
-                      stroke={isAiScm ? "hsl(var(--foreground) / 0.4)" : "hsl(var(--primary) / 0.5)"}
-                      strokeWidth={isAiScm ? 1.5 : 1}
+                  {/* Glow for AI-SCM highlight */}
+                  {seg.isHighlight && (
+                    <motion.line
+                      x1={leftX} y1={y1} x2={rightX} y2={y2}
+                      stroke="hsl(var(--foreground) / 0.15)"
+                      strokeWidth="8"
+                      filter="url(#slopeGlow)"
                       className="pointer-events-none"
-                      animate={{ opacity: isOther ? 0.05 : 0.7 }}
+                      animate={{ opacity: isOther ? 0.05 : 0.6 }}
                     />
                   )}
 
-                  {/* Percentage label inside slice */}
-                  {slice.val / total > 0.03 && (
-                    <motion.text
-                      x={cx + dx + (displayR * 0.6) * Math.cos(slice.midAngle)}
-                      y={cy + dy + (displayR * 0.6) * Math.sin(slice.midAngle)}
-                      textAnchor="middle"
-                      dominantBaseline="central"
-                      className={`pointer-events-none font-medium select-none ${isAiScm ? "fill-background text-sm" : "fill-background/80 text-[11px]"}`}
-                      animate={{ opacity: isOther ? 0.1 : 0.9 }}
-                    >
-                      {slice.val.toFixed(1)}%
-                    </motion.text>
-                  )}
+                  {/* Main line */}
+                  <motion.line
+                    x1={leftX} y1={y1} x2={rightX} y2={y2}
+                    stroke={seg.color}
+                    strokeWidth={isActive ? 3 : seg.isHighlight ? 2.5 : 1.5}
+                    strokeLinecap="round"
+                    className="cursor-pointer"
+                    animate={{ opacity: isOther ? 0.12 : 1 }}
+                    transition={{ duration: 0.4 }}
+                    onClick={(e) => { e.stopPropagation(); setActiveSegment(isActive ? null : i); }}
+                    whileHover={{ strokeWidth: 3.5 }}
+                  />
+
+                  {/* Left dot */}
+                  <motion.circle
+                    cx={leftX} cy={y1} r={isActive ? 5 : seg.isHighlight ? 4.5 : 3.5}
+                    fill={seg.color}
+                    className="cursor-pointer"
+                    animate={{ opacity: isOther ? 0.15 : 1 }}
+                    onClick={(e) => { e.stopPropagation(); setActiveSegment(isActive ? null : i); }}
+                  />
+
+                  {/* Right dot */}
+                  <motion.circle
+                    cx={rightX} cy={y2} r={isActive ? 5 : seg.isHighlight ? 4.5 : 3.5}
+                    fill={seg.color}
+                    className="cursor-pointer"
+                    animate={{ opacity: isOther ? 0.15 : 1 }}
+                    onClick={(e) => { e.stopPropagation(); setActiveSegment(isActive ? null : i); }}
+                  />
+
+                  {/* Left value label */}
+                  <motion.text
+                    x={leftX - 12} y={y1} textAnchor="end" dominantBaseline="central"
+                    className={`pointer-events-none select-none ${seg.isHighlight ? "fill-foreground text-xs font-medium" : "fill-muted-foreground/50 text-[11px]"}`}
+                    animate={{ opacity: isOther ? 0.1 : 0.9 }}
+                  >
+                    {seg.values[0].toFixed(seg.values[0] < 10 ? 2 : 1)}%
+                  </motion.text>
+
+                  {/* Right value label */}
+                  <motion.text
+                    x={rightX + 12} y={y2} textAnchor="start" dominantBaseline="central"
+                    className={`pointer-events-none select-none ${seg.isHighlight ? "fill-foreground text-xs font-medium" : "fill-muted-foreground/50 text-[11px]"}`}
+                    animate={{ opacity: isOther ? 0.1 : 0.9 }}
+                  >
+                    {seg.values[1].toFixed(seg.values[1] < 10 ? 2 : 1)}%
+                  </motion.text>
+
+                  {/* Growth indicator on right side */}
+                  <motion.text
+                    x={rightX + 12} y={y2 + 14} textAnchor="start" dominantBaseline="central"
+                    className={`pointer-events-none select-none text-[9px] ${isGrowing ? "fill-primary/60" : "fill-destructive/50"}`}
+                    animate={{ opacity: isOther ? 0 : 0.7 }}
+                  >
+                    {isGrowing ? "↑" : "↓"} {Math.abs(((seg.values[1] - seg.values[0]) / seg.values[0]) * 100).toFixed(0)}%
+                  </motion.text>
                 </motion.g>
               );
             })}
-
-            {/* Center label */}
-            <text x={cx} y={cy - 8} textAnchor="middle" dominantBaseline="central" className="fill-muted-foreground/25 text-xs font-light pointer-events-none select-none">Market Share</text>
-            <text x={cx} y={cy + 10} textAnchor="middle" dominantBaseline="central" className="fill-foreground/50 text-sm font-medium pointer-events-none select-none">{activeYear}</text>
           </svg>
 
           {/* Interactive legend */}
           <div className="flex flex-wrap gap-5 justify-center mt-6">
-            {segmentLabels.map((label, i) => (
+            {slopeSegments.map((seg, i) => (
               <button
                 key={i}
                 className={`flex items-center gap-2 transition-all duration-300 group ${activeSegment !== null && activeSegment !== i ? "opacity-25" : "opacity-100"} hover:opacity-100`}
@@ -553,10 +508,10 @@ const MarketGrowthComparison = ({ whyNowVisible }: { whyNowVisible: boolean }) =
               >
                 <div
                   className={`w-3 h-3 rounded-full transition-transform duration-200 ${activeSegment === i ? "scale-125" : "group-hover:scale-110"}`}
-                  style={{ background: segmentColors[i], boxShadow: i === 0 ? "0 0 8px hsl(var(--foreground) / 0.3)" : "none" }}
+                  style={{ background: seg.color, boxShadow: seg.isHighlight ? "0 0 8px hsl(var(--foreground) / 0.3)" : "none" }}
                 />
                 <span className={`text-xs transition-colors duration-200 ${activeSegment === i ? "text-foreground/80" : "text-muted-foreground/45 group-hover:text-muted-foreground/65"}`}>
-                  {label}
+                  {seg.label}
                 </span>
               </button>
             ))}
@@ -564,8 +519,7 @@ const MarketGrowthComparison = ({ whyNowVisible }: { whyNowVisible: boolean }) =
         </div>
 
         {/* Right side panel */}
-        <div className="flex flex-col gap-6 lg:pt-16">
-          {/* Segment comparison panel */}
+        <div className="flex flex-col gap-6 lg:pt-8">
           <AnimatePresence mode="wait">
             {selectedSegment ? (
               <motion.div
@@ -577,7 +531,7 @@ const MarketGrowthComparison = ({ whyNowVisible }: { whyNowVisible: boolean }) =
               >
                 <GlassPanel intensity="subtle" bordered className="p-6 rounded-xl">
                   <div className="flex items-center gap-2 mb-5">
-                    <div className="w-2.5 h-2.5 rounded-full" style={{ background: segmentColors[activeSegment!], boxShadow: activeSegment === 0 ? "0 0 6px hsl(var(--foreground) / 0.3)" : "none" }} />
+                    <div className="w-2.5 h-2.5 rounded-full" style={{ background: slopeSegments[activeSegment!].color, boxShadow: slopeSegments[activeSegment!].isHighlight ? "0 0 6px hsl(var(--foreground) / 0.3)" : "none" }} />
                     <p className="text-xs text-foreground/70 font-medium">{selectedSegment.label}</p>
                   </div>
                   <div className="space-y-3">
@@ -626,16 +580,16 @@ const MarketGrowthComparison = ({ whyNowVisible }: { whyNowVisible: boolean }) =
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="text-[11px] text-muted-foreground/45">2023/24</span>
-                  <span className="text-sm font-light text-foreground/60">{aiScmStart}%</span>
+                  <span className="text-sm font-light text-foreground/60">0.67%</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-[11px] text-muted-foreground/45">2029/30</span>
-                  <span className="text-sm font-light text-foreground">{aiScmEnd}%</span>
+                  <span className="text-sm font-light text-foreground">1.94%</span>
                 </div>
                 <div className="h-px bg-border/15 my-1" />
                 <div className="flex items-center justify-between">
                   <span className="text-[11px] text-primary/70">Growth</span>
-                  <span className="text-base font-medium text-primary">↑ {aiScmGrowth}%</span>
+                  <span className="text-base font-medium text-primary">↑ 190%</span>
                 </div>
               </div>
             </GlassPanel>
@@ -657,33 +611,32 @@ const MarketGrowthComparison = ({ whyNowVisible }: { whyNowVisible: boolean }) =
           <motion.div
             className="absolute inset-y-0 left-0 rounded-full bg-foreground/10"
             initial={{ width: "0%" }}
-            animate={whyNowVisible ? { width: `${(aiScmEnd / 3) * 100}%` } : {}}
+            animate={whyNowVisible ? { width: `${(1.94 / 3) * 100}%` } : {}}
             transition={{ delay: 1.2, duration: 0.8, ease: "easeOut" }}
           />
           <motion.div
             className="absolute inset-y-0 left-0 rounded-full"
             style={{ background: "linear-gradient(90deg, hsl(var(--primary) / 0.6), hsl(var(--foreground) / 0.9))" }}
-            initial={{ width: `${(aiScmStart / 3) * 100}%` }}
-            animate={whyNowVisible ? { width: `${(aiScmEnd / 3) * 100}%` } : {}}
+            initial={{ width: `${(0.67 / 3) * 100}%` }}
+            animate={whyNowVisible ? { width: `${(1.94 / 3) * 100}%` } : {}}
             transition={{ delay: 2.2, duration: 1.2, ease: [0.23, 0.86, 0.39, 0.96] }}
           />
         </div>
         <div className="flex items-center justify-between mt-2">
-          <span className="text-[11px] text-muted-foreground/40">{aiScmStart}%</span>
+          <span className="text-[11px] text-muted-foreground/40">0.67%</span>
           <motion.span
             className="text-[11px] text-foreground/70 font-medium"
             initial={{ opacity: 0 }}
             animate={whyNowVisible ? { opacity: 1 } : {}}
             transition={{ delay: 3 }}
           >
-            {aiScmEnd}% → ↑ {aiScmGrowth}%
+            1.94% → ↑ 190%
           </motion.span>
         </div>
       </motion.div>
     </div>
   );
 };
-
 // Why Now Carousel Component
 const whyNowCards = [
   { key: "technology", title: "Technology", dataKey: "technology" as const, highlightKey: "technologyHighlight" as const, sourceKey: "technologySource" as const },
@@ -899,15 +852,18 @@ const OpportunitySection = () => {
         
         {/* === WHY NOW === */}
         <div ref={whyNowRef} className="mb-40 md:mb-56">
-          <p className="text-xs tracking-[0.25em] uppercase text-muted-foreground/35 mb-16">
+          <p className="text-xs tracking-[0.25em] uppercase text-muted-foreground/35 mb-6">
             Why now – AI as the operating system of supply-chains
           </p>
+          <h3 className={`text-2xl md:text-3xl font-light text-foreground/80 mb-16 transition-all duration-1000 ${whyNowVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}>
+            Structural Shift in Supply Chain Technology Spend
+          </h3>
           
           <div className={`transition-all duration-1000 ${whyNowVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
-            {/* Single large pie chart */}
+            {/* Slope chart */}
             <div className="max-w-5xl mx-auto mb-16">
               <GlassPanel intensity="subtle" bordered className="p-10 md:p-14 rounded-xl">
-                <MarketGrowthComparison whyNowVisible={whyNowVisible} />
+                <MarketSlopeChart whyNowVisible={whyNowVisible} />
               </GlassPanel>
             </div>
             
