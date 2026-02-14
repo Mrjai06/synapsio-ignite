@@ -19,7 +19,7 @@ const team = [
     title: "COO & Co-founder",
     description: "• E-Commerce operations coordinator at Götze Gold",
     imageUrl: luisImg,
-    linkedinUrl: "#"
+    linkedinUrl: "https://www.linkedin.com/in/luis-boy-a6b787378/"
   },
   {
     name: "You?",
