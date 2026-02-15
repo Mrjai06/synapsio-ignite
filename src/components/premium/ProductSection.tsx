@@ -22,45 +22,47 @@ interface ComparisonSide {
 }
 
 const comparisonData: { scenario: string; description: string; without: ComparisonSide; with: ComparisonSide } = {
-  scenario: "Protecting Margins During Global Price Shocks",
+  scenario: "Inside a Modern Supply Network",
   description:
-    "A global manufacturer sources critical components from multiple suppliers across regions. Sudden raw material price increases, currency fluctuations, and supplier price adjustments threaten margins — without causing a visible operational crisis.",
+    "A global manufacturer operates across 19 production sites, 520 suppliers, and 5 distribution centers. Every day, demand shifts, suppliers delay, capacity fluctuates, and new partners enter the network.",
   without: {
-    title: "Without Synapsio",
+    title: "Traditional Operating Model",
     steps: [
-      { icon: FileSpreadsheet, text: "Price changes received via emails and supplier portals", tooltip: "Fragmented information across dozens of inboxes and platforms delays awareness." },
-      { icon: Eye, text: "Manual contract and pricing review by procurement teams", tooltip: "Teams spend days cross-referencing contracts, often missing critical clauses." },
-      { icon: BarChart3, text: "Excel-based scenario simulations across suppliers", tooltip: "Static models can't capture real-time market dynamics or supplier interdependencies." },
-      { icon: RefreshCw, text: "Limited visibility into alternative supplier capacity", tooltip: "Without live data, switching suppliers is guesswork — not strategy." },
-      { icon: TrendingDown, text: "No real-time optimization across price, risk, and lead time", tooltip: "Decisions are sequential and siloed, leaving margin on the table." },
+      { icon: FileSpreadsheet, text: "Demand increase handled by separate planning team", tooltip: "Planning operates in silos, reacting to signals days after they occur." },
+      { icon: Eye, text: "Supplier delay escalated via email and meetings", tooltip: "Manual escalation chains slow down response and fragment accountability." },
+      { icon: BarChart3, text: "Production schedule adjusted manually", tooltip: "Planners reconcile spreadsheets across sites without real-time visibility." },
+      { icon: RefreshCw, text: "Logistics re-optimizes routes independently", tooltip: "Transport planning operates detached from production and procurement decisions." },
+      { icon: TrendingDown, text: "New supplier onboarding requires weeks of coordination", tooltip: "Qualification, compliance, and integration processes run sequentially across departments." },
+      { icon: FileSpreadsheet, text: "Decisions made sequentially across departments", tooltip: "Each function optimizes locally, missing network-wide opportunities." },
     ],
     outcome: {
       title: "Outcome",
       points: [
-        "6–9% margin erosion",
-        "Slow response to market shifts",
-        "Missed optimization opportunities",
-        "Decisions dependent on human coordination",
+        "Local optimizations instead of network optimization",
+        "Slower response to change",
+        "Capital inefficiencies",
+        "High coordination overhead",
       ],
       sentiment: "negative",
     },
   },
   with: {
-    title: "With Synapsio",
+    title: "Autonomous Operating Model (Synapsio)",
     steps: [
-      { icon: Activity, text: "AI continuously monitors price, demand, and capacity signals", tooltip: "Thousands of data points ingested in real time from markets, suppliers, and logistics." },
-      { icon: Shield, text: "Contracts, supplier risk, and logistics data evaluated automatically", tooltip: "Every variable — from payment terms to geopolitical risk — is scored and weighted." },
-      { icon: Gauge, text: "47 sourcing scenarios simulated in real time", tooltip: "Parallel simulations evaluate cost, risk, lead time, and quality trade-offs instantly." },
-      { icon: Zap, text: "Orders dynamically rebalanced across suppliers", tooltip: "Allocation shifts automatically to the optimal supplier mix as conditions change." },
-      { icon: Lock, text: "AI locks optimal conditions before price escalation spreads", tooltip: "Autonomous execution secures the best terms before competitors can react." },
+      { icon: Activity, text: "AI continuously monitors demand, capacity, pricing, and risk", tooltip: "Thousands of signals ingested in real time across all network nodes." },
+      { icon: Shield, text: "Supplier delays automatically re-simulated across network", tooltip: "Every disruption triggers instant scenario analysis across the full supply graph." },
+      { icon: Gauge, text: "Production dynamically rebalanced across sites", tooltip: "Capacity allocation shifts automatically based on real-time constraints." },
+      { icon: Zap, text: "Transport plans adjusted in real time", tooltip: "Logistics adapts continuously to production and demand changes." },
+      { icon: Lock, text: "New suppliers integrated directly into optimization model", tooltip: "Onboarding feeds directly into the decision engine — no manual handoffs." },
+      { icon: Brain, text: "Orders prioritized by margin, SLA, and risk exposure", tooltip: "Multi-objective optimization balances competing priorities autonomously." },
     ],
     outcome: {
       title: "Outcome",
       points: [
-        "4.2% cost reduction despite price shock",
-        "0% supply disruption",
-        "Margins stabilized automatically",
-        "Decisions executed without human intervention",
+        "11% lower inventory exposure",
+        "0% unplanned production interruptions",
+        "18% faster response to network changes",
+        "Coordinated, real-time autonomous execution",
       ],
       sentiment: "positive",
     },
@@ -177,7 +179,7 @@ const ProductSection = () => {
       {/* Before/After Comparison */}
       <div className="relative z-10 container mx-auto px-8 lg:px-20 xl:px-28">
         <div ref={comparisonRef}>
-          <p className="text-xs tracking-[0.25em] uppercase text-muted-foreground/35 mb-6">Real-World Example</p>
+          <p className="text-xs tracking-[0.25em] uppercase text-muted-foreground/35 mb-6">Real-World Operations</p>
 
           {/* Scenario Header */}
           <motion.div
