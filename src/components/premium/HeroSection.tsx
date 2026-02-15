@@ -22,7 +22,7 @@ const HeroSection = () => {
   }, []);
   const contentOpacity = 1 - scrollProgress * 1.5;
   const contentTranslate = scrollProgress * 40;
-  return <section ref={sectionRef} className="relative min-h-[110vh] flex items-center justify-center overflow-hidden">
+  return <section ref={sectionRef} className="relative min-h-[110vh] flex items-center justify-center overflow-hidden bg-background" style={{ zIndex: 2 }}>
       {/* Neural synapse animated background */}
       <CosmicSynapseCanvas className="absolute inset-0 opacity-60" />
       
