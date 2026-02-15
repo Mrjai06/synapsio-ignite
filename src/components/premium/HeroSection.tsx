@@ -23,17 +23,7 @@ const HeroSection = () => {
   const contentOpacity = 1 - scrollProgress * 1.5;
   const contentTranslate = scrollProgress * 40;
   return <section ref={sectionRef} className="relative min-h-[110vh] flex items-center justify-center overflow-hidden">
-      {/* Neural synapse animated background */}
-      <CosmicSynapseCanvas className="absolute inset-0 opacity-60" />
       
-      {/* Ambient depth glows */}
-      <AmbientGlow color="primary" size="xl" intensity="subtle" position="right" className="top-1/4" />
-      <AmbientGlow color="secondary" size="lg" intensity="subtle" position="left" className="top-2/3" />
-      
-      {/* Depth layers */}
-      <div className="absolute inset-0 pointer-events-none transition-opacity duration-1000" style={{
-      background: `radial-gradient(ellipse at 50% 40%, transparent 0%, hsl(var(--background) / ${0.2 + scrollProgress * 0.5}) 70%)`
-    }} />
       
       
       {/* Content */}
