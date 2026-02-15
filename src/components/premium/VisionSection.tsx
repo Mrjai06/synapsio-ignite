@@ -49,7 +49,7 @@ const VisionSection = () => {
             transition={{ duration: 0.8, delay: 0.2 }}
           >
             <FloatingSurface elevation="high" glow glowColor="primary" className="rounded-full">
-              <a href="/Synapsio_Pitch.pdf" download>
+              <a href="/Synapsio_Pitch.pdf" target="_blank" rel="noopener noreferrer">
                 <Button 
                   size="lg" 
                   className="group bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-10 py-7 text-sm tracking-wide font-normal transition-all duration-1000 hover:scale-[1.02]"
