@@ -98,6 +98,8 @@ const Footer = () => {
                       <li key={link.title}>
                         <a
                           href={link.href}
+                          target={link.href.startsWith('http') ? '_blank' : undefined}
+                          rel={link.href.startsWith('http') ? 'noopener noreferrer' : undefined}
                           className="group flex items-center gap-2 text-sm text-muted-foreground transition-colors duration-300 hover:text-foreground"
                         >
                           {link.icon && (
