@@ -49,13 +49,15 @@ const VisionSection = () => {
             transition={{ duration: 0.8, delay: 0.2 }}
           >
             <FloatingSurface elevation="high" glow glowColor="primary" className="rounded-full">
-              <Button 
-                size="lg" 
-                className="group bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-10 py-7 text-sm tracking-wide font-normal transition-all duration-1000 hover:scale-[1.02]"
-              >
-                View Pitchdeck
-                <ArrowRight className="ml-3 h-4 w-4 transition-transform duration-700 group-hover:translate-x-1" />
-              </Button>
+              <a href="/Synapsio_Pitch.pdf" download>
+                <Button 
+                  size="lg" 
+                  className="group bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-10 py-7 text-sm tracking-wide font-normal transition-all duration-1000 hover:scale-[1.02]"
+                >
+                  View Pitchdeck
+                  <ArrowRight className="ml-3 h-4 w-4 transition-transform duration-700 group-hover:translate-x-1" />
+                </Button>
+              </a>
             </FloatingSurface>
             <FloatingSurface elevation="medium" className="rounded-full">
               <Button 
