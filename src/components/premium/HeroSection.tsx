@@ -84,11 +84,6 @@ const HeroSection = () => {
                 </Button>
               </a>
             </FloatingSurface>
-            <FloatingSurface elevation="medium" className="rounded-full">
-              <Button size="lg" variant="ghost" className="text-foreground/90 hover:text-foreground hover:bg-card/50 rounded-full px-12 py-8 text-sm tracking-wide font-normal border border-border/60 hover:border-border/80 transition-all duration-1000 backdrop-blur-md bg-card/20">
-                Explore Product
-              </Button>
-            </FloatingSurface>
           </div>
         </div>
       </div>
