@@ -60,6 +60,13 @@ const Footer = () => {
       <div className="absolute -top-32 left-0 right-0 h-32 bg-gradient-to-t from-primary/20 via-primary/5 to-transparent pointer-events-none" />
       <div className="absolute -top-24 left-1/4 right-1/4 h-24 bg-gradient-to-t from-primary/30 to-transparent blur-2xl pointer-events-none" />
       
+      {/* Disclaimer */}
+      <div className="border-b border-border/10 py-4 text-center">
+        <p className="text-xs text-muted-foreground/50 italic">
+          This Website is a Demonstration and Representation of our Idea and is by no means a finished product.
+        </p>
+      </div>
+
       <div className="mx-auto max-w-7xl px-6 py-12 lg:px-8 lg:py-16">
         {/* Divider */}
         <AnimatedContainer delay={0}>
