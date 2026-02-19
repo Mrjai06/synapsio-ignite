@@ -190,10 +190,6 @@ const RoadmapSection = () => {
         <Timeline data={roadmapData} />
       </div>
       
-      {/* Morphing transition */}
-      <div className="absolute bottom-0 left-0 right-0 h-[30vh] pointer-events-none">
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/70 to-transparent" />
-      </div>
     </section>
   );
 };

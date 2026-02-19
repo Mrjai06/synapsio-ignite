@@ -30,47 +30,36 @@ const Index = () => {
         
         {/* Preface: What Synapsio is */}
         <section id="preface" className="relative">
-          <div className="absolute top-0 left-0 right-0 h-40 pointer-events-none bg-gradient-to-b from-background via-background/60 to-transparent" />
           <PrefaceSection />
-          <div className="absolute bottom-0 left-0 right-0 h-40 pointer-events-none bg-gradient-to-t from-background via-background/60 to-transparent" />
         </section>
         
         {/* Act 2: The Challenge - Friction Emerges */}
         <section id="problem" className="relative">
-          <div className="absolute top-0 left-0 right-0 h-40 pointer-events-none bg-gradient-to-b from-background via-background/40 to-transparent" />
           <ProblemSection />
-          <div className="absolute bottom-0 left-0 right-0 h-40 pointer-events-none bg-gradient-to-t from-background via-background/40 to-transparent" />
         </section>
         
         {/* Act 3: The Solution - Order Restored */}
         <section id="solution" className="relative">
-          <div className="absolute top-0 left-0 right-0 h-40 pointer-events-none bg-gradient-to-b from-background via-background/40 to-transparent" />
           <SolutionSection />
-          <div className="absolute bottom-0 left-0 right-0 h-40 pointer-events-none bg-gradient-to-t from-background via-background/40 to-transparent" />
         </section>
         
         {/* Act 4: Our Product - Process Overview + Features + Comparison */}
         <section id="product" className="relative">
-          <div className="absolute top-0 left-0 right-0 h-40 pointer-events-none bg-gradient-to-b from-background via-background/40 to-transparent" />
           <ProductSection />
         </section>
         
         {/* Act 5: Opportunity - Market, Competition, Business Model */}
         <section id="opportunity" className="relative">
-          <div className="absolute top-0 left-0 right-0 h-40 pointer-events-none bg-gradient-to-b from-background via-background/40 to-transparent" />
           <OpportunitySection />
-          <div className="absolute bottom-0 left-0 right-0 h-40 pointer-events-none bg-gradient-to-t from-background via-background/40 to-transparent" />
         </section>
         
         {/* Act 6: Roadmap */}
         <section id="roadmap" className="relative">
-          <div className="absolute top-0 left-0 right-0 h-40 pointer-events-none bg-gradient-to-b from-background via-background/40 to-transparent" />
           <RoadmapSection />
         </section>
         
         {/* Act 7: The Team - Human Trust */}
         <section id="team" className="relative">
-          <div className="absolute top-0 left-0 right-0 h-40 pointer-events-none bg-gradient-to-b from-background via-background/40 to-transparent" />
           <TeamSection />
           <VisionSection />
         </section>
