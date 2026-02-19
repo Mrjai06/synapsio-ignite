@@ -430,7 +430,7 @@ const FeaturesSection = () => {
                 </AnimatePresence>
                 
                 {/* What's eliminated - overlay at bottom */}
-                <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-background/90 via-background/60 to-transparent">
+                <div className="absolute bottom-0 left-0 right-0 pt-16 pb-6 px-6 bg-gradient-to-t from-background/90 via-background/60 to-transparent">
                   <AnimatePresence mode="wait">
                     <motion.div
                       key={activeFeature}
