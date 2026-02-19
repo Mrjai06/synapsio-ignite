@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import { motion, useInView, AnimatePresence } from "framer-motion";
-import { Database, Users, ShieldAlert, TrendingUp } from "lucide-react";
+import { Database, Users, ShieldAlert, TrendingUp, AlertTriangle } from "lucide-react";
 
 interface ProblemNode {
   id: string;
@@ -24,7 +24,7 @@ const problemNodes: ProblemNode[] = [
       "Stakeholders operate in information silos",
       "Poor coordination leads to overproduction or shortages"
     ],
-    position: { x: 0, y: 0 },
+    position: { x: 0.5, y: 0 },
   },
   {
     id: "fragmented",
@@ -37,7 +37,7 @@ const problemNodes: ProblemNode[] = [
       "More manual work required to plan supply chains",
       "Supply chain inefficiencies increase operational costs by up to 20%"
     ],
-    position: { x: 1, y: 0 },
+    position: { x: 0.975, y: 0.345 },
   },
   {
     id: "inflexible",
@@ -50,7 +50,7 @@ const problemNodes: ProblemNode[] = [
       "Unnecessary costs from rigid processes",
       "Poor supply-chain visibility and excess inventory"
     ],
-    position: { x: 0, y: 1 },
+    position: { x: 0.795, y: 0.905 },
   },
   {
     id: "geopolitical",
@@ -63,17 +63,34 @@ const problemNodes: ProblemNode[] = [
       "Supply disruptions and planning uncertainty",
       "The Economist Intelligence Unit estimates poor supply-chain management costs $1 Trillion annually"
     ],
-    position: { x: 1, y: 1 },
+    position: { x: 0.205, y: 0.905 },
+  },
+  {
+    id: "criminality",
+    icon: AlertTriangle,
+    title: "Criminality / Human Error",
+    shortTitle: "Criminality",
+    description: "Criminal activity and human error introduce unpredictable disruptions, from fraud and cyberattacks to costly operational mistakes.",
+    impacts: [
+      "Cybercrime costs supply chains billions annually",
+      "Human errors cause up to 80% of supply chain disruptions",
+      "Lack of traceability enables fraud and counterfeiting"
+    ],
+    position: { x: 0.025, y: 0.345 },
   },
 ];
 
 const connections = [
   { from: 0, to: 1 },
+  { from: 0, to: 4 },
+  { from: 1, to: 2 },
+  { from: 2, to: 3 },
+  { from: 3, to: 4 },
   { from: 0, to: 2 },
   { from: 0, to: 3 },
-  { from: 1, to: 2 },
   { from: 1, to: 3 },
-  { from: 2, to: 3 },
+  { from: 1, to: 4 },
+  { from: 2, to: 4 },
 ];
 
 const ProblemSection = () => {
@@ -84,12 +101,12 @@ const ProblemSection = () => {
   const getNodeCenter = (index: number) => {
     const node = problemNodes[index];
     const centerX = 200;
-    const centerY = 200;
-    const spreadX = 140;
-    const spreadY = 120;
+    const centerY = 210;
+    const radiusX = 145;
+    const radiusY = 135;
     
-    const x = centerX + (node.position.x - 0.5) * spreadX * 2;
-    const y = centerY + (node.position.y - 0.5) * spreadY * 2;
+    const x = centerX + (node.position.x - 0.5) * radiusX * 2;
+    const y = centerY + (node.position.y - 0.5) * radiusY * 2;
     return { x, y };
   };
 
@@ -377,7 +394,7 @@ const ProblemSection = () => {
                         </div>
                         <div>
                           <p className="text-[10px] tracking-[0.3em] uppercase text-primary/60 mb-1">
-                            Problem {activeNode + 1} of 4
+                            Problem {activeNode + 1} of {problemNodes.length}
                           </p>
                           <h3 className="text-xl font-medium text-foreground">
                             {problemNodes[activeNode].title}
