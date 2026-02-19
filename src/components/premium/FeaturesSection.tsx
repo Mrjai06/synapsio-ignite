@@ -158,8 +158,6 @@ const FeaturesSection = () => {
   return (
     <section data-features-section className="relative py-32 md:py-48">
       
-      <AmbientGlow color="primary" size="xl" intensity="medium" position="center" />
-      <AmbientGlow color="accent" size="md" intensity="subtle" position="right" className="top-1/3" />
 
       <div className="relative z-10 container mx-auto px-8 lg:px-16 xl:px-24">
         {/* Section header */}
