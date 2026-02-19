@@ -102,8 +102,8 @@ const ProblemSection = () => {
     const node = problemNodes[index];
     const centerX = 200;
     const centerY = 210;
-    const radiusX = 145;
-    const radiusY = 135;
+    const radiusX = 170;
+    const radiusY = 160;
     
     const x = centerX + (node.position.x - 0.5) * radiusX * 2;
     const y = centerY + (node.position.y - 0.5) * radiusY * 2;
