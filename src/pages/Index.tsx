@@ -67,7 +67,7 @@ const Index = () => {
       
       {/* Disclaimer */}
       <div className="w-full text-center px-6 py-6 text-xs text-muted-foreground/50 italic">
-        This Website is a Demonstration and Representation of our Idea and is by no means a finished product
+        This website is a demonstration and representation of our idea and is by no means a finished product
       </div>
 
       {/* Footer */}
