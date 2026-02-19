@@ -194,7 +194,7 @@ const SolutionSection = () => {
   const Icon = slide.icon;
 
   return (
-    <section ref={sectionRef} className="relative py-32 md:py-48 overflow-hidden">
+    <section ref={sectionRef} className="relative py-32 md:py-48">
       <AmbientGlow color="primary" size="xl" intensity="medium" position="center" />
       
       <div className="relative z-10 container mx-auto px-6 lg:px-20 xl:px-28">

@@ -121,7 +121,7 @@ const ProcessOverviewSection = () => {
   };
 
   return (
-    <section ref={sectionRef} className="relative py-32 md:py-48 overflow-hidden">
+    <section ref={sectionRef} className="relative py-32 md:py-48">
       <AmbientGlow color="primary" size="lg" intensity="subtle" position="center" />
       <AmbientGlow color="accent" size="md" intensity="subtle" position="right" className="top-1/3" />
 
