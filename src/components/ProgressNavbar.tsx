@@ -122,7 +122,7 @@ const ProgressNavbar = () => {
         )}
         
         {/* Section indicators */}
-        <div className="relative flex flex-col gap-6">
+        <div className="relative flex flex-col gap-6 z-20">
           {sections.map((section, index) => {
             const isActive = index === activeSection;
             const isPast = index < activeSection;
