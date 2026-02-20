@@ -160,8 +160,8 @@
 
   html {
     scroll-behavior: smooth;
-    /* Proportional scaling: comfortable baseline, scales with viewport */
-    font-size: clamp(16px, 1.15vw, 19px);
+    /* Proportional scaling: balanced baseline */
+    font-size: clamp(14.5px, 1vw, 17px);
   }
 
   body {
