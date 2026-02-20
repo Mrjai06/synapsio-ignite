@@ -171,6 +171,45 @@ const marketLandscapeSystems = [
           "Requires significant customization",
           "No autonomous execution features"
         ]
+      },
+      {
+        name: "Oracle",
+        facts: [
+          "Comprehensive cloud ERP and SCM suite",
+          "Strong in financials, manufacturing, and logistics",
+          "Deep integration across Oracle Cloud applications"
+        ],
+        arguments: [
+          "Complex and costly implementation",
+          "Vendor lock-in with Oracle ecosystem",
+          "Limited flexibility for SMEs"
+        ]
+      },
+      {
+        name: "Microsoft",
+        facts: [
+          "Dynamics 365 covers ERP, CRM, and supply chain",
+          "Strong Azure cloud and AI integration",
+          "Large partner ecosystem and enterprise adoption"
+        ],
+        arguments: [
+          "Fragmented product suite across modules",
+          "Limited autonomous supply chain capabilities",
+          "Requires significant partner customization"
+        ]
+      },
+      {
+        name: "Infor",
+        facts: [
+          "Industry-specific cloud ERP solutions",
+          "Strong in manufacturing and distribution verticals",
+          "AI/ML capabilities via Coleman platform"
+        ],
+        arguments: [
+          "Smaller ecosystem compared to SAP/Oracle",
+          "Limited cross-company intelligence",
+          "Niche focus limits broader SCM coverage"
+        ]
       }
     ]
   },
@@ -216,6 +255,52 @@ const marketLandscapeSystems = [
           "Complex implementation requirements",
           "Limited SME focus",
           "Traditional human-driven workflows"
+        ]
+      }
+    ]
+  },
+  {
+    id: "planning",
+    systemType: "Planning & Orchestration",
+    description: "Advanced supply chain planning and decision intelligence platforms",
+    businesses: [
+      {
+        name: "Kinaxis",
+        facts: [
+          "Leader in concurrent planning and S&OP",
+          "Real-time scenario analysis capabilities",
+          "Strong in complex multi-tier supply chains"
+        ],
+        arguments: [
+          "High cost and long implementation timelines",
+          "Planning-focused — limited execution capabilities",
+          "No integrated marketplace or autonomous agents"
+        ]
+      },
+      {
+        name: "Blue Yonder",
+        facts: [
+          "End-to-end supply chain platform (Panasonic-backed)",
+          "Strong demand forecasting and warehouse management",
+          "Large enterprise customer base"
+        ],
+        arguments: [
+          "Legacy architecture limits agility",
+          "Slow AI adoption compared to cloud-native players",
+          "Complex integration across modules"
+        ]
+      },
+      {
+        name: "o9 Solutions",
+        facts: [
+          "AI-native decision intelligence platform",
+          "Strong integrated business planning capabilities",
+          "Modern cloud architecture with knowledge graph"
+        ],
+        arguments: [
+          "Enterprise-focused with high price point",
+          "Limited SME accessibility",
+          "No autonomous execution or marketplace layer"
         ]
       }
     ]
