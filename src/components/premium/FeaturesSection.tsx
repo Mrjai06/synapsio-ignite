@@ -1069,31 +1069,9 @@ const OperationsVisualization = ({ state }: { state: SystemState }) => {
         </motion.g>
       )}
 
-      {/* Execution PULSES at end */}
+      {/* Execution checkmark at end */}
       {state === "execution" && (
-        <motion.g>
-          {[0, 1, 2].map((i) => (
-            <motion.circle
-              key={i}
-              cx={480}
-              cy={150}
-              r="15"
-              fill="none"
-              stroke="hsl(var(--primary))"
-              strokeWidth="2"
-              animate={{
-                r: [15, 30, 45],
-                opacity: [0.8, 0.4, 0],
-              }}
-              transition={{
-                duration: 1.5,
-                delay: i * 0.5,
-                repeat: Infinity,
-              }}
-            />
-          ))}
-          <text x={500} y={155} textAnchor="start" className="fill-primary text-xl">✓</text>
-        </motion.g>
+        <text x={500} y={155} textAnchor="start" className="fill-primary text-xl">✓</text>
       )}
 
     </svg>
