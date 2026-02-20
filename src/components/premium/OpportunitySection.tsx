@@ -5,16 +5,28 @@ import { AnimatedTabs } from "@/components/ui/animated-tabs";
 import { FloatingSurface, GlassPanel, AmbientGlow } from "./DepthSystem";
 import sapLogo from "@/assets/logos/sap.png";
 import odooLogo from "@/assets/logos/odoo.png";
+import oracleLogo from "@/assets/logos/oracle.png";
+import microsoftLogo from "@/assets/logos/microsoft.png";
+import inforLogo from "@/assets/logos/infor.png";
 import coupaLogo from "@/assets/logos/coupa.png";
 import tactoLogo from "@/assets/logos/tacto.png";
 import jaggaerLogo from "@/assets/logos/jaggaer.png";
+import kinaxisLogo from "@/assets/logos/kinaxis.png";
+import blueyonderLogo from "@/assets/logos/blueyonder.png";
+import o9Logo from "@/assets/logos/o9.png";
 
 const companyLogos: Record<string, string> = {
   SAP: sapLogo,
   Odoo: odooLogo,
+  Oracle: oracleLogo,
+  Microsoft: microsoftLogo,
+  Infor: inforLogo,
   Coupa: coupaLogo,
   Tacto: tactoLogo,
   Jaggaer: jaggaerLogo,
+  Kinaxis: kinaxisLogo,
+  "Blue Yonder": blueyonderLogo,
+  "o9 Solutions": o9Logo,
 };
 
 // Market Opportunity Data (Pyramid)
