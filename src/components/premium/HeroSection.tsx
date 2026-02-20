@@ -42,7 +42,7 @@ const HeroSection = () => {
       }} />
 
       {/* TOP: Branding + Headline centered */}
-      <div className="absolute top-0 left-0 right-0 z-10 px-4 lg:px-8 pt-24 flex flex-col items-center text-center gap-4 transition-all duration-700" style={{
+      <div className="absolute top-0 left-0 right-0 z-10 px-4 lg:px-8 pt-36 flex flex-col items-center text-center gap-4 transition-all duration-700" style={{
         opacity: Math.max(0, contentOpacity),
         transform: `translateY(${contentTranslate}px)`
       }}>
