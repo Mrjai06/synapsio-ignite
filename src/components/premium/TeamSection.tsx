@@ -25,8 +25,7 @@ const team = [
     name: "You?",
     title: "Co-founder & CTO",
     description: "• We're looking for a technical co-founder\n• Adept in programming and software engineering\n• Ready to build the future of supply chain AI",
-    imageUrl: "",
-    linkedinUrl: "#"
+    imageUrl: ""
   }
 ];
 
