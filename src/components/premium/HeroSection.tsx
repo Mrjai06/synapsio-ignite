@@ -43,37 +43,35 @@ const HeroSection = () => {
       
       
       {/* Content */}
-      <div className="relative z-10 w-full px-8 lg:px-20 xl:px-28 transition-all duration-700" style={{
+      <div className="relative z-10 w-full px-8 lg:px-20 xl:px-28 transition-all duration-700 flex items-center justify-center" style={{
       opacity: Math.max(0, contentOpacity),
       transform: `translateY(${contentTranslate}px)`
     }}>
-        <div className="w-full flex flex-col min-h-[80vh] justify-between py-12">
-          {/* Top: Branding */}
-          <div className="animate-fade-in flex items-center gap-4" style={{
+        <div className="w-full max-w-7xl flex flex-col items-center text-center gap-10">
+          {/* Branding - bigger */}
+          <div className="animate-fade-in flex items-center gap-5" style={{
           animationDelay: "0.2s",
           animationDuration: "1.2s"
         }}>
-            <img src={synapsioLogo} alt="Synapsio" className="h-10 w-auto opacity-60" />
-            <span className="tracking-[0.5em] uppercase text-muted-foreground/40 font-light text-4xl font-mono">
+            <img src={synapsioLogo} alt="Synapsio" className="h-16 w-auto opacity-60" />
+            <span className="tracking-[0.5em] uppercase text-muted-foreground/40 font-light text-5xl font-mono">
               Synapsio
             </span>
           </div>
           
-          {/* Middle: Headline full width */}
-          <div className="w-full">
-            <h1 className="text-5xl md:text-7xl lg:text-[5.5rem] xl:text-[7rem] font-light tracking-[-0.03em] animate-fade-in leading-[0.92]" style={{
-            animationDelay: "0.4s",
-            animationDuration: "1.4s"
-          }}>
-              <span className="text-foreground">Connections</span>
-              <br />
-              <span className="text-primary">you can rely on</span>
-            </h1>
-          </div>
+          {/* Headline - bigger, centered */}
+          <h1 className="text-6xl md:text-8xl lg:text-[7rem] xl:text-[9rem] font-light tracking-[-0.03em] animate-fade-in leading-[0.88] w-full" style={{
+          animationDelay: "0.4s",
+          animationDuration: "1.4s"
+        }}>
+            <span className="text-foreground">Connections</span>
+            <br />
+            <span className="text-primary">you can rely on</span>
+          </h1>
           
-          {/* Bottom: Subtitle left, CTA right */}
-          <div className="flex flex-col lg:flex-row items-start lg:items-end justify-between gap-8 w-full">
-            <p className="text-lg md:text-xl max-w-lg font-light leading-[1.7] animate-fade-in lg:text-2xl text-primary" style={{
+          {/* Subtitle + CTA row */}
+          <div className="flex flex-col lg:flex-row items-center justify-between gap-8 w-full mt-4">
+            <p className="text-lg md:text-xl max-w-lg font-light leading-[1.7] animate-fade-in lg:text-2xl text-primary text-center lg:text-left" style={{
             animationDelay: "0.6s",
             animationDuration: "1.4s"
           }}>A fully automated AI-based SCM-solution used for the management and creation of supply-chains</p>
