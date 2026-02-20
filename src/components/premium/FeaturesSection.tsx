@@ -187,7 +187,7 @@ const FeaturesSection = () => {
           <motion.div 
             className="flex gap-4 items-stretch"
             layout
-            transition={{ duration: 0 }}
+            transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
           >
             {features.map((feature) => {
               const isActive = activeFeature === feature.id;
@@ -203,7 +203,7 @@ const FeaturesSection = () => {
                   animate={{ 
                     flex: isActive ? "1 1 auto" : isInactive ? "0 0 60px" : "1 1 0%",
                   }}
-                  transition={{ duration: 0 }}
+                  transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
                   onClick={() => {
                     if (cardsRef.current) {
                       const rect = cardsRef.current.getBoundingClientRect();
@@ -234,12 +234,12 @@ const FeaturesSection = () => {
                   <motion.div 
                     layout="position"
                     className={`${isInactive ? "p-3" : "p-5"}`}
-                    transition={{ duration: 0 }}
+                    transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
                   >
                     <motion.div 
                       layout="position"
                       className={`flex items-center ${isInactive ? "flex-col gap-2" : "gap-3 mb-3"}`}
-                      transition={{ duration: 0 }}
+                      transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
                     >
                       <motion.div 
                         layout
@@ -250,7 +250,7 @@ const FeaturesSection = () => {
                           width: isInactive ? 32 : 40,
                           height: isInactive ? 32 : 40
                         }}
-                        transition={{ duration: 0 }}
+                        transition={{ duration: 0.35, ease: "easeOut" }}
                         style={{ transition: "background-color 0.5s" }}
                       >
                         <Icon className={`transition-all duration-400 ${
@@ -262,10 +262,10 @@ const FeaturesSection = () => {
                         {!isInactive && (
                           <motion.h3 
                             key="title"
-                            initial={{ opacity: 1, x: 0 }}
+                            initial={{ opacity: 0, x: -8 }}
                             animate={{ opacity: 1, x: 0 }}
-                            exit={{ opacity: 0 }}
-                            transition={{ duration: 0 }}
+                            exit={{ opacity: 0, x: -8 }}
+                            transition={{ duration: 0.3, ease: "easeOut" }}
                             className={`font-medium text-base whitespace-nowrap ${
                               isActive ? "text-accent" : "text-foreground"
                             }`}
@@ -288,14 +288,14 @@ const FeaturesSection = () => {
                       )}
                     </motion.div>
                     
-                    <AnimatePresence mode="wait">
+                      <AnimatePresence mode="wait">
                       {!isInactive && (
                         <motion.p 
                           key="description"
-                          initial={{ opacity: 1, y: 0 }}
+                          initial={{ opacity: 0, y: 6 }}
                           animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0 }}
-                          transition={{ duration: 0 }}
+                          exit={{ opacity: 0, y: 6 }}
+                          transition={{ duration: 0.3, delay: 0.05, ease: "easeOut" }}
                           className="text-sm text-muted-foreground/50 leading-relaxed"
                         >
                           {feature.description}
@@ -308,10 +308,10 @@ const FeaturesSection = () => {
                   <AnimatePresence mode="wait">
                     {isActive && (
                       <motion.div
-                        initial={{ opacity: 1, height: "auto" }}
+                        initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: "auto" }}
                         exit={{ opacity: 0, height: 0 }}
-                        transition={{ duration: 0 }}
+                        transition={{ duration: 0.45, ease: [0.25, 0.1, 0.25, 1] }}
                         className="overflow-hidden"
                       >
                         <div className="px-5 pb-5">
@@ -393,10 +393,10 @@ const FeaturesSection = () => {
         <AnimatePresence>
           {activeFeature !== "" && (
             <motion.div
-              initial={{ opacity: 1, height: "auto" }}
+              initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0 }}
+              transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
               className="overflow-hidden"
             >
               {/* Live Explanation Panel - Above visualization */}
