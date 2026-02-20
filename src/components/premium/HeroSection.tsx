@@ -42,16 +42,16 @@ const HeroSection = () => {
       }} />
 
       {/* TOP: Branding + Headline centered */}
-      <div className="absolute top-0 left-0 right-0 z-10 px-4 lg:px-8 pt-36 flex flex-col items-center text-center gap-4 transition-all duration-700" style={{
+      <div className="absolute inset-0 z-10 px-4 lg:px-8 flex flex-col items-center justify-center text-center gap-6 transition-all duration-700" style={{
         opacity: Math.max(0, contentOpacity),
         transform: `translateY(${contentTranslate}px)`
       }}>
-        <div className="animate-fade-in flex items-center gap-4" style={{
+        <div className="animate-fade-in flex items-center gap-5" style={{
           animationDelay: "0.2s",
           animationDuration: "1.2s"
         }}>
-          <img src={synapsioLogo} alt="Synapsio" className="h-12 w-auto opacity-60" />
-          <span className="tracking-[0.5em] uppercase text-muted-foreground/40 font-light text-4xl font-mono">
+          <img src={synapsioLogo} alt="Synapsio" className="h-20 w-auto opacity-60" />
+          <span className="tracking-[0.5em] uppercase text-muted-foreground/40 font-light text-6xl font-mono">
             Synapsio
           </span>
         </div>
