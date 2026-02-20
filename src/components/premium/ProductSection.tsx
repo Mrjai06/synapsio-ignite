@@ -108,7 +108,7 @@ const StepItem = ({
             </div>
           </motion.div>
         </TooltipTrigger>
-        <TooltipContent side={isLeft ? "right" : "left"} className="max-w-xs text-xs z-[100]">
+        <TooltipContent side={isLeft ? "top" : "left"} className="max-w-xs text-xs z-[100]">
           {step.tooltip}
         </TooltipContent>
       </Tooltip>
