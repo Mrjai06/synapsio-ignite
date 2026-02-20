@@ -43,13 +43,13 @@ const HeroSection = () => {
       
       
       {/* Content */}
-      <div className="relative z-10 container mx-auto px-8 lg:px-20 xl:px-28 transition-all duration-700" style={{
+      <div className="relative z-10 w-full px-8 lg:px-20 xl:px-28 transition-all duration-700" style={{
       opacity: Math.max(0, contentOpacity),
       transform: `translateY(${contentTranslate}px)`
     }}>
-        <div className="max-w-5xl lg:max-w-2xl xl:max-w-3xl">
-          {/* Branding - very subtle */}
-          <div className="mb-20 animate-fade-in flex items-center gap-4" style={{
+        <div className="w-full flex flex-col min-h-[80vh] justify-between py-12">
+          {/* Top: Branding */}
+          <div className="animate-fade-in flex items-center gap-4" style={{
           animationDelay: "0.2s",
           animationDuration: "1.2s"
         }}>
@@ -59,37 +59,38 @@ const HeroSection = () => {
             </span>
           </div>
           
-          {/* Headline - larger, more breathing room */}
-          <h1 className="text-5xl md:text-7xl lg:text-[5.5rem] font-light tracking-[-0.03em] mb-14 animate-fade-in leading-[0.92] xl:text-7xl" style={{
-          animationDelay: "0.4s",
-          animationDuration: "1.4s"
-        }}>
-            <span className="text-foreground">Connections</span>
-            <br />
-            <span className="text-primary">you can rely </span>
-            <br />
-            <span className="text-primary">on</span>
-          </h1>
+          {/* Middle: Headline full width */}
+          <div className="w-full">
+            <h1 className="text-5xl md:text-7xl lg:text-[5.5rem] xl:text-[7rem] font-light tracking-[-0.03em] animate-fade-in leading-[0.92]" style={{
+            animationDelay: "0.4s",
+            animationDuration: "1.4s"
+          }}>
+              <span className="text-foreground">Connections</span>
+              <br />
+              <span className="text-primary">you can rely on</span>
+            </h1>
+          </div>
           
-          {/* Subheadline - more space */}
-          <p className="text-lg md:text-xl max-w-xl mb-20 font-light leading-[1.7] animate-fade-in lg:text-2xl text-primary" style={{
-          animationDelay: "0.6s",
-          animationDuration: "1.4s"
-        }}>A fully automated AI-based SCM-solution used for the management and creation of supply-chains</p>
-          
-          {/* CTAs - floating surfaces */}
-          <div className="flex flex-col sm:flex-row gap-6 animate-fade-in" style={{
-          animationDelay: "0.8s",
-          animationDuration: "1.4s"
-        }}>
-            <FloatingSurface elevation="high" glow glowColor="primary" className="rounded-full">
-              <a href="/Synapsio_Pitch.pdf" target="_blank" rel="noopener noreferrer">
-                <Button size="lg" className="group bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-12 py-8 text-sm tracking-wide font-normal transition-all duration-1000 hover:scale-[1.02]">
-                  View Pitchdeck
-                  <ArrowRight className="ml-3 h-4 w-4 transition-transform duration-700 group-hover:translate-x-1" />
-                </Button>
-              </a>
-            </FloatingSurface>
+          {/* Bottom: Subtitle left, CTA right */}
+          <div className="flex flex-col lg:flex-row items-start lg:items-end justify-between gap-8 w-full">
+            <p className="text-lg md:text-xl max-w-lg font-light leading-[1.7] animate-fade-in lg:text-2xl text-primary" style={{
+            animationDelay: "0.6s",
+            animationDuration: "1.4s"
+          }}>A fully automated AI-based SCM-solution used for the management and creation of supply-chains</p>
+            
+            <div className="flex-shrink-0 animate-fade-in" style={{
+            animationDelay: "0.8s",
+            animationDuration: "1.4s"
+          }}>
+              <FloatingSurface elevation="high" glow glowColor="primary" className="rounded-full">
+                <a href="/Synapsio_Pitch.pdf" target="_blank" rel="noopener noreferrer">
+                  <Button size="lg" className="group bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-12 py-8 text-sm tracking-wide font-normal transition-all duration-1000 hover:scale-[1.02]">
+                    View Pitchdeck
+                    <ArrowRight className="ml-3 h-4 w-4 transition-transform duration-700 group-hover:translate-x-1" />
+                  </Button>
+                </a>
+              </FloatingSurface>
+            </div>
           </div>
         </div>
       </div>
