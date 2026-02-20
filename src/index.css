@@ -161,7 +161,7 @@
   html {
     scroll-behavior: smooth;
     /* Proportional scaling: balanced baseline */
-    font-size: clamp(13.5px, 0.92vw, 16px);
+    font-size: clamp(12.5px, 0.82vw, 15px);
   }
 
   body {
