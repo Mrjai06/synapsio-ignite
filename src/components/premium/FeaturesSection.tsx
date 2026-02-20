@@ -1092,7 +1092,7 @@ const OperationsVisualization = ({ state }: { state: SystemState }) => {
               }}
             />
           ))}
-          <text x={480} y={155} textAnchor="middle" className="fill-primary text-xl">✓</text>
+          <text x={500} y={155} textAnchor="start" className="fill-primary text-xl">✓</text>
         </motion.g>
       )}
 
