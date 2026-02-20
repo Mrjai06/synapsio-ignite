@@ -15,15 +15,15 @@ const HeroSection = () => {
       const progress = Math.max(0, Math.min(1, -rect.top / rect.height));
       setScrollProgress(progress);
     };
-    window.addEventListener("scroll", handleScroll, {
-      passive: true
-    });
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
   const contentOpacity = 1 - scrollProgress * 1.5;
   const contentTranslate = scrollProgress * 40;
-  return <section ref={sectionRef} className="relative min-h-[110vh] flex items-center justify-center overflow-hidden" style={{ zIndex: 2 }}>
-      {/* Deep background fill - only behind canvas, fades at bottom */}
+
+  return (
+    <section ref={sectionRef} className="relative min-h-[110vh] overflow-hidden" style={{ zIndex: 2 }}>
+      {/* Deep background fill */}
       <div className="absolute inset-0 bg-background" style={{ 
         maskImage: "linear-gradient(to bottom, black 0%, black 60%, transparent 100%)",
         WebkitMaskImage: "linear-gradient(to bottom, black 0%, black 60%, transparent 100%)"
@@ -38,17 +38,14 @@ const HeroSection = () => {
       
       {/* Depth layers */}
       <div className="absolute inset-0 pointer-events-none transition-opacity duration-1000" style={{
-      background: `radial-gradient(ellipse at 50% 40%, transparent 0%, hsl(var(--background) / ${0.2 + scrollProgress * 0.5}) 70%)`
-    }} />
-      
-      
-      {/* Content */}
-      {/* Top content: logo + headline pinned near top */}
-      <div className="absolute top-0 left-0 right-0 z-10 px-8 lg:px-20 xl:px-28 pt-28 flex flex-col items-center text-center gap-6 transition-all duration-700" style={{
+        background: `radial-gradient(ellipse at 50% 40%, transparent 0%, hsl(var(--background) / ${0.2 + scrollProgress * 0.5}) 70%)`
+      }} />
+
+      {/* TOP: Branding */}
+      <div className="absolute top-0 left-0 right-0 z-10 px-8 lg:px-20 xl:px-28 pt-28 transition-all duration-700" style={{
         opacity: Math.max(0, contentOpacity),
         transform: `translateY(${contentTranslate}px)`
       }}>
-        {/* Branding */}
         <div className="animate-fade-in flex items-center gap-5" style={{
           animationDelay: "0.2s",
           animationDuration: "1.2s"
@@ -58,24 +55,35 @@ const HeroSection = () => {
             Synapsio
           </span>
         </div>
+      </div>
 
-        {/* Headline */}
-        <h1 className="text-6xl md:text-8xl lg:text-[7rem] xl:text-[9rem] font-light tracking-[-0.03em] animate-fade-in leading-[0.88] w-full" style={{
+      {/* MIDDLE: Headline — full viewport width, stretched */}
+      <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 z-10 px-3 lg:px-6 transition-all duration-700" style={{
+        opacity: Math.max(0, contentOpacity),
+        transform: `translateY(calc(-50% + ${contentTranslate}px))`
+      }}>
+        <h1 className="w-full animate-fade-in leading-[0.85] text-center" style={{
+          fontSize: "clamp(4rem, 13.5vw, 18rem)",
+          letterSpacing: "-0.04em",
           animationDelay: "0.4s",
           animationDuration: "1.4s"
         }}>
-          <span className="text-foreground">Connections</span>
-          <br />
-          <span className="text-primary">you can rely on</span>
+          <span className="text-foreground block font-light">Connections</span>
+          <span className="text-primary block font-light">you can rely on</span>
         </h1>
       </div>
 
-      {/* Middle: CTA button centered over sphere */}
-      <div className="relative z-10 flex flex-col items-center gap-4 mt-32 transition-all duration-700" style={{
+      {/* BOTTOM: Subtitle left + CTA right */}
+      <div className="absolute bottom-0 left-0 right-0 z-10 px-8 lg:px-20 xl:px-28 pb-24 flex flex-col sm:flex-row items-center justify-between gap-8 transition-all duration-700" style={{
         opacity: Math.max(0, contentOpacity),
         transform: `translateY(${contentTranslate}px)`
       }}>
-        <div className="animate-fade-in" style={{
+        <p className="text-lg md:text-xl max-w-md font-light leading-[1.7] animate-fade-in text-primary/70" style={{
+          animationDelay: "0.6s",
+          animationDuration: "1.4s"
+        }}>A fully automated AI-based SCM-solution used for the management and creation of supply-chains</p>
+
+        <div className="animate-fade-in flex-shrink-0" style={{
           animationDelay: "0.8s",
           animationDuration: "1.4s"
         }}>
@@ -88,30 +96,27 @@ const HeroSection = () => {
             </a>
           </FloatingSurface>
         </div>
-        <p className="text-base md:text-lg max-w-md font-light leading-[1.7] animate-fade-in text-primary/70 text-center" style={{
-          animationDelay: "0.6s",
-          animationDuration: "1.4s"
-        }}>A fully automated AI-based SCM-solution used for the management and creation of supply-chains</p>
       </div>
-      
-      {/* Scroll hint - more subtle */}
-      <div className="absolute bottom-20 left-1/2 -translate-x-1/2 transition-opacity duration-1000" style={{
-      opacity: 1 - scrollProgress * 4
-    }}>
+
+      {/* Scroll hint */}
+      <div className="absolute bottom-20 left-1/2 -translate-x-1/2 transition-opacity duration-1000 z-10" style={{
+        opacity: 1 - scrollProgress * 4
+      }}>
         <div className="flex flex-col items-center gap-4">
           <span className="text-[0.625rem] tracking-[0.3em] uppercase text-muted-foreground/25">Scroll</span>
           <div className="w-5 h-8 rounded-full border border-border/15 flex justify-center pt-1.5">
             <div className="w-0.5 h-1.5 bg-muted-foreground/25 rounded-full animate-bounce" style={{
-            animationDuration: "2.5s"
-          }} />
+              animationDuration: "2.5s"
+            }} />
           </div>
         </div>
       </div>
       
-      {/* Bottom transition - fully transparent at the edge */}
+      {/* Bottom transition */}
       <div className="absolute bottom-0 left-0 right-0 h-[70vh] pointer-events-none">
         <div className="absolute inset-0 bg-gradient-to-t from-transparent via-transparent to-transparent" />
       </div>
-    </section>;
+    </section>
+  );
 };
 export default HeroSection;
