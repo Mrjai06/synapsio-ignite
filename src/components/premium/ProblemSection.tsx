@@ -74,7 +74,7 @@ const problemNodes: ProblemNode[] = [
     description: "Criminal activity and human error introduce unpredictable disruptions, from fraud and cyberattacks to costly operational mistakes.",
     impacts: [
       "Cybercrime costs supply chains billions annually",
-      "Human errors cause up to 80% of supply chain disruptions",
+      "Human error, such as miscounts, poor forecasting and communication lapses cause significant operational disruptions and losses",
       "Lack of traceability enables fraud and counterfeiting"
     ],
     position: { x: 0.025, y: 0.345 },
