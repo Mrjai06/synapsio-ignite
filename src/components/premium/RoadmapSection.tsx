@@ -10,27 +10,31 @@ const roadmapData = [
       <div>
         <div className="flex items-center gap-3 mb-4">
           <span className="text-xs tracking-wider px-3 py-1 rounded-full border bg-primary/10 text-primary border-primary/20">
-            Completed
+            In Progress
+          </span>
+          <span className="flex items-center gap-1.5 text-xs text-primary/70">
+            <Clock className="w-3 h-3" />
+            Current Phase
           </span>
         </div>
-        <FloatingSurface elevation="low" className="rounded-2xl">
-          <GlassPanel intensity="subtle" bordered className="rounded-2xl p-6 md:p-8">
+        <FloatingSurface elevation="medium" glow glowColor="primary" className="rounded-2xl">
+          <GlassPanel intensity="medium" bordered className="rounded-2xl p-6 md:p-8">
             <h4 className="text-xl font-medium text-foreground mb-3">Foundation</h4>
             <p className="text-sm text-muted-foreground/60 leading-relaxed mb-6">
-              Core platform architecture, initial integrations with major ERPs, and pilot customer deployments.
+              Core platform architecture and investor-ready traction.
             </p>
             <div className="space-y-2">
               <div className="flex items-center gap-3 text-sm">
-                <Check className="w-4 h-4 text-primary flex-shrink-0" />
-                <span className="text-muted-foreground/50">Platform MVP launch</span>
+                <ArrowRight className="w-3 h-3 text-primary/50 flex-shrink-0" />
+                <span className="text-muted-foreground/40">Platform MVP launch</span>
               </div>
               <div className="flex items-center gap-3 text-sm">
-                <Check className="w-4 h-4 text-primary flex-shrink-0" />
-                <span className="text-muted-foreground/50">SAP & Oracle connectors</span>
+                <ArrowRight className="w-3 h-3 text-primary/50 flex-shrink-0" />
+                <span className="text-muted-foreground/40">ERP connectors</span>
               </div>
               <div className="flex items-center gap-3 text-sm">
-                <Check className="w-4 h-4 text-primary flex-shrink-0" />
-                <span className="text-muted-foreground/50">3 pilot customers live</span>
+                <ArrowRight className="w-3 h-3 text-primary/50 flex-shrink-0" />
+                <span className="text-muted-foreground/40">Pilot customer deployments</span>
               </div>
             </div>
           </GlassPanel>
@@ -43,16 +47,12 @@ const roadmapData = [
     content: (
       <div>
         <div className="flex items-center gap-3 mb-4">
-          <span className="text-xs tracking-wider px-3 py-1 rounded-full border bg-primary/10 text-primary border-primary/20">
-            In Progress
-          </span>
-          <span className="flex items-center gap-1.5 text-xs text-primary/70">
-            <Clock className="w-3 h-3" />
-            Current Phase
+          <span className="text-xs tracking-wider px-3 py-1 rounded-full border bg-muted/50 text-muted-foreground/50 border-border/20">
+            Upcoming
           </span>
         </div>
-        <FloatingSurface elevation="medium" glow glowColor="primary" className="rounded-2xl">
-          <GlassPanel intensity="medium" bordered className="rounded-2xl p-6 md:p-8">
+        <FloatingSurface elevation="low" className="rounded-2xl">
+          <GlassPanel intensity="subtle" bordered className="rounded-2xl p-6 md:p-8 opacity-60">
             <h4 className="text-xl font-medium text-foreground mb-3">Intelligence Layer</h4>
             <p className="text-sm text-muted-foreground/60 leading-relaxed mb-6">
               Advanced ML models for demand forecasting, risk detection, and anomaly identification.
