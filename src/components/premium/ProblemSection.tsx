@@ -61,7 +61,8 @@ const problemNodes: ProblemNode[] = [
     impacts: [
       "Higher volatility in global trade",
       "Supply disruptions and planning uncertainty",
-      "The Economist Intelligence Unit estimates poor supply-chain management costs $1 Trillion annually"
+      "The Economist Intelligence Unit estimates poor supply-chain management costs $1 Trillion annually",
+      "New environmental and economic regulations for supply chains create difficulties for supply-chain planning"
     ],
     position: { x: 0.205, y: 0.905 },
   },
