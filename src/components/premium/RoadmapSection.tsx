@@ -5,7 +5,7 @@ import { Timeline } from "@/components/ui/timeline";
 
 const roadmapData = [
   {
-    title: "Q1 2025",
+    title: "Q2–Q4 2026",
     content: (
       <div>
         <div className="flex items-center gap-3 mb-4">
@@ -26,11 +26,11 @@ const roadmapData = [
             <div className="space-y-2">
               <div className="flex items-center gap-3 text-sm">
                 <ArrowRight className="w-3 h-3 text-primary/50 flex-shrink-0" />
-                <span className="text-muted-foreground/40">Platform MVP launch</span>
+                <span className="text-muted-foreground/40">AI-Native B2B marketplace and SCM-Core MVP</span>
               </div>
               <div className="flex items-center gap-3 text-sm">
                 <ArrowRight className="w-3 h-3 text-primary/50 flex-shrink-0" />
-                <span className="text-muted-foreground/40">ERP connectors</span>
+                <span className="text-muted-foreground/40">Custom model training</span>
               </div>
               <div className="flex items-center gap-3 text-sm">
                 <ArrowRight className="w-3 h-3 text-primary/50 flex-shrink-0" />
@@ -43,7 +43,7 @@ const roadmapData = [
     ),
   },
   {
-    title: "Q2 2025",
+    title: "Q1 2027",
     content: (
       <div>
         <div className="flex items-center gap-3 mb-4">
@@ -55,20 +55,24 @@ const roadmapData = [
           <GlassPanel intensity="subtle" bordered className="rounded-2xl p-6 md:p-8 opacity-60">
             <h4 className="text-xl font-medium text-foreground mb-3">Intelligence Layer</h4>
             <p className="text-sm text-muted-foreground/60 leading-relaxed mb-6">
-              Advanced ML models for demand forecasting, risk detection, and anomaly identification.
+              Operational automation in recurring workflows.
             </p>
             <div className="space-y-2">
               <div className="flex items-center gap-3 text-sm">
                 <ArrowRight className="w-3 h-3 text-primary/50 flex-shrink-0" />
-                <span className="text-muted-foreground/40">Predictive analytics engine</span>
+                <span className="text-muted-foreground/40">Reduced manual procurement intervention</span>
               </div>
               <div className="flex items-center gap-3 text-sm">
                 <ArrowRight className="w-3 h-3 text-primary/50 flex-shrink-0" />
-                <span className="text-muted-foreground/40">Real-time alerting system</span>
+                <span className="text-muted-foreground/40">Dynamic demand forecasting</span>
               </div>
               <div className="flex items-center gap-3 text-sm">
                 <ArrowRight className="w-3 h-3 text-primary/50 flex-shrink-0" />
-                <span className="text-muted-foreground/40">Custom model training</span>
+                <span className="text-muted-foreground/40">Autonomous auto-sourcing</span>
+              </div>
+              <div className="flex items-center gap-3 text-sm">
+                <ArrowRight className="w-3 h-3 text-primary/50 flex-shrink-0" />
+                <span className="text-muted-foreground/40">Predictive restocking workflows</span>
               </div>
             </div>
           </GlassPanel>
@@ -77,7 +81,7 @@ const roadmapData = [
     ),
   },
   {
-    title: "Q3 2025",
+    title: "Q2 2027",
     content: (
       <div>
         <div className="flex items-center gap-3 mb-4">
@@ -89,20 +93,28 @@ const roadmapData = [
           <GlassPanel intensity="subtle" bordered className="rounded-2xl p-6 md:p-8 opacity-60">
             <h4 className="text-xl font-medium text-foreground mb-3">Automation Suite</h4>
             <p className="text-sm text-muted-foreground/60 leading-relaxed mb-6">
-              End-to-end workflow automation, autonomous decision-making, and supplier management.
+              Self-optimizing supply-coordination and autonomous decision-making.
             </p>
             <div className="space-y-2">
               <div className="flex items-center gap-3 text-sm">
                 <ArrowRight className="w-3 h-3 text-primary/50 flex-shrink-0" />
-                <span className="text-muted-foreground/40">Workflow automation builder</span>
+                <span className="text-muted-foreground/40">AI-to-AI Coordination</span>
               </div>
               <div className="flex items-center gap-3 text-sm">
                 <ArrowRight className="w-3 h-3 text-primary/50 flex-shrink-0" />
-                <span className="text-muted-foreground/40">Autonomous reordering</span>
+                <span className="text-muted-foreground/40">Cross-company supply optimization</span>
               </div>
               <div className="flex items-center gap-3 text-sm">
                 <ArrowRight className="w-3 h-3 text-primary/50 flex-shrink-0" />
-                <span className="text-muted-foreground/40">Supplier portal launch</span>
+                <span className="text-muted-foreground/40">Self-learning supplier models</span>
+              </div>
+              <div className="flex items-center gap-3 text-sm">
+                <ArrowRight className="w-3 h-3 text-primary/50 flex-shrink-0" />
+                <span className="text-muted-foreground/40">Network-wide intelligence</span>
+              </div>
+              <div className="flex items-center gap-3 text-sm">
+                <ArrowRight className="w-3 h-3 text-primary/50 flex-shrink-0" />
+                <span className="text-muted-foreground/40">End-to-End Management</span>
               </div>
             </div>
           </GlassPanel>
@@ -111,7 +123,7 @@ const roadmapData = [
     ),
   },
   {
-    title: "Q4 2025",
+    title: "Q3–Q4 2027",
     content: (
       <div>
         <div className="flex items-center gap-3 mb-4">
@@ -133,10 +145,6 @@ const roadmapData = [
               <div className="flex items-center gap-3 text-sm">
                 <ArrowRight className="w-3 h-3 text-primary/50 flex-shrink-0" />
                 <span className="text-muted-foreground/40">Advanced BI dashboards</span>
-              </div>
-              <div className="flex items-center gap-3 text-sm">
-                <ArrowRight className="w-3 h-3 text-primary/50 flex-shrink-0" />
-                <span className="text-muted-foreground/40">Partner marketplace</span>
               </div>
             </div>
           </GlassPanel>
