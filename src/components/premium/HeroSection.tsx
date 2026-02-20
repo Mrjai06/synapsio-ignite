@@ -56,14 +56,14 @@ const HeroSection = () => {
           </span>
         </div>
 
-        <h1 className="w-full animate-fade-in leading-[0.85] text-center" style={{
-          fontSize: "clamp(2.2rem, 7vw, 10rem)",
+        <h1 className="w-full animate-fade-in leading-[0.85] text-center whitespace-nowrap" style={{
+          fontSize: "clamp(1rem, 5.2vw, 8rem)",
           letterSpacing: "-0.04em",
           animationDelay: "0.4s",
           animationDuration: "1.4s"
         }}>
-          <span className="text-foreground block font-light">Connections</span>
-          <span className="text-primary block font-light">you can rely on</span>
+          <span className="text-foreground font-light">Connections </span>
+          <span className="text-primary font-light">you can rely on</span>
         </h1>
       </div>
 
