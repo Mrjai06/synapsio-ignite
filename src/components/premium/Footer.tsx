@@ -47,7 +47,7 @@ const footerLinks: FooterSection[] = [
     label: 'Connect',
     links: [
       { title: 'LinkedIn', href: 'https://www.linkedin.com/company/synapsioai/', icon: Linkedin },
-      { title: 'Email', href: '#', icon: Mail },
+      { title: 'Email', href: 'mailto:contact@synapsio.co.site', icon: Mail },
       { title: 'Website', href: '#', icon: Globe },
     ],
   },
