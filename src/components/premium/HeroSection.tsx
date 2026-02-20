@@ -57,7 +57,7 @@ const HeroSection = () => {
         </div>
 
         <h1 className="w-full animate-fade-in leading-[0.85] text-center" style={{
-          fontSize: "clamp(3.5rem, 12vw, 16rem)",
+          fontSize: "clamp(2.8rem, 9.5vw, 13rem)",
           letterSpacing: "-0.04em",
           animationDelay: "0.4s",
           animationDuration: "1.4s"
