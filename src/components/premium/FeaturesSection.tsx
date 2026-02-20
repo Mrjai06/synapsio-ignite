@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { 
   Store, Cog, MessageSquare, 
-  ArrowRight, DollarSign, Clock, AlertTriangle,
+  ArrowRight, Clock, AlertTriangle,
   TrendingDown, Zap, Users, Circle, Play, CheckCircle, Plus, X
 } from "lucide-react";
 import { AmbientGlow } from "./DepthSystem";
@@ -26,13 +26,13 @@ const features = [
         risk: "Real-time supplier health monitoring vs. quarterly reviews",
         time: "Seconds to match vs. weeks of evaluation"
       },
-      metrics: [
-        { icon: DollarSign, value: "23%", label: "procurement savings" },
-        { icon: Clock, value: "95%", label: "faster qualification" },
-        { icon: AlertTriangle, value: "3x", label: "earlier risk detection" }
+      keyFeatures: [
+        "Direct producer-to-business trading",
+        "Reduced procurement costs and faster sourcing",
+        "AI-optimized supplier matching and contract negotiation (price, availability, lead time)",
+        "Transaction-based scalability"
       ]
     },
-    // Input → Decision → Action semantics
     semantics: {
       input: "Incoming purchase request with specs, quantity, deadline",
       decision: "AI evaluates 47 suppliers on cost, risk, capacity in 0.3s",
@@ -53,10 +53,10 @@ const features = [
         risk: "Prevents stockouts before they happen",
         time: "Continuous optimization vs. weekly planning cycles"
       },
-      metrics: [
-        { icon: TrendingDown, value: "40%", label: "fewer stockouts" },
-        { icon: Zap, value: "85%", label: "automation rate" },
-        { icon: DollarSign, value: "18%", label: "inventory reduction" }
+      keyFeatures: [
+        "24/7 AI-driven operational decision-making",
+        "Demand forecasting and auto-replenishment",
+        "Dynamic safety stock optimization"
       ]
     },
     semantics: {
@@ -79,10 +79,11 @@ const features = [
         risk: "Instant exception handling vs. email escalation chains",
         time: "Sub-second sync vs. days of back-and-forth"
       },
-      metrics: [
-        { icon: Users, value: "70%", label: "fewer manual touchpoints" },
-        { icon: Clock, value: "<1s", label: "cross-company sync" },
-        { icon: Zap, value: "24/7", label: "autonomous operation" }
+      keyFeatures: [
+        "Automated supplier communication",
+        "Intelligent P2B & B2B-negotiations",
+        "Cross-company data synchronisation",
+        "Reduced friction and lower bullwhip effect"
       ]
     },
     semantics: {
@@ -314,7 +315,7 @@ const FeaturesSection = () => {
                         className="overflow-hidden"
                       >
                         <div className="px-5 pb-5">
-                          <div className="grid md:grid-cols-[1fr_1fr_auto] gap-6 border-t border-accent/20 pt-4">
+                          <div className="grid md:grid-cols-[1fr_1fr_1fr] gap-6 border-t border-accent/20 pt-4">
                             {/* Left: Headline & Details */}
                             <div className="space-y-4">
                               <p className="text-base text-foreground/90 leading-relaxed font-light">
@@ -359,26 +360,23 @@ const FeaturesSection = () => {
                               ))}
                             </div>
 
-                            {/* Right: Metrics */}
-                            <div className="flex flex-col gap-2">
-                              {feature.content.metrics.map((metric, idx) => {
-                                const MetricIcon = metric.icon;
-                                return (
-                                  <motion.div
-                                    key={metric.label}
-                                    initial={{ opacity: 0, y: 10 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ delay: 0.15 + idx * 0.05 }}
-                                    className="text-center p-3 rounded-lg bg-background/50 border border-border/10 min-w-[100px]"
-                                  >
-                                    <MetricIcon className="w-4 h-4 text-accent mx-auto mb-1" />
-                                    <p className="text-lg font-medium text-accent">{metric.value}</p>
-                                    <p className="text-[8px] text-muted-foreground/50 uppercase tracking-wider">
-                                      {metric.label}
-                                    </p>
-                                  </motion.div>
-                                );
-                              })}
+                            {/* Right: Key Features */}
+                            <div className="space-y-3">
+                              <p className="text-[10px] uppercase tracking-wider text-muted-foreground/50">
+                                Key Features
+                              </p>
+                              {feature.content.keyFeatures.map((item, idx) => (
+                                <motion.div
+                                  key={idx}
+                                  initial={{ opacity: 0, x: 10 }}
+                                  animate={{ opacity: 1, x: 0 }}
+                                  transition={{ delay: 0.15 + idx * 0.06 }}
+                                  className="flex items-start gap-2 text-sm"
+                                >
+                                  <span className="w-1.5 h-1.5 rounded-full bg-primary/60 shrink-0 mt-1.5" />
+                                  <span className="text-muted-foreground/70">{item}</span>
+                                </motion.div>
+                              ))}
                             </div>
                           </div>
                         </div>
