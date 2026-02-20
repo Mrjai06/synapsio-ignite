@@ -27,7 +27,7 @@ const AnimatedTabs = ({
 
   return (
     <div className={cn("w-full", className)}>
-      <div className="flex space-x-1 rounded-lg bg-secondary/30 p-1 backdrop-blur-sm border border-border/20">
+      <div className="flex flex-wrap gap-1 rounded-lg bg-secondary/30 p-1 backdrop-blur-sm border border-border/20">
         {tabs.map((tab) => (
           <button
             key={tab.id}
