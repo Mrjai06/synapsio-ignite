@@ -517,7 +517,7 @@ const StackedAreaChart = ({ whyNowVisible }: { whyNowVisible: boolean }) => {
 
   return (
     <div>
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-10 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_17.5rem] gap-10 items-start">
         <div className="flex flex-col items-center">
           <svg viewBox={`0 0 ${width} ${height}`} className="w-full" onClick={() => setActiveSegment(null)}>
             <defs>
@@ -583,12 +583,12 @@ const StackedAreaChart = ({ whyNowVisible }: { whyNowVisible: boolean }) => {
                 >
                   <div
                     className={`w-2.5 h-2.5 rounded-full transition-transform duration-200 ${activeSegment === seg.key ? "scale-125" : "group-hover:scale-110"}`}
-                    style={{ background: seg.color, boxShadow: seg.isHighlight ? "0 0 6px hsl(var(--foreground) / 0.25)" : "none" }}
+                    style={{ background: seg.color, boxShadow: seg.isHighlight ? "0 0 0.375rem hsl(var(--foreground) / 0.25)" : "none" }}
                   />
-                  <span className={`text-[10px] transition-colors duration-200 ${activeSegment === seg.key ? "text-foreground/75" : "text-muted-foreground/35 group-hover:text-muted-foreground/55"}`}>
+                  <span className={`text-[0.625rem] transition-colors duration-200 ${activeSegment === seg.key ? "text-foreground/75" : "text-muted-foreground/35 group-hover:text-muted-foreground/55"}`}>
                     {seg.label}
                   </span>
-                  <span className={`text-[9px] ${isGrowing ? "text-primary/40" : "text-destructive/35"}`}>
+                  <span className={`text-[0.5625rem] ${isGrowing ? "text-primary/40" : "text-destructive/35"}`}>
                     {isGrowing ? "↑" : "↓"}
                   </span>
                 </button>
@@ -610,27 +610,27 @@ const StackedAreaChart = ({ whyNowVisible }: { whyNowVisible: boolean }) => {
               >
                 <GlassPanel intensity="subtle" bordered className="p-6 rounded-xl">
                   <div className="flex items-center gap-2 mb-5">
-                    <div className="w-2.5 h-2.5 rounded-full" style={{ background: selectedMeta.color, boxShadow: selectedMeta.isHighlight ? "0 0 6px hsl(var(--foreground) / 0.25)" : "none" }} />
+                    <div className="w-2.5 h-2.5 rounded-full" style={{ background: selectedMeta.color, boxShadow: selectedMeta.isHighlight ? "0 0 0.375rem hsl(var(--foreground) / 0.25)" : "none" }} />
                     <p className="text-xs text-foreground/65 font-medium">{selectedData.label}</p>
                   </div>
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
-                      <span className="text-[11px] text-muted-foreground/40">2023/24</span>
+                      <span className="text-[0.6875rem] text-muted-foreground/40">2023/24</span>
                       <span className="text-sm font-light text-foreground/55">{selectedData.val2023.toFixed(2)}%</span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-[11px] text-muted-foreground/40">2029/30</span>
+                      <span className="text-[0.6875rem] text-muted-foreground/40">2029/30</span>
                       <span className="text-sm font-light text-foreground">{selectedData.val2030.toFixed(2)}%</span>
                     </div>
                     <div className="h-px bg-border/12 my-1" />
                     <div className="flex items-center justify-between">
-                      <span className="text-[11px] text-muted-foreground/40">Abs. change</span>
+                      <span className="text-[0.6875rem] text-muted-foreground/40">Abs. change</span>
                       <span className={`text-sm font-medium ${abs >= 0 ? "text-primary" : "text-destructive/65"}`}>
                         {abs >= 0 ? "+" : ""}{abs.toFixed(2)}pp
                       </span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-[11px] text-muted-foreground/40">Rel. growth</span>
+                      <span className="text-[0.6875rem] text-muted-foreground/40">Rel. growth</span>
                       <span className={`text-sm font-semibold ${growth >= 0 ? "text-primary" : "text-destructive/65"}`}>
                         {growth >= 0 ? "↑" : "↓"} {Math.abs(growth).toFixed(0)}%
                       </span>
@@ -775,7 +775,7 @@ const OpportunitySection = () => {
       <div className="relative z-10 container mx-auto px-8 lg:px-20 xl:px-28">
         {/* Section header */}
         <div ref={headerRef} className="max-w-2xl mb-28 md:mb-36">
-          <p className={`text-[10px] tracking-[0.4em] uppercase text-primary/50 mb-10 transition-all duration-1000 ${headerVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}>
+          <p className={`text-[0.625rem] tracking-[0.4em] uppercase text-primary/50 mb-10 transition-all duration-1000 ${headerVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}>
             Opportunity
           </p>
           <h2 
@@ -843,7 +843,7 @@ const OpportunitySection = () => {
                           transition={{ delay: 0.1 + i * 0.08 }}
                         >
                           <GlassPanel intensity="subtle" bordered className="rounded-xl p-5">
-                            <p className="text-[10px] uppercase tracking-[0.3em] text-primary/60 mb-3">
+                            <p className="text-[0.625rem] uppercase tracking-[0.3em] text-primary/60 mb-3">
                               {section.category}
                             </p>
                             <ul className="space-y-2.5">
@@ -981,7 +981,7 @@ const OpportunitySection = () => {
                           </div>
                         )}
                         <div className="flex items-center gap-3 mb-6">
-                          <span className="text-[10px] tracking-[0.2em] uppercase text-muted-foreground/40 px-3 py-1 rounded-full border border-border/20 bg-secondary/20">
+                          <span className="text-[0.625rem] tracking-[0.2em] uppercase text-muted-foreground/40 px-3 py-1 rounded-full border border-border/20 bg-secondary/20">
                             {system.systemType}
                           </span>
                         </div>

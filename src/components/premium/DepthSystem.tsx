@@ -154,10 +154,10 @@ export const AmbientGlow = forwardRef<HTMLDivElement, AmbientGlowProps>(
     };
 
     const sizeStyles = {
-      sm: "w-[200px] h-[200px]",
-      md: "w-[400px] h-[400px]",
-      lg: "w-[600px] h-[600px]",
-      xl: "w-[900px] h-[900px]",
+      sm: "w-[12.5rem] h-[12.5rem]",
+      md: "w-[25rem] h-[25rem]",
+      lg: "w-[37.5rem] h-[37.5rem]",
+      xl: "w-[56.25rem] h-[56.25rem]",
     };
 
     const intensityStyles = {
@@ -178,7 +178,7 @@ export const AmbientGlow = forwardRef<HTMLDivElement, AmbientGlowProps>(
       <div
         ref={ref}
         className={cn(
-          "absolute rounded-full blur-[120px] pointer-events-none",
+          "absolute rounded-full blur-[7.5rem] pointer-events-none",
           colorStyles[color],
           sizeStyles[size],
           intensityStyles[intensity],

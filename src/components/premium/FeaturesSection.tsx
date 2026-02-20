@@ -164,7 +164,7 @@ const FeaturesSection = () => {
         {/* Section header */}
         <div ref={headerRef} className="max-w-2xl mb-20 md:mb-28">
           <p
-            className={`text-[10px] tracking-[0.4em] uppercase text-primary/50 mb-8 transition-all duration-1000 ${
+            className={`text-[0.625rem] tracking-[0.4em] uppercase text-primary/50 mb-8 transition-all duration-1000 ${
               headerVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
             }`}
           >
@@ -323,7 +323,7 @@ const FeaturesSection = () => {
                               </p>
 
                               <div className="p-3 rounded-lg bg-accent/5 border border-accent/20">
-                                <p className="text-[10px] uppercase tracking-wider text-accent/70 mb-1">
+                                <p className="text-[0.625rem] uppercase tracking-wider text-accent/70 mb-1">
                                   Decision Automated
                                 </p>
                                 <p className="text-foreground/80 leading-relaxed text-sm">
@@ -332,7 +332,7 @@ const FeaturesSection = () => {
                               </div>
 
                               <div className="p-3 rounded-lg bg-primary/5 border border-primary/20">
-                                <p className="text-[10px] uppercase tracking-wider text-primary/70 mb-1">
+                                <p className="text-[0.625rem] uppercase tracking-wider text-primary/70 mb-1">
                                   Constraint Optimized
                                 </p>
                                 <p className="text-foreground/70 leading-relaxed text-sm">
@@ -343,7 +343,7 @@ const FeaturesSection = () => {
 
                             {/* Middle: What's Eliminated */}
                             <div className="space-y-3">
-                              <p className="text-[10px] uppercase tracking-wider text-muted-foreground/50">
+                              <p className="text-[0.625rem] uppercase tracking-wider text-muted-foreground/50">
                                 What's Eliminated
                               </p>
                               {Object.entries(feature.content.removal).map(([key, value], idx) => (
@@ -362,7 +362,7 @@ const FeaturesSection = () => {
 
                             {/* Right: Key Features */}
                             <div className="space-y-3">
-                              <p className="text-[10px] uppercase tracking-wider text-muted-foreground/50">
+                              <p className="text-[0.625rem] uppercase tracking-wider text-muted-foreground/50">
                                 Key Features
                               </p>
                               {feature.content.keyFeatures.map((item, idx) => (
@@ -408,7 +408,7 @@ const FeaturesSection = () => {
               </div>
 
               {/* VISUALIZATION - Full width below cards */}
-              <div className="relative w-full aspect-[16/9] max-h-[600px] rounded-3xl border border-border/20 bg-background/40 backdrop-blur-sm overflow-hidden">
+              <div className="relative w-full aspect-[16/9] max-h-[37.5rem] rounded-3xl border border-border/20 bg-background/40 backdrop-blur-sm overflow-hidden">
                 {/* System State Indicator - Top Right */}
                 <SystemStateIndicator state={systemState} onStateClick={handleStateClick} isPaused={isLoopPaused} />
                 
@@ -487,7 +487,7 @@ const SystemStateIndicator = ({
 
   return (
     <div className="absolute top-4 right-4 z-20 flex items-center gap-2 bg-background/80 backdrop-blur-sm rounded-full px-4 py-2 border border-border/30">
-      <span className="text-[9px] uppercase tracking-wider text-muted-foreground/50 mr-2">State</span>
+      <span className="text-[0.5625rem] uppercase tracking-wider text-muted-foreground/50 mr-2">State</span>
       {states.map((s) => {
         const isActive = state === s.id;
         const Icon = s.icon;
@@ -510,7 +510,7 @@ const SystemStateIndicator = ({
             whileTap={{ scale: 0.95 }}
           >
             <Icon className={`w-3 h-3 ${isActive && s.id === "execution" ? "animate-pulse" : ""}`} />
-            <span className="text-[10px] font-medium">{s.label}</span>
+            <span className="text-[0.625rem] font-medium">{s.label}</span>
           </motion.button>
         );
       })}
@@ -542,7 +542,7 @@ const LiveExplanationPanel = ({
     <div className="w-full bg-background/90 backdrop-blur-sm rounded-xl border border-border/30 overflow-hidden">
       <div className="flex items-center gap-4 px-4 py-3">
         {/* Title */}
-        <p className="text-[9px] uppercase tracking-widest text-muted-foreground/50 whitespace-nowrap shrink-0">
+        <p className="text-[0.5625rem] uppercase tracking-widest text-muted-foreground/50 whitespace-nowrap shrink-0">
           Live System Activity
         </p>
         
@@ -581,7 +581,7 @@ const LiveExplanationPanel = ({
                 
                 {/* Content */}
                 <div className="flex-1 min-w-0 overflow-hidden">
-                  <p className={`text-[9px] uppercase tracking-wider truncate ${
+                  <p className={`text-[0.5625rem] uppercase tracking-wider truncate ${
                     isCurrent 
                       ? step.id === "idle" 
                         ? "text-foreground/70" 
@@ -592,7 +592,7 @@ const LiveExplanationPanel = ({
                   }`}>
                     {step.label}
                   </p>
-                  <p className={`text-[10px] leading-tight truncate ${
+                  <p className={`text-[0.625rem] leading-tight truncate ${
                     isCurrent ? "text-foreground/90" : "text-muted-foreground/50"
                   }`} title={step.text}>
                     {step.text}
@@ -601,7 +601,7 @@ const LiveExplanationPanel = ({
                 
                 {/* Connector arrow */}
                 {idx < 2 && (
-                  <div className={`text-[10px] ${isActive ? "text-border" : "text-border/30"}`}>→</div>
+                  <div className={`text-[0.625rem] ${isActive ? "text-border" : "text-border/30"}`}>→</div>
                 )}
               </motion.div>
             );

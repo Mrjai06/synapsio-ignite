@@ -161,8 +161,8 @@ const ProblemSection = () => {
     <section ref={sectionRef} className="relative py-32 md:py-48">
       {/* Background layers */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-primary/3 rounded-full blur-[150px]" />
-        <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-secondary/3 rounded-full blur-[120px]" />
+        <div className="absolute top-0 left-1/4 w-[37.5rem] h-[37.5rem] bg-primary/3 rounded-full blur-[9.375rem]" />
+        <div className="absolute bottom-0 right-1/4 w-[31.25rem] h-[31.25rem] bg-secondary/3 rounded-full blur-[7.5rem]" />
       </div>
 
       <div className="relative z-10 container mx-auto px-6 lg:px-16 xl:px-24">
@@ -173,7 +173,7 @@ const ProblemSection = () => {
           transition={{ duration: 0.8 }}
           className="text-center mb-16 md:mb-24"
         >
-          <p className="text-[10px] tracking-[0.4em] uppercase text-primary/50 mb-6">
+          <p className="text-[0.625rem] tracking-[0.4em] uppercase text-primary/50 mb-6">
             The Challenge
           </p>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-light tracking-[-0.02em] leading-[1.15] max-w-3xl mx-auto">
@@ -191,7 +191,7 @@ const ProblemSection = () => {
             transition={{ duration: 1, delay: 0.3 }}
             className="relative order-2 lg:order-1"
           >
-            <div className="relative w-full max-w-[500px] mx-auto aspect-square">
+            <div className="relative w-full max-w-[31.25rem] mx-auto aspect-square">
               {/* Ambient glow behind network */}
               <div className="absolute inset-0 bg-gradient-radial from-primary/5 via-transparent to-transparent rounded-full blur-3xl" />
               
@@ -352,7 +352,7 @@ const ProblemSection = () => {
                       exit={{ opacity: 0, y: -10 }}
                       transition={{ duration: 0.4, ease: "easeOut" }}
                     >
-                      <p className="text-[10px] tracking-[0.3em] uppercase text-primary/60 mb-4">
+                      <p className="text-[0.625rem] tracking-[0.3em] uppercase text-primary/60 mb-4">
                         Explore the problems
                       </p>
                       <h3 className="text-xl font-medium text-foreground mb-4">
@@ -393,7 +393,7 @@ const ProblemSection = () => {
                           })()}
                         </div>
                         <div>
-                          <p className="text-[10px] tracking-[0.3em] uppercase text-primary/60 mb-1">
+                          <p className="text-[0.625rem] tracking-[0.3em] uppercase text-primary/60 mb-1">
                             Problem {activeNode + 1} of {problemNodes.length}
                           </p>
                           <h3 className="text-xl font-medium text-foreground">
@@ -409,7 +409,7 @@ const ProblemSection = () => {
 
                       {/* Impacts */}
                       <div className="space-y-4">
-                        <p className="text-[10px] tracking-[0.3em] uppercase text-muted-foreground/50">
+                        <p className="text-[0.625rem] tracking-[0.3em] uppercase text-muted-foreground/50">
                           Business Impact
                         </p>
                         <ul className="space-y-3">

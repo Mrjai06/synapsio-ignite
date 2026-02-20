@@ -99,7 +99,7 @@ const HeroSection = () => {
       opacity: 1 - scrollProgress * 4
     }}>
         <div className="flex flex-col items-center gap-4">
-          <span className="text-[10px] tracking-[0.3em] uppercase text-muted-foreground/25">Scroll</span>
+          <span className="text-[0.625rem] tracking-[0.3em] uppercase text-muted-foreground/25">Scroll</span>
           <div className="w-5 h-8 rounded-full border border-border/15 flex justify-center pt-1.5">
             <div className="w-0.5 h-1.5 bg-muted-foreground/25 rounded-full animate-bounce" style={{
             animationDuration: "2.5s"

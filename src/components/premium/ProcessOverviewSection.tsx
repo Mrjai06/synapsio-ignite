@@ -129,7 +129,7 @@ const ProcessOverviewSection = () => {
         {/* Section header */}
         <div className="max-w-2xl mb-16 md:mb-24">
           <p
-            className={`text-[10px] tracking-[0.4em] uppercase text-primary/50 mb-8 transition-all duration-1000 ${
+            className={`text-[0.625rem] tracking-[0.4em] uppercase text-primary/50 mb-8 transition-all duration-1000 ${
               isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
             }`}
           >
@@ -166,7 +166,7 @@ const ProcessOverviewSection = () => {
           >
             <svg 
               viewBox="0 0 500 500" 
-              className="w-[320px] h-[320px] md:w-[450px] md:h-[450px] lg:w-[500px] lg:h-[500px]"
+              className="w-[20rem] h-[20rem] md:w-[28.125rem] md:h-[28.125rem] lg:w-[31.25rem] lg:h-[31.25rem]"
             >
               <defs>
                 {/* Gradient for orbit path */}
@@ -436,7 +436,7 @@ const ProcessOverviewSection = () => {
                         <span className="text-xs font-medium text-primary">IN</span>
                       </div>
                       <div>
-                        <p className="text-[10px] uppercase tracking-wider text-muted-foreground/50 mb-1">
+                        <p className="text-[0.625rem] uppercase tracking-wider text-muted-foreground/50 mb-1">
                           Input Signal
                         </p>
                         <p className="text-sm text-foreground/80">{activeNode.input}</p>
@@ -454,7 +454,7 @@ const ProcessOverviewSection = () => {
                         <Zap className="w-4 h-4 text-accent" />
                       </div>
                       <div>
-                        <p className="text-[10px] uppercase tracking-wider text-muted-foreground/50 mb-1">
+                        <p className="text-[0.625rem] uppercase tracking-wider text-muted-foreground/50 mb-1">
                           Decision Made
                         </p>
                         <p className="text-sm text-foreground/80">{activeNode.decision}</p>
@@ -472,7 +472,7 @@ const ProcessOverviewSection = () => {
                         <span className="text-xs font-medium text-emerald-500">OUT</span>
                       </div>
                       <div>
-                        <p className="text-[10px] uppercase tracking-wider text-muted-foreground/50 mb-1">
+                        <p className="text-[0.625rem] uppercase tracking-wider text-muted-foreground/50 mb-1">
                           Business Outcome
                         </p>
                         <p className="text-sm text-foreground/80">{activeNode.outcome}</p>
@@ -510,7 +510,7 @@ const ProcessOverviewSection = () => {
                   className="text-center"
                 >
                   <p className="text-lg font-light text-accent">{stat.value}</p>
-                  <p className="text-[10px] uppercase tracking-wider text-muted-foreground/40">
+                  <p className="text-[0.625rem] uppercase tracking-wider text-muted-foreground/40">
                     {stat.label}
                   </p>
                 </motion.div>

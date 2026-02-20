@@ -72,7 +72,7 @@ const ScrollProgress = () => {
       ))}
       
       {/* Progress line */}
-      <div className="absolute right-[5px] top-0 w-0.5 h-full bg-border/10">
+      <div className="absolute right-[0.3125rem] top-0 w-0.5 h-full bg-border/10">
         <div 
           className="w-full bg-primary/30 transition-all duration-300"
           style={{ height: `${progress * 100}%` }}

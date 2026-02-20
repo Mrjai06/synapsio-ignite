@@ -180,7 +180,7 @@ const RoadmapSection = () => {
         {/* Section header */}
         <div ref={headerRef} className="max-w-2xl mb-16 md:mb-24">
           <p 
-            className={`text-[10px] tracking-[0.4em] uppercase text-primary/50 mb-10 transition-all duration-1000 ${headerVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}
+            className={`text-[0.625rem] tracking-[0.4em] uppercase text-primary/50 mb-10 transition-all duration-1000 ${headerVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}
           >
             Roadmap
           </p>

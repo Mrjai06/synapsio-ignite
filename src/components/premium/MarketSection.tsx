@@ -121,7 +121,7 @@ const MarketSection = () => {
         {/* Section header */}
         <div ref={headerRef} className="max-w-2xl mb-28 md:mb-36">
           <p 
-            className={`text-[10px] tracking-[0.4em] uppercase text-primary/50 mb-10 transition-all duration-1000 ${headerVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}
+            className={`text-[0.625rem] tracking-[0.4em] uppercase text-primary/50 mb-10 transition-all duration-1000 ${headerVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}
           >
             Opportunity
           </p>
@@ -221,7 +221,7 @@ const MarketSection = () => {
               
               <div className="relative">
                 {/* Stacked card deck effect */}
-                <div className="relative h-[200px]">
+                <div className="relative h-[12.5rem]">
                   {competitors.map((competitor, i) => {
                     const offset = i - competitorIndex;
                     const isActive = i === competitorIndex;

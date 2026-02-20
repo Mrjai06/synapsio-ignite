@@ -93,7 +93,7 @@ const TeamSection = () => {
         {/* Section header */}
         <div ref={headerRef} className="max-w-2xl mx-auto text-center mb-20 md:mb-28">
           <p 
-            className={`text-[10px] tracking-[0.4em] uppercase text-primary/50 mb-10 transition-all duration-1000 ${headerVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}
+            className={`text-[0.625rem] tracking-[0.4em] uppercase text-primary/50 mb-10 transition-all duration-1000 ${headerVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}
           >
             Team
           </p>
@@ -121,7 +121,7 @@ const TeamSection = () => {
           className="max-w-3xl mx-auto text-center"
         >
           <p 
-            className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground/40 mb-6 transition-all duration-1000"
+            className="text-[0.625rem] uppercase tracking-[0.3em] text-muted-foreground/40 mb-6 transition-all duration-1000"
             style={{ 
               opacity: ctaVisible ? 1 : 0,
               transform: ctaVisible ? "translateY(0)" : "translateY(10px)"

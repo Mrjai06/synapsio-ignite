@@ -64,7 +64,7 @@ const ConnectionDiagram = ({ elements, center }: { elements: string[]; center: s
   });
 
   return (
-    <div className="relative w-full h-[360px] mx-auto" style={{ maxWidth: 420 }}>
+    <div className="relative w-full h-[22.5rem] mx-auto" style={{ maxWidth: "26.25rem" }}>
       {/* Connection lines */}
       <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 0 }}>
         {positions.map((pos, i) => (
@@ -88,7 +88,7 @@ const ConnectionDiagram = ({ elements, center }: { elements: string[]; center: s
       <motion.div
         className="absolute z-10 rounded-3xl bg-card/40 backdrop-blur-xl border border-primary/30 flex flex-col items-center justify-center gap-2"
         style={{ left: centerX - 72, top: centerY - 72, width: 144, height: 144, 
-          boxShadow: '0 0 40px hsl(var(--primary) / 0.15), 0 8px 32px hsl(var(--background) / 0.5)'
+          boxShadow: '0 0 2.5rem hsl(var(--primary) / 0.15), 0 0.5rem 2rem hsl(var(--background) / 0.5)'
         }}
         initial={{ scale: 0, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
@@ -108,7 +108,7 @@ const ConnectionDiagram = ({ elements, center }: { elements: string[]; center: s
             className="absolute rounded-2xl bg-card/30 backdrop-blur-xl border border-border/20 flex flex-col items-center justify-center gap-2 cursor-pointer hover:border-primary/40 transition-colors duration-300 group"
             style={{ 
               left: positions[i].x - 52, top: positions[i].y - 52, width: 104, height: 104,
-              boxShadow: '0 8px 24px hsl(var(--background) / 0.6)'
+              boxShadow: '0 0.5rem 1.5rem hsl(var(--background) / 0.6)'
             }}
             initial={{ scale: 0, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
@@ -137,7 +137,7 @@ const FlowDiagram = ({ steps }: { steps: string[] }) => (
           transition={{ duration: 0.4, delay: 0.2 + i * 0.15 }}
         >
           <div className="w-24 h-24 rounded-2xl bg-card/30 backdrop-blur-xl border border-border/20 flex items-center justify-center"
-            style={{ boxShadow: '0 8px 24px hsl(var(--background) / 0.6)' }}>
+            style={{ boxShadow: '0 0.5rem 1.5rem hsl(var(--background) / 0.6)' }}>
             <span className="text-xs font-medium text-muted-foreground/70 text-center px-2">{step}</span>
           </div>
           {i < steps.length - 1 && (
@@ -164,7 +164,7 @@ const ImpactDiagram = ({ metrics }: { metrics: { value: string; label: string }[
         <motion.div
           key={metric.label}
           className="text-center rounded-2xl bg-card/30 backdrop-blur-xl border border-border/20 px-8 py-6"
-          style={{ boxShadow: '0 8px 24px hsl(var(--background) / 0.6)' }}
+          style={{ boxShadow: '0 0.5rem 1.5rem hsl(var(--background) / 0.6)' }}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2 + i * 0.15 }}
@@ -201,7 +201,7 @@ const SolutionSection = () => {
         {/* Header */}
         <div className="max-w-2xl mb-16 md:mb-20">
           <motion.p 
-            className="text-[10px] tracking-[0.4em] uppercase text-primary/50 mb-10"
+            className="text-[0.625rem] tracking-[0.4em] uppercase text-primary/50 mb-10"
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.8 }}
@@ -248,7 +248,7 @@ const SolutionSection = () => {
           </div>
 
           {/* Slide content */}
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center min-h-[400px]">
+          <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center min-h-[25rem]">
             {/* Text content */}
             <AnimatePresence mode="wait">
               <motion.div
@@ -285,7 +285,7 @@ const SolutionSection = () => {
                 exit={{ opacity: 0, scale: 0.95 }}
                 transition={{ duration: 0.4 }}
                 className="relative bg-card/30 backdrop-blur-xl border border-border/20 rounded-3xl p-8 md:p-10"
-                style={{ boxShadow: '0 8px 32px hsl(var(--background) / 0.5)' }}
+                style={{ boxShadow: '0 0.5rem 2rem hsl(var(--background) / 0.5)' }}
               >
                 {slide.diagram.type === "connect" && (
                   <ConnectionDiagram 

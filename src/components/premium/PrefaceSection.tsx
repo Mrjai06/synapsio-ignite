@@ -23,7 +23,7 @@ const PrefaceSection = () => {
       <div className="relative z-10 container mx-auto px-8 lg:px-20 xl:px-28">
         <div ref={sectionRef} className="max-w-3xl">
           <p 
-            className={`text-[10px] tracking-[0.4em] uppercase text-primary/50 mb-10 transition-all duration-1000 ${visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}
+            className={`text-[0.625rem] tracking-[0.4em] uppercase text-primary/50 mb-10 transition-all duration-1000 ${visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}
           >
             Intro
           </p>
