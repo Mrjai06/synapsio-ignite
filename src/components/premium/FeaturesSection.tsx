@@ -1012,7 +1012,7 @@ const OperationsVisualization = ({ state }: { state: SystemState }) => {
               }}
             />
             {isActive && idx < activeNodeIndex && (
-              <text x={node.x} y={187} textAnchor="middle" className="fill-background text-[8px] font-bold">✓</text>
+              <text x={node.x + 43} y={195} textAnchor="middle" className="fill-primary text-[10px] font-bold">✓</text>
             )}
             
             {/* Label text - positioned below indicator */}
@@ -1096,18 +1096,6 @@ const OperationsVisualization = ({ state }: { state: SystemState }) => {
         </motion.g>
       )}
 
-      {/* Feedback loop */}
-      <motion.path
-        d="M 480 180 Q 520 250 480 300 Q 400 340 275 340 Q 150 340 70 300 Q 30 250 70 180"
-        fill="none"
-        stroke="hsl(var(--accent))"
-        strokeWidth="1.5"
-        strokeDasharray="8 4"
-        opacity={state === "execution" ? 0.6 : 0.2}
-      />
-      <text x="275" y="360" textAnchor="middle" className={`text-[9px] uppercase tracking-wider ${state === "execution" ? "fill-accent/70" : "fill-muted-foreground/20"}`}>
-        Continuous Learning Loop
-      </text>
     </svg>
   );
 };
