@@ -57,7 +57,7 @@ const HeroSection = () => {
         </div>
 
         <h1 className="w-full animate-fade-in leading-[0.85] text-center" style={{
-          fontSize: "clamp(2.8rem, 9.5vw, 13rem)",
+          fontSize: "clamp(2.2rem, 7vw, 10rem)",
           letterSpacing: "-0.04em",
           animationDelay: "0.4s",
           animationDuration: "1.4s"
@@ -68,7 +68,7 @@ const HeroSection = () => {
       </div>
 
       {/* BOTTOM: Subtitle + CTA centered */}
-      <div className="absolute bottom-0 left-0 right-0 z-10 px-8 pb-20 flex flex-col items-center gap-6 transition-all duration-700" style={{
+      <div className="absolute bottom-0 left-0 right-0 z-10 px-8 pb-36 flex flex-col items-center gap-6 transition-all duration-700" style={{
         opacity: Math.max(0, contentOpacity),
         transform: `translateY(${contentTranslate}px)`
       }}>
