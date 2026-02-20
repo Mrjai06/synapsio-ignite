@@ -57,8 +57,8 @@ const HeroSection = () => {
         </div>
       </div>
 
-      {/* TOP: Headline at previous position */}
-      <div className="absolute top-0 left-0 right-0 z-10 px-4 lg:px-8 pt-36 flex flex-col items-center text-center transition-all duration-700" style={{
+      {/* TOP: Headline + Subtitle */}
+      <div className="absolute top-0 left-0 right-0 z-10 px-4 lg:px-8 pt-36 flex flex-col items-center text-center gap-6 transition-all duration-700" style={{
         opacity: Math.max(0, contentOpacity),
         transform: `translateY(${contentTranslate}px)`
       }}>
@@ -71,17 +71,17 @@ const HeroSection = () => {
           <span className="text-foreground font-light">Connections </span>
           <span className="text-primary font-light">you can rely on</span>
         </h1>
-      </div>
-
-      {/* BOTTOM: Subtitle + CTA centered */}
-      <div className="absolute bottom-0 left-0 right-0 z-10 px-8 pb-80 flex flex-col items-center gap-6 transition-all duration-700" style={{
-        opacity: Math.max(0, contentOpacity),
-        transform: `translateY(${contentTranslate}px)`
-      }}>
         <p className="text-lg md:text-xl max-w-xl font-light leading-[1.7] animate-fade-in text-primary/70 text-center" style={{
           animationDelay: "0.6s",
           animationDuration: "1.4s"
         }}>A fully automated AI-based SCM-solution used for the management and creation of supply-chains</p>
+      </div>
+
+      {/* BOTTOM: CTA centered */}
+      <div className="absolute bottom-0 left-0 right-0 z-10 px-8 pb-80 flex flex-col items-center gap-6 transition-all duration-700" style={{
+        opacity: Math.max(0, contentOpacity),
+        transform: `translateY(${contentTranslate}px)`
+      }}>
 
         <div className="animate-fade-in" style={{
           animationDelay: "0.8s",
