@@ -26,7 +26,7 @@ const footerLinks: FooterSection[] = [
     ],
   },
   {
-    label: 'Company',
+    label: 'Legal',
     links: [
       
       { title: 'Privacy Policy', href: '/privacy-policy-synapsio.pdf' },
