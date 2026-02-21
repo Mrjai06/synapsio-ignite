@@ -92,8 +92,8 @@ const ProgressNavbar = () => {
     <nav className="fixed right-6 top-1/2 -translate-y-1/2 z-40 hidden lg:flex flex-col items-center gap-4">
       {/* Brand mark - centered with dot column */}
       <a href="#hero" className="opacity-75 hover:opacity-100 transition-opacity duration-500 flex items-center justify-end w-full mb-3">
-        <div className="w-3 flex items-center justify-center">
-          <img src={synapsioLogo} alt="Synapsio" className="h-auto w-6" />
+        <div className="w-3 flex items-center justify-center overflow-visible">
+          <img src={synapsioLogo} alt="Synapsio" className="h-auto w-6 max-w-none" />
         </div>
       </a>
       <div className="relative" ref={containerRef}>
