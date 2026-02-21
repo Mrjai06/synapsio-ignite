@@ -32,7 +32,7 @@ const PrefaceSection = () => {
             className={`text-xl md:text-2xl text-muted-foreground/70 leading-relaxed mb-8 transition-all duration-1000 ${visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
             style={{ transitionDelay: "100ms" }}
           >
-            Synapsio is an AI-based supply chain management and marketplace platform, aiming to revolutionize the way supply chains operate. We turn fragmented networks, into intelligent, connected ecosystems.
+            Synapsio is an AI-based supply chain management and marketplace platform, aiming to revolutionize the way supply chains operate. The service turns fragmented networks, into intelligent, connected ecosystems.
           </p>
           
           <p 
