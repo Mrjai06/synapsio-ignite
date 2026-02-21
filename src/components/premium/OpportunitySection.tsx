@@ -585,10 +585,10 @@ const StackedAreaChart = ({ whyNowVisible }: { whyNowVisible: boolean }) => {
                     className={`w-2.5 h-2.5 rounded-full transition-transform duration-200 ${activeSegment === seg.key ? "scale-125" : "group-hover:scale-110"}`}
                     style={{ background: seg.color, boxShadow: seg.isHighlight ? "0 0 0.375rem hsl(var(--foreground) / 0.25)" : "none" }}
                   />
-                  <span className={`text-[0.625rem] transition-colors duration-200 ${activeSegment === seg.key ? "text-foreground/75" : "text-muted-foreground/35 group-hover:text-muted-foreground/55"}`}>
+                  <span className={`text-xs transition-colors duration-200 ${activeSegment === seg.key ? "text-foreground/75" : "text-muted-foreground/35 group-hover:text-muted-foreground/55"}`}>
                     {seg.label}
                   </span>
-                  <span className={`text-[0.5625rem] ${isGrowing ? "text-primary/40" : "text-destructive/35"}`}>
+                  <span className={`text-[0.6875rem] ${isGrowing ? "text-primary/40" : "text-destructive/35"}`}>
                     {isGrowing ? "↑" : "↓"}
                   </span>
                 </button>
