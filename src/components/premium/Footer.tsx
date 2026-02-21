@@ -31,7 +31,7 @@ const footerLinks: FooterSection[] = [
       
       { title: 'Privacy Policy', href: '/privacy-policy-synapsio.pdf' },
       { title: 'Terms of Service', href: '/terms-of-service-synapsio.pdf' },
-      { title: 'Imprint', href: '#' },
+      { title: 'Imprint', href: '/Imprint-Synapsio.pdf' },
     ],
   },
   {
