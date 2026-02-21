@@ -35,15 +35,6 @@ const footerLinks: FooterSection[] = [
     ],
   },
   {
-    label: 'Resources',
-    links: [
-      
-      
-      { title: 'Case Studies', href: '#' },
-      { title: 'Contact', href: '#contact' },
-    ],
-  },
-  {
     label: 'Connect',
     links: [
       { title: 'LinkedIn', href: 'https://www.linkedin.com/company/synapsioai/', icon: Linkedin },
