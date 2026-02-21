@@ -57,7 +57,7 @@ const Footer = () => {
           <div className="mb-8 h-px w-full bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
         </AnimatedContainer>
 
-        <div className="flex flex-col items-center gap-12 lg:flex-row lg:justify-center lg:items-start lg:gap-24">
+        <div className="relative flex flex-col gap-12 lg:flex-row">
           {/* Brand Section */}
           <AnimatedContainer delay={0.1}>
             <div className="max-w-sm">
@@ -76,8 +76,8 @@ const Footer = () => {
             </div>
           </AnimatedContainer>
 
-          {/* Links Grid */}
-          <div className="grid grid-cols-2 gap-8 sm:grid-cols-4 lg:gap-12">
+          {/* Links Grid - absolutely centered */}
+          <div className="lg:absolute lg:left-1/2 lg:-translate-x-1/2 grid grid-cols-2 gap-8 sm:grid-cols-3 lg:gap-12">
             {footerLinks.map((section, index) => (
               <AnimatedContainer key={section.label} delay={0.2 + index * 0.1}>
                 <div className="space-y-4">
