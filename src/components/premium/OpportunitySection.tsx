@@ -321,18 +321,18 @@ const marketLandscapeSystems = [
 
 // Business Model Data
 const subscriptionTiers = [
-  { name: "Getting Started", price: "10€", limit: "Transactions up to 1,000€/month" },
-  { name: "Base", price: "50€", limit: "Transactions up to 5,000€/month" },
-  { name: "Advanced", price: "250€", limit: "Transactions up to 50,000€/month" },
-  { name: "Enterprise", price: "Custom", limit: "Transactions with 100,000€+/month", highlighted: true },
+  { name: "Getting Started", description: "For small businesses starting out", icon: "🌱" },
+  { name: "Base", description: "For growing businesses with moderate volume", icon: "📦" },
+  { name: "Advanced", description: "For established businesses with high volume", icon: "🚀" },
+  { name: "Enterprise", description: "Tailored solutions for large-scale operations", icon: "🏢", highlighted: true },
 ];
 
-const tieredPricing = [
-  { threshold: "< 1,000€", fee: "2.5%", gastro: "1.5% gastro" },
-  { threshold: "< 10,000€", fee: "2.0%", gastro: "1.5% gastro" },
-  { threshold: "< 100,000€", fee: "1.5%", gastro: null },
-  { threshold: "< 1,000,000€", fee: "1.0%", gastro: null },
-  { threshold: "10,000,000€+", fee: "0.8%", gastro: null },
+const volumeBands = [
+  { label: "Low", level: 1 },
+  { label: "Medium", level: 2 },
+  { label: "High", level: 3 },
+  { label: "Very High", level: 4 },
+  { label: "Enterprise", level: 5 },
 ];
 
 // Traditional Pyramid Component with rounded edges
@@ -1016,11 +1016,6 @@ const OpportunitySection = () => {
           <p className="text-xs tracking-[0.25em] uppercase text-muted-foreground/35 mb-12">
             Business Model
           </p>
-
-          {/* Disclaimer */}
-          <p className="text-xs text-muted-foreground/40 italic mb-8 max-w-2xl">
-            * All prices and thresholds shown below are illustrative and subject to change. They do not represent final pricing.
-          </p>
           
           <div className="grid lg:grid-cols-2 gap-10 max-w-5xl mx-auto">
             {/* Subscription Service */}
@@ -1029,63 +1024,81 @@ const OpportunitySection = () => {
                 <div className="flex items-center gap-3 mb-6">
                   <Building2 className="w-8 h-8 text-primary" />
                   <h4 className="text-lg font-medium text-foreground">Subscription Service</h4>
-                  <span className="text-xs text-muted-foreground/40 ml-auto">monthly fee</span>
+                  <span className="text-xs text-muted-foreground/40 ml-auto">monthly</span>
                 </div>
                 <div className="space-y-3 mb-6">
                   {subscriptionTiers.map((tier, i) => (
                     <div
                       key={i}
-                      className={`flex items-center justify-between p-3 rounded-xl border transition-all duration-300 ${
+                      className={`flex items-center gap-4 p-4 rounded-xl border transition-all duration-300 ${
                         tier.highlighted
                           ? "border-primary/30 bg-primary/5"
                           : "border-border/15 bg-card/20"
                       }`}
                     >
+                      <span className="text-xl">{tier.icon}</span>
                       <div>
                         <p className={`text-sm font-medium ${tier.highlighted ? "text-foreground" : "text-foreground/80"}`}>{tier.name}</p>
-                        <p className="text-xs text-muted-foreground/50">{tier.limit}</p>
+                        <p className="text-xs text-muted-foreground/50">{tier.description}</p>
                       </div>
-                      <span className={`text-lg font-light ${tier.highlighted ? "text-primary" : "text-foreground/70"}`}>{tier.price}<span className="text-xs text-muted-foreground/40">/mo</span></span>
                     </div>
                   ))}
                 </div>
                 <div className="p-3 rounded-xl bg-card/20 border border-border/15">
                   <p className="text-xs text-muted-foreground/50 leading-relaxed">
-                    If the monthly transaction limit is reached, a warning is displayed. If the user proceeds, an additional <span className="text-foreground/70">15€ per 1,000€</span> spent above the limit will be charged.
+                    If your monthly limit is reached, you'll be notified. Continuing beyond the limit incurs a small additional fee.
                   </p>
                 </div>
               </GlassPanel>
             </FloatingSurface>
 
-            {/* Tiered Pricing */}
+            {/* Tiered Transaction Fees — Conceptual */}
             <FloatingSurface elevation="low" className={`rounded-2xl transition-all duration-1000 ${businessVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`} style={{ transitionDelay: '150ms' }}>
               <GlassPanel intensity="subtle" bordered className="rounded-2xl p-8 h-full">
                 <div className="flex items-center gap-3 mb-6">
                   <Layers className="w-8 h-8 text-primary" />
-                  <h4 className="text-lg font-medium text-foreground">Tiered Transaction Fees</h4>
+                  <h4 className="text-lg font-medium text-foreground">Transaction Fees</h4>
                   <span className="text-xs text-muted-foreground/40 ml-auto">per transaction</span>
                 </div>
+                <p className="text-sm text-muted-foreground/60 mb-6">
+                  Fees decrease as your transaction volume grows — rewarding scale.
+                </p>
                 <div className="space-y-2 mb-6">
-                  {tieredPricing.map((tier, i) => (
-                    <div key={i} className="flex items-center justify-between p-3 rounded-xl border border-border/15 bg-card/20">
-                      <span className="text-sm text-foreground/70">{tier.threshold}</span>
-                      <div className="flex items-center gap-3">
-                        <span className="text-sm font-medium text-foreground/80">{tier.fee}</span>
-                        {tier.gastro && (
-                          <span className="text-xs text-muted-foreground/40 border border-border/20 rounded-full px-2 py-0.5">{tier.gastro}</span>
-                        )}
+                  {volumeBands.map((band, i) => (
+                    <div key={i} className="flex items-center gap-3 p-3 rounded-xl border border-border/15 bg-card/20">
+                      <span className="text-sm text-foreground/70 w-24">{band.label}</span>
+                      <div className="flex-1 h-2 rounded-full bg-secondary/20 overflow-hidden">
+                        <div
+                          className="h-full rounded-full bg-primary/60 transition-all duration-500"
+                          style={{ width: `${100 - (band.level - 1) * 18}%` }}
+                        />
                       </div>
+                      <span className="text-xs text-muted-foreground/40 w-16 text-right">
+                        {band.level === 1 ? "Higher" : band.level === 5 ? "Lowest" : ""}
+                      </span>
                     </div>
                   ))}
                 </div>
-                <div className="p-3 rounded-xl bg-card/20 border border-border/15">
-                  <p className="text-xs text-muted-foreground/50 leading-relaxed">
-                    Payment processing fees from providers (e.g. PayPal, Stripe) are displayed separately at checkout and are not included in the fees above.
-                  </p>
+                <div className="space-y-2">
+                  <div className="p-3 rounded-xl bg-card/20 border border-border/15">
+                    <p className="text-xs text-muted-foreground/50 leading-relaxed">
+                      Reduced fees available for select industries (e.g., gastronomy).
+                    </p>
+                  </div>
+                  <div className="p-3 rounded-xl bg-card/20 border border-border/15">
+                    <p className="text-xs text-muted-foreground/50 leading-relaxed">
+                      Payment processing fees from providers (e.g. PayPal, Stripe) are displayed separately at checkout.
+                    </p>
+                  </div>
                 </div>
               </GlassPanel>
             </FloatingSurface>
           </div>
+
+          {/* Closing note */}
+          <p className="text-xs text-muted-foreground/40 text-center mt-10 max-w-xl mx-auto italic">
+            Final pricing will be determined closer to launch. Contact us to learn more.
+          </p>
         </div>
       </div>
       
