@@ -51,7 +51,7 @@ const slides = [
 
 // Simple connection diagram
 const ConnectionDiagram = ({ elements, center }: { elements: string[]; center: string }) => {
-  const centerX = 200;
+  const centerX = 210;
   const centerY = 180;
   const radius = 140;
 
