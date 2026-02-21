@@ -324,7 +324,7 @@ const subscriptionTiers = [
   { name: "Getting Started", price: "10€", limit: "Transactions up to 1,000€/month" },
   { name: "Base", price: "50€", limit: "Transactions up to 5,000€/month" },
   { name: "Advanced", price: "250€", limit: "Transactions up to 50,000€/month" },
-  { name: "Enterprise", price: "2,500€", limit: "Transactions with 100,000€+/month", highlighted: true },
+  { name: "Enterprise", price: "Custom", limit: "Transactions with 100,000€+/month", highlighted: true },
 ];
 
 const tieredPricing = [
