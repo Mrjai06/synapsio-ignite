@@ -541,7 +541,7 @@ const LiveExplanationPanel = ({
     <div className="w-full bg-background/90 backdrop-blur-sm rounded-xl border border-border/30 overflow-hidden">
       <div className="flex items-center gap-4 px-4 py-3">
         {/* Title */}
-        <p className="text-[0.5625rem] uppercase tracking-widest text-muted-foreground/50 whitespace-nowrap shrink-0">
+        <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground/80 whitespace-nowrap shrink-0">
           Live System Activity
         </p>
         
