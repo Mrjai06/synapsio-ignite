@@ -80,7 +80,7 @@ const Footer = () => {
                 Intelligent orchestration for modern supply chains. Transforming complexity into clarity.
               </p>
               <p className="mt-6 text-xs text-muted-foreground/60">
-                © {new Date().getFullYear()} Synapsio Inc. All rights reserved.
+                © {new Date().getFullYear()} Synapsio. All rights reserved.
               </p>
             </div>
           </AnimatedContainer>
