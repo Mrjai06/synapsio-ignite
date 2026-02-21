@@ -93,7 +93,7 @@ const ProgressNavbar = () => {
       {/* Brand mark - centered with dot column */}
       <a href="#hero" className="opacity-75 hover:opacity-100 transition-opacity duration-500 flex items-center justify-end w-full mb-3">
         <div className="w-3 flex items-center justify-center overflow-visible">
-          <img src={synapsioLogo} alt="Synapsio" className="h-auto w-6 max-w-none" />
+          <img src={synapsioLogo} alt="Synapsio" className="h-auto w-10 max-w-none" />
         </div>
       </a>
       <div className="relative" ref={containerRef}>
