@@ -320,31 +320,19 @@ const marketLandscapeSystems = [
 ];
 
 // Business Model Data
-const tiers = [
-  {
-    icon: Building2,
-    name: "Enterprise",
-    price: "$150K",
-    period: "/year",
-    description: "Full platform access with dedicated support",
-    features: ["Unlimited users", "All integrations", "Custom workflows", "24/7 support", "SLA guarantee"]
-  },
-  {
-    icon: Layers,
-    name: "Platform",
-    price: "$75K",
-    period: "/year",
-    description: "Core SCM capabilities for mid-market",
-    features: ["Up to 50 users", "Standard integrations", "Pre-built templates", "Business hours support"]
-  },
-  {
-    icon: Zap,
-    name: "Usage-Based",
-    price: "$0.02",
-    period: "/transaction",
-    description: "Pay only for what you use",
-    features: ["Unlimited users", "API access", "Basic support", "Self-service"]
-  }
+const subscriptionTiers = [
+  { name: "Getting Started", price: "10€", limit: "Transactions up to 1,000€/month" },
+  { name: "Base", price: "50€", limit: "Transactions up to 5,000€/month" },
+  { name: "Advanced", price: "250€", limit: "Transactions up to 50,000€/month" },
+  { name: "Enterprise", price: "2,500€", limit: "Transactions with 100,000€+/month", highlighted: true },
+];
+
+const tieredPricing = [
+  { threshold: "< 1,000€", fee: "2.5%", gastro: "1.5% gastro" },
+  { threshold: "< 10,000€", fee: "2.0%", gastro: "1.5% gastro" },
+  { threshold: "< 100,000€", fee: "1.5%", gastro: null },
+  { threshold: "< 1,000,000€", fee: "1.0%", gastro: null },
+  { threshold: "10,000,000€+", fee: "0.8%", gastro: null },
 ];
 
 // Traditional Pyramid Component with rounded edges
@@ -1028,40 +1016,75 @@ const OpportunitySection = () => {
           <p className="text-xs tracking-[0.25em] uppercase text-muted-foreground/35 mb-12">
             Business Model
           </p>
+
+          {/* Disclaimer */}
+          <p className="text-xs text-muted-foreground/40 italic mb-8 max-w-2xl">
+            * All prices and thresholds shown below are illustrative and subject to change. They do not represent final pricing.
+          </p>
           
-          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            {tiers.map((tier, index) => (
-              <FloatingSurface 
-                key={index}
-                elevation={index === 0 ? "medium" : "low"}
-                glow={index === 0}
-                glowColor="primary"
-                className={`rounded-2xl transition-all duration-1000 ${businessVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
-                style={{ transitionDelay: `${index * 150}ms` }}
-              >
-                <GlassPanel 
-                  intensity={index === 0 ? "medium" : "subtle"} 
-                  bordered 
-                  className={`rounded-2xl p-8 h-full ${index === 0 ? "border-primary/20" : ""}`}
-                >
-                  <tier.icon className="w-10 h-10 text-primary mb-6" />
-                  <h4 className="text-xl font-medium text-foreground mb-2">{tier.name}</h4>
-                  <div className="flex items-baseline gap-1 mb-3">
-                    <span className="text-3xl font-light text-foreground">{tier.price}</span>
-                    <span className="text-muted-foreground/50 text-sm">{tier.period}</span>
-                  </div>
-                  <p className="text-sm text-muted-foreground/50 mb-6">{tier.description}</p>
-                  <ul className="space-y-2">
-                    {tier.features.map((feature, i) => (
-                      <li key={i} className="text-sm text-muted-foreground/40 flex items-center gap-3">
-                        <span className="w-1 h-1 rounded-full bg-primary/50" />
-                        {feature}
-                      </li>
-                    ))}
-                  </ul>
-                </GlassPanel>
-              </FloatingSurface>
-            ))}
+          <div className="grid lg:grid-cols-2 gap-10 max-w-5xl mx-auto">
+            {/* Subscription Service */}
+            <FloatingSurface elevation="medium" glow glowColor="primary" className={`rounded-2xl transition-all duration-1000 ${businessVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
+              <GlassPanel intensity="medium" bordered className="rounded-2xl p-8 h-full border-primary/20">
+                <div className="flex items-center gap-3 mb-6">
+                  <Building2 className="w-8 h-8 text-primary" />
+                  <h4 className="text-lg font-medium text-foreground">Subscription Service</h4>
+                  <span className="text-xs text-muted-foreground/40 ml-auto">monthly fee</span>
+                </div>
+                <div className="space-y-3 mb-6">
+                  {subscriptionTiers.map((tier, i) => (
+                    <div
+                      key={i}
+                      className={`flex items-center justify-between p-3 rounded-xl border transition-all duration-300 ${
+                        tier.highlighted
+                          ? "border-primary/30 bg-primary/5"
+                          : "border-border/15 bg-card/20"
+                      }`}
+                    >
+                      <div>
+                        <p className={`text-sm font-medium ${tier.highlighted ? "text-foreground" : "text-foreground/80"}`}>{tier.name}</p>
+                        <p className="text-xs text-muted-foreground/50">{tier.limit}</p>
+                      </div>
+                      <span className={`text-lg font-light ${tier.highlighted ? "text-primary" : "text-foreground/70"}`}>{tier.price}<span className="text-xs text-muted-foreground/40">/mo</span></span>
+                    </div>
+                  ))}
+                </div>
+                <div className="p-3 rounded-xl bg-card/20 border border-border/15">
+                  <p className="text-xs text-muted-foreground/50 leading-relaxed">
+                    If the monthly transaction limit is reached, a warning is displayed. If the user proceeds, an additional <span className="text-foreground/70">15€ per 1,000€</span> spent above the limit will be charged.
+                  </p>
+                </div>
+              </GlassPanel>
+            </FloatingSurface>
+
+            {/* Tiered Pricing */}
+            <FloatingSurface elevation="low" className={`rounded-2xl transition-all duration-1000 ${businessVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`} style={{ transitionDelay: '150ms' }}>
+              <GlassPanel intensity="subtle" bordered className="rounded-2xl p-8 h-full">
+                <div className="flex items-center gap-3 mb-6">
+                  <Layers className="w-8 h-8 text-primary" />
+                  <h4 className="text-lg font-medium text-foreground">Tiered Transaction Fees</h4>
+                  <span className="text-xs text-muted-foreground/40 ml-auto">per transaction</span>
+                </div>
+                <div className="space-y-2 mb-6">
+                  {tieredPricing.map((tier, i) => (
+                    <div key={i} className="flex items-center justify-between p-3 rounded-xl border border-border/15 bg-card/20">
+                      <span className="text-sm text-foreground/70">{tier.threshold}</span>
+                      <div className="flex items-center gap-3">
+                        <span className="text-sm font-medium text-foreground/80">{tier.fee}</span>
+                        {tier.gastro && (
+                          <span className="text-xs text-muted-foreground/40 border border-border/20 rounded-full px-2 py-0.5">{tier.gastro}</span>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="p-3 rounded-xl bg-card/20 border border-border/15">
+                  <p className="text-xs text-muted-foreground/50 leading-relaxed">
+                    Payment processing fees from providers (e.g. PayPal, Stripe) are displayed separately at checkout and are not included in the fees above.
+                  </p>
+                </div>
+              </GlassPanel>
+            </FloatingSurface>
           </div>
         </div>
       </div>
