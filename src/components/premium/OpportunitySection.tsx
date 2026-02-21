@@ -572,23 +572,23 @@ const StackedAreaChart = ({ whyNowVisible }: { whyNowVisible: boolean }) => {
           </svg>
 
           {/* Legend */}
-          <div className="flex flex-wrap gap-5 justify-center mt-4">
+          <div className="grid grid-cols-2 gap-3 justify-center mt-6 max-w-md mx-auto">
             {areaSegments.map(seg => {
               const isGrowing = (stackedData[stackedData.length - 1][seg.key as keyof typeof stackedData[0]] as number) > (stackedData[0][seg.key as keyof typeof stackedData[0]] as number);
               return (
                 <button
                   key={seg.key}
-                  className={`flex items-center gap-2 transition-all duration-300 group ${activeSegment !== null && activeSegment !== seg.key ? "opacity-25" : "opacity-100"} hover:opacity-100`}
+                  className={`flex items-center gap-3 px-4 py-3 rounded-xl border border-border/20 bg-card/20 backdrop-blur-sm transition-all duration-300 group ${activeSegment !== null && activeSegment !== seg.key ? "opacity-25" : "opacity-100"} hover:opacity-100 hover:border-primary/30`}
                   onClick={() => setActiveSegment(activeSegment === seg.key ? null : seg.key)}
                 >
                   <div
-                    className={`w-2.5 h-2.5 rounded-full transition-transform duration-200 ${activeSegment === seg.key ? "scale-125" : "group-hover:scale-110"}`}
+                    className={`w-3 h-3 rounded-full transition-transform duration-200 shrink-0 ${activeSegment === seg.key ? "scale-125" : "group-hover:scale-110"}`}
                     style={{ background: seg.color, boxShadow: seg.isHighlight ? "0 0 0.375rem hsl(var(--foreground) / 0.25)" : "none" }}
                   />
-                  <span className={`text-[0.625rem] transition-colors duration-200 ${activeSegment === seg.key ? "text-foreground/75" : "text-muted-foreground/35 group-hover:text-muted-foreground/55"}`}>
+                  <span className={`text-xs transition-colors duration-200 ${activeSegment === seg.key ? "text-foreground/75" : "text-muted-foreground/45 group-hover:text-muted-foreground/65"}`}>
                     {seg.label}
                   </span>
-                  <span className={`text-[0.5625rem] ${isGrowing ? "text-primary/40" : "text-destructive/35"}`}>
+                  <span className={`text-xs ml-auto ${isGrowing ? "text-primary/50" : "text-destructive/40"}`}>
                     {isGrowing ? "↑" : "↓"}
                   </span>
                 </button>
