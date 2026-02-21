@@ -57,11 +57,11 @@ const Footer = () => {
           <div className="mb-8 h-px w-full bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
         </AnimatedContainer>
 
-        <div className="flex flex-col gap-12 lg:flex-row lg:justify-between">
+        <div className="flex flex-col items-center gap-12">
           {/* Brand Section */}
           <AnimatedContainer delay={0.1}>
-            <div className="max-w-sm">
-              <div className="flex items-center gap-3">
+            <div className="text-center">
+              <div className="flex items-center justify-center gap-3">
                 <img src={synapsioLogo} alt="Synapsio" className="h-10 w-auto" />
                 <span className="text-lg font-medium tracking-tight text-foreground uppercase">
                   Synapsio
@@ -77,7 +77,7 @@ const Footer = () => {
           </AnimatedContainer>
 
           {/* Links Grid */}
-          <div className="grid grid-cols-2 gap-8 sm:grid-cols-4 lg:gap-12">
+          <div className="grid grid-cols-2 gap-8 sm:grid-cols-4 lg:gap-12 text-center">
             {footerLinks.map((section, index) => (
               <AnimatedContainer key={section.label} delay={0.2 + index * 0.1}>
                 <div className="space-y-4">
@@ -91,7 +91,7 @@ const Footer = () => {
                           href={link.href}
                           target={link.href.startsWith('http') ? '_blank' : undefined}
                           rel={link.href.startsWith('http') ? 'noopener noreferrer' : undefined}
-                          className="group flex items-center gap-2 text-sm text-muted-foreground transition-colors duration-300 hover:text-foreground"
+                          className="group inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors duration-300 hover:text-foreground"
                         >
                           {link.icon && (
                             <link.icon className="h-4 w-4 text-muted-foreground/50 transition-colors duration-300 group-hover:text-primary" />
