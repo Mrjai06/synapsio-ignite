@@ -483,12 +483,12 @@ const StackedAreaChart = ({ whyNowVisible }: { whyNowVisible: boolean }) => {
   const abs = selectedData ? selectedData.val2030 - selectedData.val2023 : 0;
 
   // SVG-based stacked area chart
-  const width = 700;
-  const height = 340;
-  const padL = 48;
-  const padR = 20;
-  const padT = 20;
-  const padB = 40;
+  const width = 840;
+  const height = 408;
+  const padL = 58;
+  const padR = 24;
+  const padT = 24;
+  const padB = 48;
   const chartW = width - padL - padR;
   const chartH = height - padT - padB;
   const n = stackedData.length;
@@ -517,7 +517,7 @@ const StackedAreaChart = ({ whyNowVisible }: { whyNowVisible: boolean }) => {
 
   return (
     <div>
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_17.5rem] gap-10 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_21rem] gap-10 items-start">
         <div className="flex flex-col items-center">
           <svg viewBox={`0 0 ${width} ${height}`} className="w-full" onClick={() => setActiveSegment(null)}>
             <defs>
@@ -536,13 +536,13 @@ const StackedAreaChart = ({ whyNowVisible }: { whyNowVisible: boolean }) => {
             {[0, 25, 50, 75, 100].map(v => (
               <g key={v}>
                 <line x1={padL} y1={yScale(v)} x2={padL + chartW} y2={yScale(v)} stroke="hsl(var(--border) / 0.08)" strokeWidth="0.5" />
-                <text x={padL - 8} y={yScale(v)} textAnchor="end" dominantBaseline="central" className="fill-muted-foreground/20 text-[9px]">{v}%</text>
+                <text x={padL - 8} y={yScale(v)} textAnchor="end" dominantBaseline="central" className="fill-muted-foreground/20 text-[11px]">{v}%</text>
               </g>
             ))}
 
             {/* Year labels */}
             {stackedData.map((d, i) => (
-              <text key={d.year} x={xScale(i)} y={height - 8} textAnchor="middle" className="fill-muted-foreground/30 text-[10px]">{d.year}</text>
+              <text key={d.year} x={xScale(i)} y={height - 10} textAnchor="middle" className="fill-muted-foreground/30 text-xs">{d.year}</text>
             ))}
 
             {/* Stacked areas with dark outlines */}
