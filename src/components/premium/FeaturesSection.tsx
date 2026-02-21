@@ -797,24 +797,7 @@ const MarketplaceVisualization = ({ state }: { state: SystemState }) => {
           </g>
         ))}
         
-        {/* Decision spark - acceleration visual */}
-        {state === "decision" && (
-          <motion.circle
-            cx={aiEngine.x}
-            cy={aiEngine.y + 40}
-            r="3"
-            fill="hsl(var(--accent))"
-            animate={{
-              scale: [1, 2, 1],
-              opacity: [0.3, 1, 0.3],
-            }}
-            transition={{
-              duration: 0.4,
-              repeat: Infinity,
-              ease: "easeIn", // Acceleration
-            }}
-          />
-        )}
+        
       </motion.g>
 
       {/* EXECUTION PHASE: Winner selected, order flows with PULSES */}
