@@ -156,7 +156,7 @@ const ProcessOverviewSection = () => {
         </div>
 
         {/* Main visualization container */}
-        <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
+        <div className="flex flex-col items-center gap-8 lg:flex-row lg:gap-20">
           {/* Circular System Diagram */}
           <div 
             className={`relative flex-shrink-0 transition-all duration-1000 ${

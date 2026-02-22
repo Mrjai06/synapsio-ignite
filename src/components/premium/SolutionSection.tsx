@@ -37,7 +37,7 @@ const slides = [
 const ConnectionDiagram = ({ elements, center }: { elements: string[]; center: string }) => {
   const centerX = 210;
   const centerY = 180;
-  const radius = 140;
+  const radius = 120;
 
   const positions = elements.map((_, i) => {
     const angle = (i * 90 - 45) * (Math.PI / 180);
@@ -48,9 +48,8 @@ const ConnectionDiagram = ({ elements, center }: { elements: string[]; center: s
   });
 
   return (
-    <div className="relative mx-auto w-full max-w-[420px] aspect-[420/360]">
-      {/* Connection lines */}
-      <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 420 360" style={{ zIndex: 0 }}>
+    <div className="relative mx-auto w-full max-w-[280px] md:max-w-[420px] aspect-square">
+      <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 420 360" preserveAspectRatio="xMidYMid meet" style={{ zIndex: 0 }}>
         {positions.map((pos, i) => (
           <motion.line
             key={i}
@@ -68,30 +67,38 @@ const ConnectionDiagram = ({ elements, center }: { elements: string[]; center: s
         ))}
       </svg>
 
-      {/* Center node - glass card style matching Problem section */}
+      {/* Center node */}
       <motion.div
         className="absolute z-10 rounded-3xl bg-card/40 backdrop-blur-xl border border-primary/30 flex flex-col items-center justify-center gap-2"
-        style={{ left: centerX - 72, top: centerY - 72, width: 144, height: 144, 
+        style={{ 
+          left: '50%', top: '50%', 
+          width: 'clamp(100px, 30%, 144px)', height: 'clamp(100px, 30%, 144px)',
+          transform: 'translate(-50%, -50%)',
           boxShadow: '0 0 2.5rem hsl(var(--primary) / 0.15), 0 0.5rem 2rem hsl(var(--background) / 0.5)'
         }}
         initial={{ scale: 0, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ duration: 0.5, delay: 0.2 }}
       >
-        <Database className="w-7 h-7 text-primary" />
-        <span className="text-sm font-medium text-primary">{center}</span>
+        <Database className="w-6 h-6 md:w-7 md:h-7 text-primary" />
+        <span className="text-xs md:text-sm font-medium text-primary">{center}</span>
       </motion.div>
 
-      {/* Surrounding nodes - glass card style matching Problem section */}
+      {/* Surrounding nodes */}
       {elements.map((el, i) => {
         const nodeIcons = [Database, Brain, Zap, Database];
         const Icon = nodeIcons[i % nodeIcons.length];
+        // Position as percentages based on viewbox
+        const pctX = (positions[i].x / 420) * 100;
+        const pctY = (positions[i].y / 360) * 100;
         return (
           <motion.div
             key={el}
-            className="absolute rounded-2xl bg-card/30 backdrop-blur-xl border border-border/20 flex flex-col items-center justify-center gap-2 cursor-pointer hover:border-primary/40 transition-colors duration-300 group"
+            className="absolute rounded-2xl bg-card/30 backdrop-blur-xl border border-border/20 flex flex-col items-center justify-center gap-1 md:gap-2 cursor-pointer hover:border-primary/40 transition-colors duration-300 group"
             style={{ 
-              left: positions[i].x - 52, top: positions[i].y - 52, width: 104, height: 104,
+              left: `${pctX}%`, top: `${pctY}%`,
+              width: 'clamp(70px, 22%, 104px)', height: 'clamp(70px, 22%, 104px)',
+              transform: 'translate(-50%, -50%)',
               boxShadow: '0 0.5rem 1.5rem hsl(var(--background) / 0.6)'
             }}
             initial={{ scale: 0, opacity: 0 }}
@@ -99,8 +106,8 @@ const ConnectionDiagram = ({ elements, center }: { elements: string[]; center: s
             transition={{ duration: 0.4, delay: 0.3 + i * 0.1 }}
             whileHover={{ scale: 1.06, y: -4 }}
           >
-            <Icon className="w-5 h-5 text-muted-foreground/60 group-hover:text-primary transition-colors duration-300" />
-            <span className="text-xs font-medium text-muted-foreground/70 group-hover:text-foreground transition-colors duration-300">{el}</span>
+            <Icon className="w-4 h-4 md:w-5 md:h-5 text-muted-foreground/60 group-hover:text-primary transition-colors duration-300" />
+            <span className="text-[10px] md:text-xs font-medium text-muted-foreground/70 group-hover:text-foreground transition-colors duration-300">{el}</span>
           </motion.div>
         );
       })}
@@ -110,8 +117,8 @@ const ConnectionDiagram = ({ elements, center }: { elements: string[]; center: s
 
 // Flow diagram
 const FlowDiagram = ({ steps }: { steps: string[] }) => (
-  <div className="relative w-full h-64 flex items-center justify-center">
-    <div className="flex items-center gap-4">
+  <div className="relative w-full py-8 flex items-center justify-center">
+    <div className="flex flex-wrap md:flex-nowrap items-center justify-center gap-3 md:gap-4">
       {steps.map((step, i) => (
         <motion.div
           key={step}
@@ -120,18 +127,18 @@ const FlowDiagram = ({ steps }: { steps: string[] }) => (
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.4, delay: 0.2 + i * 0.15 }}
         >
-          <div className="w-24 h-24 rounded-2xl bg-card/30 backdrop-blur-xl border border-border/20 flex items-center justify-center"
+          <div className="w-16 h-16 md:w-24 md:h-24 rounded-2xl bg-card/30 backdrop-blur-xl border border-border/20 flex items-center justify-center"
             style={{ boxShadow: '0 0.5rem 1.5rem hsl(var(--background) / 0.6)' }}>
-            <span className="text-xs font-medium text-muted-foreground/70 text-center px-2">{step}</span>
+            <span className="text-[10px] md:text-xs font-medium text-muted-foreground/70 text-center px-1 md:px-2">{step}</span>
           </div>
           {i < steps.length - 1 && (
             <motion.div
-              className="mx-2"
+              className="mx-1 md:mx-2"
               initial={{ opacity: 0, scale: 0 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.3, delay: 0.4 + i * 0.15 }}
             >
-              <ChevronRight className="w-4 h-4 text-primary/40" />
+              <ChevronRight className="w-3 h-3 md:w-4 md:h-4 text-primary/40" />
             </motion.div>
           )}
         </motion.div>
@@ -206,7 +213,7 @@ const SolutionSection = () => {
           </div>
 
           {/* Slide content */}
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center min-h-[25rem]">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-20 items-center min-h-0 lg:min-h-[25rem]">
             {/* Text content */}
             <AnimatePresence mode="wait">
               <motion.div

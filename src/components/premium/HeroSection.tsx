@@ -78,7 +78,7 @@ const HeroSection = () => {
       </div>
 
       {/* BOTTOM: CTA centered */}
-      <div className="absolute bottom-0 left-0 right-0 z-10 px-8 pb-80 flex flex-col items-center gap-6 transition-all duration-700" style={{
+      <div className="absolute bottom-0 left-0 right-0 z-10 px-8 pb-48 md:pb-80 flex flex-col items-center gap-6 transition-all duration-700" style={{
         opacity: Math.max(0, contentOpacity),
         transform: `translateY(${contentTranslate}px)`
       }}>

@@ -407,7 +407,7 @@ const FeaturesSection = () => {
               </div>
 
               {/* VISUALIZATION - Full width below cards */}
-              <div className="relative w-full aspect-[16/9] max-h-[37.5rem] rounded-3xl border border-border/20 bg-background/40 backdrop-blur-sm overflow-hidden">
+              <div className="relative w-full aspect-square md:aspect-[16/9] max-h-[37.5rem] rounded-3xl border border-border/20 bg-background/40 backdrop-blur-sm overflow-hidden">
                 {/* System State Indicator - Top Right */}
                 <SystemStateIndicator state={systemState} onStateClick={handleStateClick} isPaused={isLoopPaused} />
                 
@@ -427,7 +427,7 @@ const FeaturesSection = () => {
                 </AnimatePresence>
                 
                 {/* What's eliminated - overlay at bottom */}
-                <div className="absolute bottom-0 left-0 right-0 pt-16 pb-6 px-6 bg-gradient-to-t from-background/90 via-background/60 to-transparent">
+                <div className="absolute bottom-0 left-0 right-0 pt-8 md:pt-16 pb-4 md:pb-6 px-3 md:px-6 bg-gradient-to-t from-background/90 via-background/60 to-transparent">
                   <AnimatePresence mode="wait">
                     <motion.div
                       key={activeFeature}
@@ -439,17 +439,17 @@ const FeaturesSection = () => {
                       <p className="text-xs uppercase tracking-wider text-muted-foreground/50 mb-3 text-center">
                         What's Eliminated
                       </p>
-                      <div className="flex flex-wrap justify-center gap-4">
+                      <div className="flex flex-col md:flex-row flex-wrap justify-center gap-2 md:gap-4">
                         {Object.entries(activeData.content.removal).map(([key, value], idx) => (
                           <motion.div
                             key={key}
                             initial={{ opacity: 0, x: 10 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ delay: idx * 0.1 }}
-                            className="flex items-center gap-2 text-sm bg-background/60 px-3 py-1.5 rounded-full border border-border/20"
+                            className="flex items-center gap-2 text-xs md:text-sm bg-background/60 px-3 py-1.5 rounded-full border border-border/20"
                           >
                             <span className="w-1.5 h-1.5 rounded-full bg-accent/60 shrink-0" />
-                            <span className="text-muted-foreground/70">{value}</span>
+                            <span className="text-muted-foreground/70 line-clamp-1">{value}</span>
                           </motion.div>
                         ))}
                       </div>
@@ -485,7 +485,7 @@ const SystemStateIndicator = ({
   ];
 
   return (
-    <div className="absolute top-4 right-4 z-20 flex items-center gap-2 bg-background/80 backdrop-blur-sm rounded-full px-4 py-2 border border-border/30">
+    <div className="absolute top-2 right-2 md:top-4 md:right-4 z-20 flex items-center gap-1 md:gap-2 bg-background/80 backdrop-blur-sm rounded-full px-2 md:px-4 py-1.5 md:py-2 border border-border/30 scale-[0.8] md:scale-100 origin-top-right">
       <span className="text-[0.5625rem] uppercase tracking-wider text-muted-foreground/50 mr-2">State</span>
       {states.map((s) => {
         const isActive = state === s.id;
@@ -539,14 +539,14 @@ const LiveExplanationPanel = ({
 
   return (
     <div className="w-full bg-background/90 backdrop-blur-sm rounded-xl border border-border/30 overflow-hidden">
-      <div className="flex items-center gap-4 px-4 py-3">
+      <div className="flex flex-col md:flex-row items-start md:items-center gap-2 md:gap-4 px-4 py-3">
         {/* Title */}
-        <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground/80 whitespace-nowrap shrink-0">
+        <p className="text-[10px] md:text-xs font-semibold uppercase tracking-widest text-muted-foreground/80 whitespace-nowrap shrink-0">
           Live System Activity
         </p>
         
         {/* Steps in horizontal layout */}
-        <div className="flex-1 flex items-center gap-2 min-w-0 overflow-hidden">
+        <div className="flex-1 flex items-center gap-2 min-w-0 overflow-hidden w-full">
           {steps.map((step, idx) => {
             const isActive = 
               (state === "idle" && step.id === "idle") ||
