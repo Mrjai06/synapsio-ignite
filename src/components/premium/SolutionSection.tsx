@@ -57,7 +57,7 @@ const ConnectionDiagram = ({ elements, center }: { elements: string[]; center: s
     <div className="w-full flex items-center justify-center py-4">
       <div className="relative" style={{ width: 'clamp(240px, 100%, 360px)', aspectRatio: '1' }}>
         {/* SVG connecting lines */}
-        <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 100 100" preserveAspectRatio="none">
+        <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
           {lineEndpoints.map((line, i) => (
             <motion.line
               key={i}
