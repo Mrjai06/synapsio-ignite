@@ -35,26 +35,27 @@ const slides = [
 
 // Simple connection diagram
 const ConnectionDiagram = ({ elements, center }: { elements: string[]; center: string }) => {
-  const centerX = 210;
-  const centerY = 180;
-  const radius = 120;
+  const size = 400;
+  const cx = size / 2;
+  const cy = size / 2;
+  const radius = 130;
 
   const positions = elements.map((_, i) => {
     const angle = (i * 90 - 45) * (Math.PI / 180);
     return {
-      x: centerX + Math.cos(angle) * radius,
-      y: centerY + Math.sin(angle) * radius,
+      x: cx + Math.cos(angle) * radius,
+      y: cy + Math.sin(angle) * radius,
     };
   });
 
   return (
-    <div className="relative mx-auto w-full max-w-[280px] md:max-w-[420px] aspect-square">
-      <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 420 360" preserveAspectRatio="xMidYMid meet" style={{ zIndex: 0 }}>
+    <div className="relative mx-auto w-full max-w-[280px] md:max-w-[400px] aspect-square">
+      <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox={`0 0 ${size} ${size}`} preserveAspectRatio="xMidYMid meet" style={{ zIndex: 0 }}>
         {positions.map((pos, i) => (
           <motion.line
             key={i}
-            x1={centerX}
-            y1={centerY}
+            x1={cx}
+            y1={cy}
             x2={pos.x}
             y2={pos.y}
             stroke="hsl(var(--primary) / 0.2)"
@@ -72,7 +73,7 @@ const ConnectionDiagram = ({ elements, center }: { elements: string[]; center: s
         className="absolute z-10 rounded-3xl bg-card/40 backdrop-blur-xl border border-primary/30 flex flex-col items-center justify-center gap-2"
         style={{ 
           left: '50%', top: '50%', 
-          width: 'clamp(100px, 30%, 144px)', height: 'clamp(100px, 30%, 144px)',
+          width: 'clamp(90px, 28%, 144px)', height: 'clamp(90px, 28%, 144px)',
           transform: 'translate(-50%, -50%)',
           boxShadow: '0 0 2.5rem hsl(var(--primary) / 0.15), 0 0.5rem 2rem hsl(var(--background) / 0.5)'
         }}
@@ -88,16 +89,15 @@ const ConnectionDiagram = ({ elements, center }: { elements: string[]; center: s
       {elements.map((el, i) => {
         const nodeIcons = [Database, Brain, Zap, Database];
         const Icon = nodeIcons[i % nodeIcons.length];
-        // Position as percentages based on viewbox
-        const pctX = (positions[i].x / 420) * 100;
-        const pctY = (positions[i].y / 360) * 100;
+        const pctX = (positions[i].x / size) * 100;
+        const pctY = (positions[i].y / size) * 100;
         return (
           <motion.div
             key={el}
             className="absolute rounded-2xl bg-card/30 backdrop-blur-xl border border-border/20 flex flex-col items-center justify-center gap-1 md:gap-2 cursor-pointer hover:border-primary/40 transition-colors duration-300 group"
             style={{ 
               left: `${pctX}%`, top: `${pctY}%`,
-              width: 'clamp(70px, 22%, 104px)', height: 'clamp(70px, 22%, 104px)',
+              width: 'clamp(65px, 20%, 104px)', height: 'clamp(65px, 20%, 104px)',
               transform: 'translate(-50%, -50%)',
               boxShadow: '0 0.5rem 1.5rem hsl(var(--background) / 0.6)'
             }}
