@@ -33,81 +33,87 @@ const slides = [
   },
 ];
 
-// Simple connection diagram
+// Simple connection diagram with connecting lines
 const ConnectionDiagram = ({ elements, center }: { elements: string[]; center: string }) => {
   const nodeIcons = [Database, Brain, Zap, Database];
 
+  // Corner positions as percentages [left, top] — center of each node
+  const corners = [
+    { left: '15%', top: '15%' },   // ERP top-left
+    { left: '85%', top: '15%' },   // WMS top-right
+    { left: '15%', top: '85%' },   // TMS bottom-left
+    { left: '85%', top: '85%' },   // Marketplace bottom-right
+  ];
+
+  // SVG line endpoints matching corner positions (center of diagram = 50,50)
+  const lineEndpoints = [
+    { x1: 50, y1: 50, x2: 15, y2: 15 },
+    { x1: 50, y1: 50, x2: 85, y2: 15 },
+    { x1: 50, y1: 50, x2: 15, y2: 85 },
+    { x1: 50, y1: 50, x2: 85, y2: 85 },
+  ];
+
   return (
     <div className="w-full flex items-center justify-center py-4">
-      <div className="grid grid-cols-3 grid-rows-3 gap-3 md:gap-4" style={{ width: 'clamp(220px, 100%, 340px)' }}>
-        {/* Row 1: Marketplace _ ERP */}
-        <motion.div
-          className="rounded-2xl bg-card/30 backdrop-blur-xl border border-border/20 flex flex-col items-center justify-center gap-1 md:gap-2 cursor-pointer hover:border-primary/40 transition-colors duration-300 group aspect-square"
-          style={{ boxShadow: '0 0.5rem 1.5rem hsl(var(--background) / 0.6)' }}
-          initial={{ scale: 0, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 0.4, delay: 0.3 }}
-          whileHover={{ scale: 1.06, y: -4 }}
-        >
-          {(() => { const Icon = nodeIcons[0]; return <Icon className="w-4 h-4 md:w-5 md:h-5 text-muted-foreground/60 group-hover:text-primary transition-colors duration-300" />; })()}
-          <span className="text-[10px] md:text-xs font-medium text-muted-foreground/70 group-hover:text-foreground transition-colors duration-300">{elements[0]}</span>
-        </motion.div>
-        
-        <div /> {/* empty center top */}
-        
-        <motion.div
-          className="rounded-2xl bg-card/30 backdrop-blur-xl border border-border/20 flex flex-col items-center justify-center gap-1 md:gap-2 cursor-pointer hover:border-primary/40 transition-colors duration-300 group aspect-square"
-          style={{ boxShadow: '0 0.5rem 1.5rem hsl(var(--background) / 0.6)' }}
-          initial={{ scale: 0, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 0.4, delay: 0.4 }}
-          whileHover={{ scale: 1.06, y: -4 }}
-        >
-          {(() => { const Icon = nodeIcons[1]; return <Icon className="w-4 h-4 md:w-5 md:h-5 text-muted-foreground/60 group-hover:text-primary transition-colors duration-300" />; })()}
-          <span className="text-[10px] md:text-xs font-medium text-muted-foreground/70 group-hover:text-foreground transition-colors duration-300">{elements[1]}</span>
-        </motion.div>
+      <div className="relative" style={{ width: 'clamp(240px, 100%, 360px)', aspectRatio: '1' }}>
+        {/* SVG connecting lines */}
+        <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 100 100" preserveAspectRatio="none">
+          {lineEndpoints.map((line, i) => (
+            <motion.line
+              key={i}
+              x1={line.x1} y1={line.y1} x2={line.x2} y2={line.y2}
+              stroke="hsl(var(--primary) / 0.2)"
+              strokeWidth="0.3"
+              initial={{ pathLength: 0, opacity: 0 }}
+              animate={{ pathLength: 1, opacity: 1 }}
+              transition={{ duration: 0.6, delay: 0.3 + i * 0.1 }}
+            />
+          ))}
+        </svg>
 
-        {/* Row 2: _ Synapsio _ */}
-        <div /> {/* empty left */}
-        
+        {/* Corner nodes */}
+        {corners.map((pos, i) => {
+          const Icon = nodeIcons[i];
+          return (
+            <motion.div
+              key={elements[i]}
+              className="absolute rounded-2xl bg-card/30 backdrop-blur-xl border border-border/20 flex flex-col items-center justify-center gap-1 md:gap-2 cursor-pointer hover:border-primary/40 transition-colors duration-300 group"
+              style={{
+                left: pos.left,
+                top: pos.top,
+                width: 'clamp(70px, 28%, 110px)',
+                aspectRatio: '1',
+                transform: 'translate(-50%, -50%)',
+                boxShadow: '0 0.5rem 1.5rem hsl(var(--background) / 0.6)',
+              }}
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ duration: 0.4, delay: 0.3 + i * 0.1 }}
+              whileHover={{ scale: 1.06, y: -4 }}
+            >
+              <Icon className="w-4 h-4 md:w-5 md:h-5 text-muted-foreground/60 group-hover:text-primary transition-colors duration-300" />
+              <span className="text-[10px] md:text-xs font-medium text-muted-foreground/70 group-hover:text-foreground transition-colors duration-300">{elements[i]}</span>
+            </motion.div>
+          );
+        })}
+
+        {/* Center node — layered on top */}
         <motion.div
-          className="rounded-3xl bg-card/40 backdrop-blur-xl border border-primary/30 flex flex-col items-center justify-center gap-2 aspect-square"
-          style={{ boxShadow: '0 0 2.5rem hsl(var(--primary) / 0.15), 0 0.5rem 2rem hsl(var(--background) / 0.5)' }}
+          className="absolute rounded-3xl bg-card/40 backdrop-blur-xl border border-primary/30 flex flex-col items-center justify-center gap-2 z-10"
+          style={{
+            left: '50%',
+            top: '50%',
+            width: 'clamp(90px, 32%, 130px)',
+            aspectRatio: '1',
+            transform: 'translate(-50%, -50%)',
+            boxShadow: '0 0 2.5rem hsl(var(--primary) / 0.15), 0 0.5rem 2rem hsl(var(--background) / 0.5)',
+          }}
           initial={{ scale: 0, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.2 }}
         >
           <Database className="w-6 h-6 md:w-7 md:h-7 text-primary" />
           <span className="text-xs md:text-sm font-medium text-primary">{center}</span>
-        </motion.div>
-        
-        <div /> {/* empty right */}
-
-        {/* Row 3: TMS _ Marketplace */}
-        <motion.div
-          className="rounded-2xl bg-card/30 backdrop-blur-xl border border-border/20 flex flex-col items-center justify-center gap-1 md:gap-2 cursor-pointer hover:border-primary/40 transition-colors duration-300 group aspect-square"
-          style={{ boxShadow: '0 0.5rem 1.5rem hsl(var(--background) / 0.6)' }}
-          initial={{ scale: 0, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 0.4, delay: 0.5 }}
-          whileHover={{ scale: 1.06, y: -4 }}
-        >
-          {(() => { const Icon = nodeIcons[2]; return <Icon className="w-4 h-4 md:w-5 md:h-5 text-muted-foreground/60 group-hover:text-primary transition-colors duration-300" />; })()}
-          <span className="text-[10px] md:text-xs font-medium text-muted-foreground/70 group-hover:text-foreground transition-colors duration-300">{elements[2]}</span>
-        </motion.div>
-        
-        <div /> {/* empty center bottom */}
-        
-        <motion.div
-          className="rounded-2xl bg-card/30 backdrop-blur-xl border border-border/20 flex flex-col items-center justify-center gap-1 md:gap-2 cursor-pointer hover:border-primary/40 transition-colors duration-300 group aspect-square"
-          style={{ boxShadow: '0 0.5rem 1.5rem hsl(var(--background) / 0.6)' }}
-          initial={{ scale: 0, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 0.4, delay: 0.6 }}
-          whileHover={{ scale: 1.06, y: -4 }}
-        >
-          {(() => { const Icon = nodeIcons[3]; return <Icon className="w-4 h-4 md:w-5 md:h-5 text-muted-foreground/60 group-hover:text-primary transition-colors duration-300" />; })()}
-          <span className="text-[10px] md:text-xs font-medium text-muted-foreground/70 group-hover:text-foreground transition-colors duration-300">{elements[3]}</span>
         </motion.div>
       </div>
     </div>
