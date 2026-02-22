@@ -35,82 +35,81 @@ const slides = [
 
 // Simple connection diagram
 const ConnectionDiagram = ({ elements, center }: { elements: string[]; center: string }) => {
-  const size = 400;
-  const cx = size / 2;
-  const cy = size / 2;
-  const radius = 130;
-
-  const positions = elements.map((_, i) => {
-    const angle = (i * 90 - 45) * (Math.PI / 180);
-    return {
-      x: cx + Math.cos(angle) * radius,
-      y: cy + Math.sin(angle) * radius,
-    };
-  });
+  const nodeIcons = [Database, Brain, Zap, Database];
 
   return (
-    <div className="relative mx-auto w-full max-w-[280px] md:max-w-[400px] aspect-square">
-      <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox={`0 0 ${size} ${size}`} preserveAspectRatio="xMidYMid meet" style={{ zIndex: 0 }}>
-        {positions.map((pos, i) => (
-          <motion.line
-            key={i}
-            x1={cx}
-            y1={cy}
-            x2={pos.x}
-            y2={pos.y}
-            stroke="hsl(var(--primary) / 0.2)"
-            strokeWidth={1}
-            strokeDasharray="4 4"
-            initial={{ pathLength: 0, opacity: 0 }}
-            animate={{ pathLength: 1, opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.4 + i * 0.1 }}
-          />
-        ))}
-      </svg>
+    <div className="w-full flex items-center justify-center py-4">
+      <div className="grid grid-cols-3 grid-rows-3 gap-3 md:gap-4" style={{ width: 'clamp(220px, 100%, 340px)' }}>
+        {/* Row 1: Marketplace _ ERP */}
+        <motion.div
+          className="rounded-2xl bg-card/30 backdrop-blur-xl border border-border/20 flex flex-col items-center justify-center gap-1 md:gap-2 cursor-pointer hover:border-primary/40 transition-colors duration-300 group aspect-square"
+          style={{ boxShadow: '0 0.5rem 1.5rem hsl(var(--background) / 0.6)' }}
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.4, delay: 0.3 }}
+          whileHover={{ scale: 1.06, y: -4 }}
+        >
+          {(() => { const Icon = nodeIcons[0]; return <Icon className="w-4 h-4 md:w-5 md:h-5 text-muted-foreground/60 group-hover:text-primary transition-colors duration-300" />; })()}
+          <span className="text-[10px] md:text-xs font-medium text-muted-foreground/70 group-hover:text-foreground transition-colors duration-300">{elements[0]}</span>
+        </motion.div>
+        
+        <div /> {/* empty center top */}
+        
+        <motion.div
+          className="rounded-2xl bg-card/30 backdrop-blur-xl border border-border/20 flex flex-col items-center justify-center gap-1 md:gap-2 cursor-pointer hover:border-primary/40 transition-colors duration-300 group aspect-square"
+          style={{ boxShadow: '0 0.5rem 1.5rem hsl(var(--background) / 0.6)' }}
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.4, delay: 0.4 }}
+          whileHover={{ scale: 1.06, y: -4 }}
+        >
+          {(() => { const Icon = nodeIcons[1]; return <Icon className="w-4 h-4 md:w-5 md:h-5 text-muted-foreground/60 group-hover:text-primary transition-colors duration-300" />; })()}
+          <span className="text-[10px] md:text-xs font-medium text-muted-foreground/70 group-hover:text-foreground transition-colors duration-300">{elements[1]}</span>
+        </motion.div>
 
-      {/* Center node */}
-      <motion.div
-        className="absolute z-10 rounded-3xl bg-card/40 backdrop-blur-xl border border-primary/30 flex flex-col items-center justify-center gap-2"
-        style={{ 
-          left: '50%', top: '50%', 
-          width: 'clamp(90px, 28%, 144px)', height: 'clamp(90px, 28%, 144px)',
-          transform: 'translate(-50%, -50%)',
-          boxShadow: '0 0 2.5rem hsl(var(--primary) / 0.15), 0 0.5rem 2rem hsl(var(--background) / 0.5)'
-        }}
-        initial={{ scale: 0, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        transition={{ duration: 0.5, delay: 0.2 }}
-      >
-        <Database className="w-6 h-6 md:w-7 md:h-7 text-primary" />
-        <span className="text-xs md:text-sm font-medium text-primary">{center}</span>
-      </motion.div>
+        {/* Row 2: _ Synapsio _ */}
+        <div /> {/* empty left */}
+        
+        <motion.div
+          className="rounded-3xl bg-card/40 backdrop-blur-xl border border-primary/30 flex flex-col items-center justify-center gap-2 aspect-square"
+          style={{ boxShadow: '0 0 2.5rem hsl(var(--primary) / 0.15), 0 0.5rem 2rem hsl(var(--background) / 0.5)' }}
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+        >
+          <Database className="w-6 h-6 md:w-7 md:h-7 text-primary" />
+          <span className="text-xs md:text-sm font-medium text-primary">{center}</span>
+        </motion.div>
+        
+        <div /> {/* empty right */}
 
-      {/* Surrounding nodes */}
-      {elements.map((el, i) => {
-        const nodeIcons = [Database, Brain, Zap, Database];
-        const Icon = nodeIcons[i % nodeIcons.length];
-        const pctX = (positions[i].x / size) * 100;
-        const pctY = (positions[i].y / size) * 100;
-        return (
-          <motion.div
-            key={el}
-            className="absolute rounded-2xl bg-card/30 backdrop-blur-xl border border-border/20 flex flex-col items-center justify-center gap-1 md:gap-2 cursor-pointer hover:border-primary/40 transition-colors duration-300 group"
-            style={{ 
-              left: `${pctX}%`, top: `${pctY}%`,
-              width: 'clamp(65px, 20%, 104px)', height: 'clamp(65px, 20%, 104px)',
-              transform: 'translate(-50%, -50%)',
-              boxShadow: '0 0.5rem 1.5rem hsl(var(--background) / 0.6)'
-            }}
-            initial={{ scale: 0, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 0.4, delay: 0.3 + i * 0.1 }}
-            whileHover={{ scale: 1.06, y: -4 }}
-          >
-            <Icon className="w-4 h-4 md:w-5 md:h-5 text-muted-foreground/60 group-hover:text-primary transition-colors duration-300" />
-            <span className="text-[10px] md:text-xs font-medium text-muted-foreground/70 group-hover:text-foreground transition-colors duration-300">{el}</span>
-          </motion.div>
-        );
-      })}
+        {/* Row 3: TMS _ Marketplace */}
+        <motion.div
+          className="rounded-2xl bg-card/30 backdrop-blur-xl border border-border/20 flex flex-col items-center justify-center gap-1 md:gap-2 cursor-pointer hover:border-primary/40 transition-colors duration-300 group aspect-square"
+          style={{ boxShadow: '0 0.5rem 1.5rem hsl(var(--background) / 0.6)' }}
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.4, delay: 0.5 }}
+          whileHover={{ scale: 1.06, y: -4 }}
+        >
+          {(() => { const Icon = nodeIcons[2]; return <Icon className="w-4 h-4 md:w-5 md:h-5 text-muted-foreground/60 group-hover:text-primary transition-colors duration-300" />; })()}
+          <span className="text-[10px] md:text-xs font-medium text-muted-foreground/70 group-hover:text-foreground transition-colors duration-300">{elements[2]}</span>
+        </motion.div>
+        
+        <div /> {/* empty center bottom */}
+        
+        <motion.div
+          className="rounded-2xl bg-card/30 backdrop-blur-xl border border-border/20 flex flex-col items-center justify-center gap-1 md:gap-2 cursor-pointer hover:border-primary/40 transition-colors duration-300 group aspect-square"
+          style={{ boxShadow: '0 0.5rem 1.5rem hsl(var(--background) / 0.6)' }}
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.4, delay: 0.6 }}
+          whileHover={{ scale: 1.06, y: -4 }}
+        >
+          {(() => { const Icon = nodeIcons[3]; return <Icon className="w-4 h-4 md:w-5 md:h-5 text-muted-foreground/60 group-hover:text-primary transition-colors duration-300" />; })()}
+          <span className="text-[10px] md:text-xs font-medium text-muted-foreground/70 group-hover:text-foreground transition-colors duration-300">{elements[3]}</span>
+        </motion.div>
+      </div>
     </div>
   );
 };
@@ -249,7 +248,7 @@ const SolutionSection = () => {
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
                 transition={{ duration: 0.4 }}
-                className="relative bg-card/30 backdrop-blur-xl border border-border/20 rounded-3xl p-8 md:p-10"
+                className="relative bg-card/30 backdrop-blur-xl border border-border/20 rounded-3xl p-6 md:p-10"
                 style={{ boxShadow: '0 0.5rem 2rem hsl(var(--background) / 0.5)' }}
               >
                 {slide.diagram.type === "connect" && (
