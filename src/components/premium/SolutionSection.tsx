@@ -3,6 +3,19 @@ import { motion, AnimatePresence, useInView } from "framer-motion";
 import { ChevronLeft, ChevronRight, Database, Brain, Zap } from "lucide-react";
 import { AmbientGlow } from "./DepthSystem";
 import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+
+const nodeDescriptions: Record<string, string> = {
+  ERP: "Enterprise Resource Planning — the core system managing finances, inventory, and operations. Synapsio connects to your ERP to read and optimize data in real time.",
+  WMS: "Warehouse Management System — controls storage, picking, and shipping. Synapsio orchestrates WMS actions for smarter fulfillment.",
+  TMS: "Transport Management System — plans and tracks shipments. Synapsio optimizes routes and carrier selection automatically.",
+  Marketplace: "Synapsio's built-in sourcing hub — discover new suppliers and create resilient supply chains without leaving the platform.",
+};
 
 // Carousel slides data
 const slides = [
@@ -37,80 +50,61 @@ const slides = [
 const ConnectionDiagram = ({ elements, center }: { elements: string[]; center: string }) => {
   const nodeIcons = [Database, Brain, Zap, Database];
 
+  const renderNode = (index: number, delay: number) => {
+    const Icon = nodeIcons[index];
+    const label = elements[index];
+    return (
+      <Tooltip delayDuration={200}>
+        <TooltipTrigger asChild>
+          <motion.div
+            className="rounded-2xl bg-card/30 backdrop-blur-xl border border-border/20 flex flex-col items-center justify-center gap-1 md:gap-2 cursor-pointer hover:border-primary/40 transition-colors duration-300 group aspect-square"
+            style={{ boxShadow: '0 0.5rem 1.5rem hsl(var(--background) / 0.6)' }}
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 0.4, delay }}
+            whileHover={{ scale: 1.06, y: -4 }}
+          >
+            <Icon className="w-4 h-4 md:w-5 md:h-5 text-muted-foreground/60 group-hover:text-primary transition-colors duration-300" />
+            <span className="text-[10px] md:text-xs font-medium text-muted-foreground/70 group-hover:text-foreground transition-colors duration-300">{label}</span>
+          </motion.div>
+        </TooltipTrigger>
+        <TooltipContent
+          side="top"
+          className="max-w-[220px] bg-card/90 backdrop-blur-xl border-border/30 text-foreground/80 text-xs leading-relaxed"
+        >
+          {nodeDescriptions[label] || label}
+        </TooltipContent>
+      </Tooltip>
+    );
+  };
+
   return (
-    <div className="w-full flex items-center justify-center py-4">
-      <div className="grid grid-cols-3 grid-rows-3 gap-3 md:gap-4" style={{ width: 'clamp(220px, 100%, 340px)' }}>
-        {/* Row 1: Marketplace _ ERP */}
-        <motion.div
-          className="rounded-2xl bg-card/30 backdrop-blur-xl border border-border/20 flex flex-col items-center justify-center gap-1 md:gap-2 cursor-pointer hover:border-primary/40 transition-colors duration-300 group aspect-square"
-          style={{ boxShadow: '0 0.5rem 1.5rem hsl(var(--background) / 0.6)' }}
-          initial={{ scale: 0, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 0.4, delay: 0.3 }}
-          whileHover={{ scale: 1.06, y: -4 }}
-        >
-          {(() => { const Icon = nodeIcons[0]; return <Icon className="w-4 h-4 md:w-5 md:h-5 text-muted-foreground/60 group-hover:text-primary transition-colors duration-300" />; })()}
-          <span className="text-[10px] md:text-xs font-medium text-muted-foreground/70 group-hover:text-foreground transition-colors duration-300">{elements[0]}</span>
-        </motion.div>
-        
-        <div /> {/* empty center top */}
-        
-        <motion.div
-          className="rounded-2xl bg-card/30 backdrop-blur-xl border border-border/20 flex flex-col items-center justify-center gap-1 md:gap-2 cursor-pointer hover:border-primary/40 transition-colors duration-300 group aspect-square"
-          style={{ boxShadow: '0 0.5rem 1.5rem hsl(var(--background) / 0.6)' }}
-          initial={{ scale: 0, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 0.4, delay: 0.4 }}
-          whileHover={{ scale: 1.06, y: -4 }}
-        >
-          {(() => { const Icon = nodeIcons[1]; return <Icon className="w-4 h-4 md:w-5 md:h-5 text-muted-foreground/60 group-hover:text-primary transition-colors duration-300" />; })()}
-          <span className="text-[10px] md:text-xs font-medium text-muted-foreground/70 group-hover:text-foreground transition-colors duration-300">{elements[1]}</span>
-        </motion.div>
+    <TooltipProvider>
+      <div className="w-full flex items-center justify-center py-4">
+        <div className="grid grid-cols-3 grid-rows-3 gap-3 md:gap-4" style={{ width: 'clamp(220px, 100%, 340px)' }}>
+          {renderNode(0, 0.3)}
+          <div />
+          {renderNode(1, 0.4)}
 
-        {/* Row 2: _ Synapsio _ */}
-        <div /> {/* empty left */}
-        
-        <motion.div
-          className="rounded-3xl bg-card/40 backdrop-blur-xl border border-primary/30 flex flex-col items-center justify-center gap-2 aspect-square"
-          style={{ boxShadow: '0 0 2.5rem hsl(var(--primary) / 0.15), 0 0.5rem 2rem hsl(var(--background) / 0.5)' }}
-          initial={{ scale: 0, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-        >
-          <Database className="w-6 h-6 md:w-7 md:h-7 text-primary" />
-          <span className="text-xs md:text-sm font-medium text-primary">{center}</span>
-        </motion.div>
-        
-        <div /> {/* empty right */}
+          <div />
+          <motion.div
+            className="rounded-3xl bg-card/40 backdrop-blur-xl border border-primary/30 flex flex-col items-center justify-center gap-2 aspect-square"
+            style={{ boxShadow: '0 0 2.5rem hsl(var(--primary) / 0.15), 0 0.5rem 2rem hsl(var(--background) / 0.5)' }}
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
+            <Database className="w-6 h-6 md:w-7 md:h-7 text-primary" />
+            <span className="text-xs md:text-sm font-medium text-primary">{center}</span>
+          </motion.div>
+          <div />
 
-        {/* Row 3: TMS _ Marketplace */}
-        <motion.div
-          className="rounded-2xl bg-card/30 backdrop-blur-xl border border-border/20 flex flex-col items-center justify-center gap-1 md:gap-2 cursor-pointer hover:border-primary/40 transition-colors duration-300 group aspect-square"
-          style={{ boxShadow: '0 0.5rem 1.5rem hsl(var(--background) / 0.6)' }}
-          initial={{ scale: 0, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 0.4, delay: 0.5 }}
-          whileHover={{ scale: 1.06, y: -4 }}
-        >
-          {(() => { const Icon = nodeIcons[2]; return <Icon className="w-4 h-4 md:w-5 md:h-5 text-muted-foreground/60 group-hover:text-primary transition-colors duration-300" />; })()}
-          <span className="text-[10px] md:text-xs font-medium text-muted-foreground/70 group-hover:text-foreground transition-colors duration-300">{elements[2]}</span>
-        </motion.div>
-        
-        <div /> {/* empty center bottom */}
-        
-        <motion.div
-          className="rounded-2xl bg-card/30 backdrop-blur-xl border border-border/20 flex flex-col items-center justify-center gap-1 md:gap-2 cursor-pointer hover:border-primary/40 transition-colors duration-300 group aspect-square"
-          style={{ boxShadow: '0 0.5rem 1.5rem hsl(var(--background) / 0.6)' }}
-          initial={{ scale: 0, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 0.4, delay: 0.6 }}
-          whileHover={{ scale: 1.06, y: -4 }}
-        >
-          {(() => { const Icon = nodeIcons[3]; return <Icon className="w-4 h-4 md:w-5 md:h-5 text-muted-foreground/60 group-hover:text-primary transition-colors duration-300" />; })()}
-          <span className="text-[10px] md:text-xs font-medium text-muted-foreground/70 group-hover:text-foreground transition-colors duration-300">{elements[3]}</span>
-        </motion.div>
+          {renderNode(2, 0.5)}
+          <div />
+          {renderNode(3, 0.6)}
+        </div>
       </div>
-    </div>
+    </TooltipProvider>
   );
 };
 
