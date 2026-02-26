@@ -88,14 +88,18 @@ const ConnectionDiagram = ({ elements, center }: { elements: string[]; center: s
 
           <div />
           <motion.div
-            className="rounded-3xl bg-card/40 backdrop-blur-xl border border-primary/30 flex flex-col items-center justify-center gap-2 aspect-square"
-            style={{ boxShadow: '0 0 2.5rem hsl(var(--primary) / 0.15), 0 0.5rem 2rem hsl(var(--background) / 0.5)' }}
+            className="relative z-10 rounded-3xl bg-card/50 backdrop-blur-2xl border border-primary/40 flex flex-col items-center justify-center gap-2 aspect-square"
+            style={{
+              boxShadow: '0 0 3rem hsl(var(--primary) / 0.2), 0 0 1.5rem hsl(var(--primary) / 0.1), 0 1rem 3rem hsl(var(--background) / 0.6)',
+              transform: 'translateZ(0)',
+            }}
             initial={{ scale: 0, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.2 }}
+            whileHover={{ scale: 1.05 }}
           >
             <Database className="w-6 h-6 md:w-7 md:h-7 text-primary" />
-            <span className="text-xs md:text-sm font-medium text-primary">{center}</span>
+            <span className="text-xs md:text-sm font-semibold text-primary">{center}</span>
           </motion.div>
           <div />
 
