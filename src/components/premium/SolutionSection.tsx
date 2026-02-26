@@ -1,6 +1,7 @@
 import { useState, useRef } from "react";
 import { motion, AnimatePresence, useInView } from "framer-motion";
 import { ChevronLeft, ChevronRight, Database, Brain, Zap } from "lucide-react";
+import synapsioLogo from "@/assets/synapsio-logo.png";
 import { AmbientGlow } from "./DepthSystem";
 import { Button } from "@/components/ui/button";
 import {
@@ -98,7 +99,7 @@ const ConnectionDiagram = ({ elements, center }: { elements: string[]; center: s
             transition={{ duration: 0.5, delay: 0.2 }}
             whileHover={{ scale: 1.05 }}
           >
-            <Database className="w-6 h-6 md:w-7 md:h-7 text-primary" />
+            <img src={synapsioLogo} alt="Synapsio" className="w-7 h-7 md:w-8 md:h-8 object-contain" />
             <span className="text-xs md:text-sm font-semibold text-primary">{center}</span>
           </motion.div>
           <div />
